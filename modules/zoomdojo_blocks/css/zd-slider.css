@@ -1,0 +1,73 @@
+.bxslider div {
+    vertical-align: middle;
+    /*display: inline-block;
+    float: none !important;
+	margin-left: -5px;*/
+}
+.bxslider  {
+margin-left: calc(((100% - 1026px) / 2) * (1));
+}
+.bxslider div {
+opacity: 0.7;
+}
+.bxslider div.active {
+opacity: 1;
+}
+
+.bx-controls {
+text-align: center;
+
+width: 1026px;
+display: block;
+margin: 0 auto;
+height: 32px;
+position: absolute;
+margin-left: calc(((100% - 1026px) / 2) * (1));
+top: 50%;
+}
+
+.slide span {
+position: absolute;
+top: 65%;
+right: 0px;
+color: #fff;
+font-size: 40px;
+background: #D84242;
+display: block;
+width: 335px;
+font-weight: bold;
+text-align: left;
+height: auto;
+line-height: 42px;
+padding: 10px 20px;
+}
+
+#block-zoomdojo-blocks-zd-slider {
+background: #000;
+margin-bottom: 15px;
+}
+
+.bx-wrapper .bx-prev {
+background: url(../images/controls.png) no-repeat 0 -32px;
+float: left;
+margin-left: -16px;
+left: 0px;
+}
+
+.bx-wrapper .bx-next {
+background: url(../images/controls.png) no-repeat -43px -32px;
+float: right;
+margin-right: -16px;
+right: 0px;
+}
+
+.bx-wrapper .bx-controls-direction a {
+position: relative;
+top: 50%;
+margin-top: -16px;
+outline: 0;
+width: 32px;
+height: 32px;
+text-indent: -9999px;
+z-index: 99;
+}

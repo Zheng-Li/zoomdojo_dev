@@ -1,0 +1,76 @@
+<?php
+/**
+ * @file
+ * Enables Validating user phone number on registration page.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function user_registration_phone_form_user_register_form_alter(&$form, &$form_state) {
+  array_push($form['#validate'],'user_registration_phone_validate');
+}
+
+/**
+ * Honeypot validate.
+ */
+function user_registration_phone_validate(&$form, &$form_state) {
+  if(isset($form_state['values']['field_mobile']) 
+      && trim($form_state['values']['field_mobile']['und'][0]['value']) != ''
+      && !preg_match('/^[0-9 \-\+]+$/i', $form_state['values']['field_mobile']['und'][0]['value'])){
+    form_set_error('field_mobile',t('Mobile phone number in wrong format.'));
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function user_registration_phone_form_user_pass_alter(&$form, &$form_state) {
+    array_push($form['#validate'], 'user_registration_phone_user_pass_validate');
+}
+
+function user_registration_phone_user_pass_validate(&$form, &$form_state)
+{
+    $email = $form_state['values']['name'];
+    if ($st = user_validate_mail($email)) {
+        form_set_error('name', $st);
+        drupal_set_message($st, 'error');
+    }
+
+    $users = user_load_multiple(array(), array('mail' => $email, 'status' => '0'));
+    $account = reset($users);
+    if (!$account) {
+        // No success, try to load by name.
+        $users = user_load_multiple(array(), array('name' => $email, 'status' => '0'));
+        $account = reset($users);
+    }
+    if (isset($account->uid) && empty($account->login)) {
+        $op = 'register_no_approval_required';
+        // Send mail
+        _user_mail_notify($op, $account);
+        drupal_get_messages('error');
+        drupal_set_message(t('A welcome message with further instructions has been sent to your e-mail address.<br/>If you do not receive an email within the next 5 minutes, please check your SPAM folder.'));
+    }
+}
+
+/**
+ * Change data of letter
+ *
+ * @param $message
+ */
+function user_registration_phone_mail_alter(&$message)
+{
+    if ($message['id'] === 'user_register_no_approval_required') {
+        $message['from'] = 'no-reply@zoomdojo.com';
+        $message['headers']['Return-Path'] = 'no-reply@zoomdojo.com';
+        $message['headers']['Sender'] = 'no-reply@zoomdojo.com';
+        $message['headers']['From'] = 'no-reply@zoomdojo.com';
+        $message['subject'] = _user_registrationpassword_mail_text('register_subject');
+        $url  = user_registrationpassword_confirmation_url($message['params']['account']);
+        $body = _user_registrationpassword_mail_text('register_body');
+        $body = str_replace('[user:registrationpassword-url]', $url, $body);
+        $message['body'][0] = $body;
+    }
+}

@@ -1,0 +1,61 @@
+.clear {float: none; clear: both;}
+#location-container .form-item {display: inline-block; margin-left: 15px;}
+#location-container .form-item:first-child {margin-left: 0px;}
+
+.pager {margin: 20px 0px;}
+.fieldset-wrapper-row .form-type-select {
+    float: left;
+    margin-right: 50px;
+}
+.btn-delete {
+    background: url("../img/delete.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    cursor: pointer;
+    height: 30px;
+    position: absolute;
+    width: 30px;
+}
+.fieldset-wrapper-row .form-type-select .btn-delete {
+    margin-top: 20px;
+    position: absolute;
+    right: 50px;
+    top: -30px;
+}
+#edit-links-wrapper {
+    padding: 35px;
+}
+#edit-links-wrapper span.fieldset-legend {
+    margin-left: -35px;
+}
+.fieldset-wrapper-row {
+    background-color: #EEEEEE;
+    border-bottom: 1px solid #CCCCCC;
+    border-image: none;
+    border-left: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    border-top: 1px solid #CCCCCC;
+    margin-bottom: 15px;
+    margin-left: 35px;
+    margin-right: 600px;
+    padding: 10px;
+    position: relative;
+}
+.form-item-float-left {
+    float: left;
+    margin-top: 10px;
+    width: 50%;
+}
+.div-floar-right {
+    margin-bottom: 20px;
+    text-align: right;
+    width: 50%;
+}
+
+#organization-manager-organization-edit input.red,#organization-manager-change-status input.red{
+  background: mistyrose;
+  float:right;
+}
+
+#organization-manager-organization-edit input.green,#organization-manager-change-status input.green{
+  background: #D7F4CA;
+  float:right;
+}

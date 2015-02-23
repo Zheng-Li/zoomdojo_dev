@@ -1,0 +1,58 @@
+
+name = zoomdojo
+description = A flexible, recolorable theme with many regions.
+package = Core
+version = VERSION
+core = 7.x
+
+stylesheets[all][] = css/layout.css
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/colors.css
+stylesheets[all][] = css/bootstrap.css
+stylesheets[all][] = css/bootstrap-responsive.css
+stylesheets[print][] = css/print.css
+
+scripts[] = js/bootstrap.js
+scripts[] = js/underscore-min.js
+scripts[] = js/backbone-min.js
+scripts[] = js/main.js
+
+
+
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[highlighted] = Highlighted
+
+regions[featured] = Featured
+regions[content] = Content
+regions[front_blocks] = Front blocks 
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+
+; Region for "Expert Speak"
+regions[expert_speak] = Expert Speak Region
+
+regions[bottom_page] = Bottom page
+regions[triptych_first] = Triptych first
+regions[triptych_middle] = Triptych middle
+regions[triptych_last] = Triptych last
+
+regions[footer_firstcolumn] = Footer first column
+regions[footer_secondcolumn] = Footer second column
+regions[footer_thirdcolumn] = Footer third column
+regions[footer_fourthcolumn] = Footer fourth column
+regions[footer_fifthcolumn] = Footer fifth column
+regions[footer_full_inside] = Footer full inside
+regions[footer] = Footer
+regions[hidden] = Hidden region
+
+settings[shortcut_module_link] = 0
+
+
+; Information added by drupal.org packaging script on 2013-08-08
+version = "7.23"
+project = "drupal"
+datestamp = "1375928238"
+

@@ -1,0 +1,4 @@
+name = Tiny cuts
+description = Adds a couple of custom keyboard shortcuts for TinyMCE via Wysiwyg module.
+core = 7.x
+dependencies[] = wysiwyg

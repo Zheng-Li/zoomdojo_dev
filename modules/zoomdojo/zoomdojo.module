@@ -1,0 +1,542 @@
+<?php
+
+/*
+ * Implementation hook_menu
+ */
+function zoomdojo_menu()
+{
+    $items['young-professionals'] = array(
+        'title'           => t('Young Professionals'),       
+        'page callback'   => 'zoomdojo_youngProfessionalsPage',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+    );
+    $items['young-professionals/resume/%'] = array(
+        'title'           => t('Young Professionals Resume'),       
+        'page callback'   => 'zoomdojo_youngProfessionalsResumePage',
+        'page arguments'  => array(2),
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+    );
+    $items['city-guides'] = array(
+        'title'           => t('City Guides'),
+        'page callback'   => 'zoomdojo_cityFocus',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['job-search-tips'] = array(
+        'title'           => t('Job Search Tips'),
+        'page callback'   => 'zoomdojo_dosAndDonts',
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['sitemap'] = array(
+        'title'           => t('Site map'),
+        'page callback'   => 'zoomdojo_siteMap',
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['blog'] = array(
+        'title'           => t('Blog'),
+        'page callback'   => 'drupal_goto',
+        'page arguments'  => array('zoomple/'),
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+/*
+ * Implementation hook_theme
+ */
+function zoomdojo_theme($existing, $type, $theme, $path) 
+{
+    $items = array(
+        'zoomdojo_young_professionals' => array(
+            'template'  => 'zd-prof-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo') . '/theme',
+        ),
+        'zoomdojo_young_professionals_resume' => array(
+            'template'  => 'zd-prof-page-resume',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo') . '/theme',
+        ),
+        'zoomdojo_city_focus_page' => array(
+            'template'  => 'zd-city-focus-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo') . '/theme',
+        ),
+        'zoomdojo_dos_and_donts_page' => array(
+            'template'  => 'zd-dos-and-donts-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo') . '/theme',
+        ),
+        'zoomdojo_sitemap_page' => array(
+            'template'  => 'zd-sitemap-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo') . '/theme',
+        ),
+    );
+    return $items;
+}
+
+/*
+ * Young Professionals page
+ */
+function zoomdojo_youngProfessionalsPage() 
+{
+    global $language ;
+    $vidYoungProf = 1;
+    $limit = 12;
+    $lang  = $language->language;
+
+    // seo
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'description',
+            'content' => "Meet young professionals and recent graduates with careers in a variety of important industries",
+        ),
+    ), 'description');
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'keywords',
+            'content' => "young professionals, career guide, recent graduate jobs",
+        ),
+    ), 'keywords');
+
+    $types = taxonomy_get_tree($vidYoungProf);
+    $pageDesc = $types[0]->description;
+
+    $termDesc = array();
+    foreach ($types as $type) {
+        $termDesc[$type->tid] = $type->description;
+    }
+
+    $query = db_select('taxonomy_term_data', 'ttd');
+    $query->join('field_data_field_image', 'fdfi', 'fdfi.entity_id=ttd.tid');
+    $query->join('file_managed', 'fm', 'fm.fid=fdfi.field_image_fid');
+    $query->fields('ttd', array('tid', 'name'))
+        ->fields('fm', array('uri'));
+    $query = $query->extend('PagerDefault')->limit($limit);
+    $query = $query->condition('ttd.language', $lang)
+        ->condition('ttd.vid', $vidYoungProf)
+        ->condition('fdfi.entity_type', 'taxonomy_term')
+        ->condition('fdfi.bundle', 'tags')
+        ->execute();
+
+    $terms = array();
+    foreach ($query as $term) {
+        $term->src  = file_create_url($term->uri);
+        $term->url  = drupal_get_path_alias('taxonomy/term/' . $term->tid);
+        $term->desc = $termDesc[$term->tid];
+        $terms[]    = $term;
+    }
+
+    $variables = array(
+        'description' => $pageDesc,
+        'terms'       => $terms,
+        'pager'       => theme('pager', array('tags' => array()))
+    );
+    return theme('zoomdojo_young_professionals', $variables);
+}
+
+/**
+ * Young Professionals Resume page
+ */
+function zoomdojo_youngProfessionalsResumePage($nid) 
+{
+    $nid  = intval($nid);
+
+    $query = db_select('node', 'n')
+        ->fields('n', array('nid'));
+    $query->addExpression('fdfrt.field_resume_title_value', 'title');
+    $query->addExpression('fdfrd.field_resume_description_value', 'description');
+    $query->addExpression('fdfi.field_image_fid', 'fid');
+
+    $query->join('field_data_field_resume_title', 'fdfrt', 'n.nid=fdfrt.entity_id');
+    $query->leftJoin('field_data_field_resume_description', 'fdfrd', 'n.nid=fdfrd.entity_id');
+    $query->leftJoin('field_data_field_image', 'fdfi', 'n.nid=fdfi.entity_id');
+
+    $query->condition('n.status', 1)
+        ->condition('n.nid', $nid);
+    $node = $query->execute()->fetch();
+
+    if (empty($node)) {
+        drupal_not_found();
+    }
+
+    $file = file_load($node->fid);
+    $image = file_create_url($file->uri);
+
+    drupal_set_title($node->title);
+    
+
+    $variables = array(
+        'title'       => $node->title,
+        'description' => $node->description,
+        'image'       =>  $image,
+    );
+    return theme('zoomdojo_young_professionals_resume', $variables);
+}
+
+/**
+ * City focus page
+ */
+function zoomdojo_cityFocus()
+{
+    global $language ;
+    $vidCityFocus = 2;
+    $lang = $language->language;
+
+    // seo
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'description',
+            'content' => "Find the perfect city to start your career right! Zoomdojo's City Focus guides young professionals through working, living, and playing in new cities.",
+        ),
+    ), 'description');
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'keywords',
+            'content' => "city guide, major cities, where are the jobs, moving to a new city, where should i move, where to move, city focus",
+        ),
+    ), 'keywords');
+
+    $query = db_select('taxonomy_term_data', 'ttd');
+    $query->join('field_data_field_image', 'fdfi', 'fdfi.entity_id=ttd.tid');
+    $query->join('file_managed', 'fm', 'fm.fid=fdfi.field_image_fid');
+    $query->fields('ttd', array('tid', 'name'))
+        ->fields('fm', array('uri'));
+
+    $query = $query->condition('ttd.language', $lang)
+        ->condition('ttd.vid', $vidCityFocus)
+        ->condition('fdfi.entity_type', 'taxonomy_term')
+        ->condition('fdfi.bundle', 'city_focus')
+        ->execute();
+
+    $terms = array();
+    foreach ($query as $term) {
+        $term->src = file_create_url($term->uri);
+        $term->url = drupal_get_path_alias('taxonomy/term/' . $term->tid);
+        $terms[] = $term;
+    }
+
+    $variables = array(
+        'terms' => $terms,
+    );
+    return theme('zoomdojo_city_focus_page', $variables);
+}
+
+/**
+ * Do’s & Don’ts page
+ */
+function zoomdojo_dosAndDonts()
+{
+    //SEO
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'description',
+            'content' => "How do I write a good résumé? How is a cover letter different from a résumé? I need help preparing for a case interview. Zoomdojo's job search tips will answer these questions.",
+        ),
+    ), 'description');
+    drupal_add_html_head(array(
+        '#tag' => 'meta',
+        '#attributes' => array(
+            'name' => 'keywords',
+            'content' => "job searching tips, job search tips, job hunting tips, job search advice, job career advice",
+        ),
+    ), 'keywords');
+
+    global $language ;
+    $vid  = 3;
+    $lang = $language->language;
+
+    $types       = taxonomy_get_tree($vid);
+    $termIds     = array();
+    $description = '';
+    foreach ($types as $type) {
+        $termIds[] = $type->tid;
+        if ($type->name == 'Job Search Tips') {
+            $description = $type->description;
+        }
+    }
+
+    $query = db_select('node', 'n');
+    $query->join('field_data_field_image', 'fdfi', 'fdfi.entity_id=n.nid');
+    $query->join('field_data_field_dos_donts', 'fdfdd', 'fdfdd.entity_id=n.nid');
+    $query->join('file_managed', 'fm', 'fm.fid=fdfi.field_image_fid');
+    $query->leftJoin('taxonomy_index', 'ti', 'ti.nid=n.nid');
+    $query->fields('n', array('nid', 'title'))
+        ->fields('fm', array('uri'));
+
+    $query = $query->condition('n.language', $lang)
+        ->condition('fdfdd.field_dos_donts_tid', $termIds, 'IN')
+        ->condition('fdfi.entity_type', 'node')
+        ->condition('fdfi.bundle', 'dos_donts')
+        ->orderBy('ti.weight')
+        ->execute()
+        ->fetchAll();
+
+    $nodes = array();
+    foreach ($query as $node) {
+        $node->src = file_create_url($node->uri);
+        $node->url = drupal_get_path_alias('node/' . $node->nid);
+        $nodes[] = $node;
+    }
+
+    $variables = array(
+        'nodes'       => $nodes,
+        'description' => $description,
+    );
+    return theme('zoomdojo_dos_and_donts_page', $variables);
+}
+
+function zoomdojo_form_alter(&$form, &$form_state, $form_id) 
+{
+    global $user;
+    if ($form_id == 'user_profile_form') {
+        if (!in_array('administrator', array_values($user->roles))) {
+            $form['account']['mail']['#type']  = 'hidden';
+            $form['account']['mail']['#value'] = $form['account']['mail']['#default_value'];   
+        }
+        $form['timezone']['#collapsible']  = false;
+        //add cancel button
+        $form['actions']['cancel'] = array(
+            '#weight' => 99,
+            '#markup' => l(t('Cancel'), 'user',
+                array(
+                    'attributes' => array(
+                        'class' => 'button btn-cancel'
+                    )
+                )
+            ),
+        );
+    }
+    if ($form_id === 'contact_site_form') {
+        $subjects = array(
+            t('Submit a Job Listing'),
+            t('Partnership Inquiry'),
+            t('Advertising Inquiry'),
+            t('Find me a Job'),
+            t('Share my Career Story'),
+            t('Bad Data or Broken Link'),
+            t('Suggest Improvements'),
+            t('Question or General Inquiry'),
+            t('Comment'),
+        );
+        $options = array();
+        foreach ($subjects as $item) {
+            $options[$item] = $item;
+        }
+        $form['message']['#attributes'] = array('class' => array('search-qwerty'));
+        $form['subject'] = array(
+            '#type'          => 'select',
+            '#title'         => t('Reason'),
+            '#required'      => 1,
+            '#options'       => $options,
+            '#default_value' => 1,
+        );
+        // Fix email title
+        $form['mail']['#title'] = 'Your email address';
+    }
+
+    if ($form_id === 'user_register_form') {
+        $form['actions']['submit']['#value'] = 'Sign Up';
+    }
+
+    if ($form_id === 'user_login') {
+        $form['name']['#title'] = 'Email';
+        $form['actions']['submit']['#value'] = 'Sign In';
+        foreach ($form['#validate'] as $k => $item) {
+            if ($item == 'user_login_final_validate') {
+                $form['#validate'][$k] = 'zoomdojo_custom_user_login_final_validate';
+            }
+        }
+    }
+}
+
+
+/**
+ * View site map html page
+ */
+function zoomdojo_siteMap()
+{
+    require_once "zoomdojo.common.inc";
+    $siteMap = array(
+        (object) array(
+            'title' => 'Job Search Tips',
+            'items' => zoomdojo_getJobSearchTipsPages(),
+        ),
+        (object) array(
+            'title' => 'More Job Search Tips',
+            'items' => zoomdojo_getResumesPages(),
+        ),
+        (object) array(
+            'title' => 'City Guides',
+            'items' => zoomdojo_getCityFocusPages(),
+        ),
+        (object) array(
+            'title' => 'Featured Jobs',
+            'items' => zoomdojo_getFeaturedJobsPages(),
+        ),
+        (object) array(
+            'title' => 'Young Professionals',
+            'items' => zoomdojo_getYoungProfessionalsPages(),
+        ),
+        (object) array(
+            'title' => 'Zoomdojo Events',
+            'items' => zoomdojo_getEventsPages(),
+        ),
+        (object) array(
+            'title' => 'Veterans Resources',
+            'items' => zoomdojo_getVeteransResourcesPages(),
+        ),
+        (object) array(
+            'title' => 'Experts Speak',
+            'items' => zoomdojo_getExpertsSpeakPages(),
+        ),
+        (object) array(
+            'title' => 'Article',
+            'items' => zoomdojo_getBasicpagePages(),
+        ),
+        (object) array(
+            'title' => 'Sample Résumés',
+            'items' => zoomdojo_getDialogsPages(),
+        ),
+    );
+
+    $variables = array(
+        'siteMap' => $siteMap,
+    );
+
+    return theme('zoomdojo_sitemap_page', $variables);
+}
+
+/**
+ * Implementation hook_menu_alter
+ */
+function zoomdojo_menu_alter(&$items) {
+    if (isset($items['user/%user']['title callback'])) {
+        $items['user/%user']['title callback'] = 'zoomdojo_userPageTitle';
+    }
+    if (isset($items['contact']['title'])) {
+        $items['contact']['title'] = 'Contact Us';
+    }
+}
+
+/**
+ * change user page title
+ */
+function zoomdojo_userPageTitle() {
+    if(arg(0) == 'user' && is_numeric(arg(1))) {
+        $name = '';
+        $lang = 'und';
+        $user = user_load(arg(1));
+
+        if (!empty($user->field_first_name[$lang][0])) {
+            $name = $user->field_first_name[$lang][0]['value'];
+        }
+
+        if (!empty($user->field_last_name[$lang][0])) {
+            $name .= ' ' . $user->field_last_name[$lang][0]['value'];
+        }
+    }
+
+    return $name;
+}
+
+function zoomdojo_mail_alter(&$message)
+{
+    if ($message['id'] === 'user_registrationpassword_register') {
+        $message['from'] = 'no-reply@zoomdojo.com';
+        $message['headers']['Return-Path'] = 'no-reply@zoomdojo.com';
+        $message['headers']['Sender'] = 'no-reply@zoomdojo.com';
+        $message['headers']['From'] = 'no-reply@zoomdojo.com';
+    }
+}
+
+/**
+ * Modify the drupal mail system to send HTML emails.
+ */
+class HtmlMailSystem implements MailSystemInterface {
+
+    public function format(array $message) {
+        $message['body'] = implode("\n\n", $message['body']);
+        return $message;
+    }
+
+    public function mail(array $message) {
+        $mimeheaders = array();
+        foreach ($message['headers'] as $name => $value) {
+            $mimeheaders[] = $name . ': ' . mime_header_encode($value);
+        }
+        $line_endings = variable_get('mail_line_endings', MAIL_LINE_ENDINGS);
+        return mail(
+            $message['to'],
+            mime_header_encode($message['subject']),
+            // Note: e-mail uses CRLF for line-endings. PHP's API requires LF
+            // on Unix and CRLF on Windows. Drupal automatically guesses the
+            // line-ending format appropriate for your system. If you need to
+            // override this, adjust $conf['mail_line_endings'] in settings.php.
+            preg_replace('@\r?\n@', $line_endings, $message['body']),
+            // For headers, PHP's API suggests that we use CRLF normally,
+            // but some MTAs incorrectly replace LF with CRLF. See #234403.
+            join("\n", $mimeheaders)
+        );
+    }
+}
+
+/**
+ * Custom login form validate
+ *
+ * @param $form
+ * @param $form_state
+ */
+function zoomdojo_custom_user_login_final_validate($form, &$form_state)
+{
+    if (empty($form_state['uid'])) {
+        // Always register an IP-based failed login event.
+        flood_register_event('failed_login_attempt_ip', variable_get('user_failed_login_ip_window', 3600));
+        // Register a per-user failed login event.
+        if (isset($form_state['flood_control_user_identifier'])) {
+            flood_register_event('failed_login_attempt_user', variable_get('user_failed_login_user_window', 21600), $form_state['flood_control_user_identifier']);
+        }
+
+        if (isset($form_state['flood_control_triggered'])) {
+            if ($form_state['flood_control_triggered'] == 'user') {
+                form_set_error('name', format_plural(variable_get('user_failed_login_user_limit', 5), 'Sorry, there has been more than one failed login attempt for this account. It is temporarily blocked. Try again later or <a href="@url">request a new password</a>.', 'Sorry, there have been more than @count failed login attempts for this account. It is temporarily blocked. Try again later or <a href="@url">request a new password</a>.', array('@url' => url('user/password'))));
+            }
+            else {
+                // We did not find a uid, so the limit is IP-based.
+                form_set_error('name', t('Sorry, too many failed login attempts from your IP address. This IP address is temporarily blocked. Try again later or <a href="@url">request a new password</a>.', array('@url' => url('user/password'))));
+            }
+        }
+        else {
+            form_set_error('name', t('Sorry, unrecognized username or password. If you are an existing user and this is your first visit to our new web site, you need to reset your password <a onclick="App.forgotPassPopup();" href="#">here</a>.'));
+            watchdog('user', 'Login attempt failed for %user.', array('%user' => $form_state['values']['name']));
+        }
+    }
+    elseif (isset($form_state['flood_control_user_identifier'])) {
+        // Clear past failures for this user so as not to block a user who might
+        // log in and out more than once in an hour.
+        flood_clear_event('failed_login_attempt_user', $form_state['flood_control_user_identifier']);
+    }
+}
+
+/** FIX FOR "Job Search Tips" NODE ORDER **********************
+UPDATE `taxonomy_index` SET `weight` = 0 WHERE `nid`= 135 ;
+UPDATE `taxonomy_index` SET `weight` = 1 WHERE `nid`= 137 ;
+UPDATE `taxonomy_index` SET `weight` = 2 WHERE `nid`= 136 ;
+UPDATE `taxonomy_index` SET `weight` = 3 WHERE `nid`= 142 ;
+UPDATE `taxonomy_index` SET `weight` = 4 WHERE `nid`= 139 ;
+UPDATE `taxonomy_index` SET `weight` = 5 WHERE `nid`= 140 ;
+UPDATE `taxonomy_index` SET `weight` = 6 WHERE `nid`= 141 ;
+UPDATE `taxonomy_index` SET `weight` = 7 WHERE `nid`= 143 ;
+UPDATE `taxonomy_index` SET `weight` = 8 WHERE `nid`= 138 ;
+ **************************************************************/

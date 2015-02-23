@@ -1,0 +1,854 @@
+<?php
+
+/**
+ * Implementation hook_init
+ */
+function zportfolio_init()
+{
+    module_load_include('inc', 'zportfolio', 'zportfolio_theme');
+}
+
+/**
+ * Implementation hook_menu
+ *
+ * @return mixed
+ */
+function zportfolio_menu()
+{
+    $items['z-portfolio'] = array(
+        'title'           => t('Z-Portfolio'),
+        'page callback'   => 'zportfolio_builder',
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['zportfolio-explained'] = array(
+        'title'           => t('Z-Portfolio Explained'),
+        'page callback'   => 'zportfolio_explained',
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['z-portfolio-resume-edit'] = array(
+        'title'           => t('Z-Portfolio Preview'),
+        'page callback'   => 'zportfolio_previewResume',
+        'page arguments'  => array(1),
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['z-portfolio-resume-preview'] = array(
+        'title'           => t('Z-Portfolio Preview'),
+        'page callback'   => 'zportfolio_previewResumeJpg',
+        'page arguments'  => array(1),
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['z-portfolio-resume-preview-image'] = array(
+        'title'           => t('Z-Portfolio Preview'),
+        'page callback'   => 'zportfolio_previewResumeJpgImage',
+        'page arguments'  => array(1),
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );    
+    $items['z-portfolio-resume-download/%'] =
+    $items['z-portfolio-resume-download'] = array(
+        'title'           => t('Z-Portfolio Download'),
+        'page callback'   => 'zportfolio_downloadResume',
+        'page arguments'  => array(1,2),
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['all-my-resumes'] = array(
+        'title'           => t('My Résumés'),
+        'page callback'   => 'zportfolio_myResumes',
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_NORMAL_ITEM,
+    );
+    $items['z-delete-resume'] = array(
+        'title'           => t('Delete résumé (ajax)'),
+        'page callback'   => 'zportfolio_deleteResumeAjax',
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_CONTEXT_NONE,
+    );
+    $items['z-edit-resume'] = array(
+        'title'           => t('Edit résumé (ajax)'),
+        'page callback'   => 'zportfolio_editResumeAjax',
+        'access callback' => 'user_is_logged_in',
+        'type'            => MENU_CONTEXT_NONE,
+    );
+    $items['admin/zoomdojo'] = array(
+        'title'            => t('ZoomDojo'),
+        'description'      => t('ZoomDojo menu'),
+        'weight'           => -8,
+        'page callback'    => 'system_admin_menu_block_page',
+        'access arguments' => array('access administration pages'),
+        'file'             => 'system.admin.inc',
+        'file path'        => drupal_get_path('module', 'system'),
+        'position'         => 'right',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['admin/zoomdojo/z-portfolio-help-tips'] = array(
+        'title'            => t('Z-portfolio help tips'),
+        'description'      => t('Edit z-portfolio help tips text'),
+        'page callback'    => 'zportfolio_listHelpTips',
+        'page arguments'   => array(zportfolio_tipsTypes()),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    $items['admin/zoomdojo/z-portfolio-help-tips/block/edit'] = array(
+        'title'            => t('Add block'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zportfolio_editHelpTipsBlock',zportfolio_tipsTypes()),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    $items['admin/zoomdojo/z-portfolio-help-tips/block/delete/%'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zportfolio_deleteHelpTipsBlock',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    
+    $items['admin/zoomdojo/z-portfolio-help-tips/block/items/%'] = array(
+        'title'            => t('Manage'),
+        'description'      => t('Edit z-portfolio help tips text'),
+        'page callback'    => 'zportfolio_listHelpTipsItems',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    $items['admin/zoomdojo/z-portfolio-help-tips/block/items/%/edit'] = array(
+        'title'            => t('Add item'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zportfolio_editHelpTipsItems',5),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    $items['admin/zoomdojo/z-portfolio-help-tips/block/items/%/delete/%'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zportfolio_deleteHelpTipsBlock',
+        'page arguments'   => array(7),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zportfolio.admin.inc',
+        'file path'        => drupal_get_path('module', 'zportfolio'),
+    );
+    
+  return $items;
+}
+
+/**
+ * Implementation hook_theme
+ *
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return array
+ */
+function zportfolio_theme($existing, $type, $theme, $path)
+{
+    return array(
+          'zportfolio_builder' => array(
+              'template'  => 'zportfolio',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_details' => array(
+              'template'  => 'zportfolio-deteils',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_education' => array(
+              'template'  => 'zportfolio-education',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_education_small' => array(
+              'template'  => 'zportfolio-education-small',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_experience' => array(
+              'template'  => 'zportfolio-experience',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_experience_small' => array(
+              'template'  => 'zportfolio-experience-small',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_leadership' => array(
+              'template'  => 'zportfolio-leadership',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_leadership_small' => array(
+              'template'  => 'zportfolio-leadership-small',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_volunteer' => array(
+              'template'  => 'zportfolio-volunteer',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_volunteer_small' => array(
+              'template'  => 'zportfolio-volunteer-small',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_other' => array(
+              'template'  => 'zportfolio-other',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_other_language' => array(
+              'template'  => 'zportfolio-other-language',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_other_skill' => array(
+              'template'  => 'zportfolio-other-skill',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_custom'=>array(
+              'template'  => 'zportfolio-custom',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_custom_small'=>array(
+              'template'  => 'zportfolio-custom-small',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_add_btn' => array(
+              'template'  => 'zportfolio-btn',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_resume' => array(
+              'template'  => 'zportfolio-resume',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_my_resumes' => array(
+              'template'  => 'zportfolio-my-resumes',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_modal' => array(
+              'template'  => 'zportfolio-modal',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_block_my_resumes' => array(
+              'template'  => 'zportfolio-block-my-resumes',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_resume_tips' => array(
+              'template'  => 'zportfolio-resume-tips',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_single_right_tips' => array(
+              'template'  => 'zportfolio-single-right-tips',
+              'variables' => array('variables' => NULL),
+              'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_explained' => array(
+            'template'  => 'zportfolio-explained',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+          'zportfolio_submit_btn' => array(
+            'template'  => 'zportfolio-submit-btn',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zportfolio') . '/theme',
+          ),
+    );
+}
+
+/**
+ * Z-portfolio builder page
+ */
+function zportfolio_builder()
+{
+    global $user;
+
+    drupal_add_css(drupal_get_path('module', 'zportfolio') . '/css/zportfolio.css');
+    drupal_add_js(drupal_get_path('module', 'zportfolio') . '/js/jquery.scrollTo.min.js');
+    drupal_add_js(drupal_get_path('module', 'zportfolio')  . '/js/parsley.js');
+    drupal_add_js(drupal_get_path('module', 'zportfolio')  . '/js/zportfolio.js');
+    drupal_add_js(drupal_get_path('module', 'zportfolio')  . '/js/jquery.TextareaLineCount.1.4.1.min.js');
+
+    $date = zportfolio_getDate();
+
+    if (isset($_POST['save'])) {
+        $portfolio = new zportfolio($user->uid);
+        if($portfolio->save($_POST)){
+            drupal_goto('z-portfolio');
+        }
+    } else {
+        $portfolio = new zportfolio($user->uid);
+    }
+
+    $personalDetails = theme('zportfolio_details', array(
+        'name'      => $portfolio->name,
+        'address'   => $portfolio->address,
+        'cellphone' => $portfolio->cellphone,
+        'email'     => $portfolio->email,
+        'error'     => isset($portfolio->error['general_data'])?$portfolio->error['general_data']:'',
+    ));
+    $educations_date  = zportfolio_getDate(10);
+    $educations_expected_date  = zportfolio_getDate(10,0);
+    $educations = zportfolio_theme_education(array(
+        'educations' => $portfolio->education,
+        'years'      => $date['years'],
+        'years_to'      => $educations_date['years'],
+        'years_expected' => $educations_expected_date['years'],
+        'months'     => $date['months'],
+        'error'      => isset($portfolio->error['education'])?$portfolio->error['education']:'',
+    ));
+
+    $experience = zportfolio_theme_experience(array(
+        'experiences' => $portfolio->experience,
+        'years'       => $date['years'],
+        'months'      => $date['months'],
+        'error'       => isset($portfolio->error['experience'])?$portfolio->error['experience']:'',
+    ));
+
+    $leadership = zportfolio_theme_leadership(array(
+        'leaderships' => $portfolio->leadership,
+        'years'       => $date['years'],
+        'months'      => $date['months'],
+        'error'       => isset($portfolio->error['leadership'])?$portfolio->error['leadership']:'',
+    ));
+
+    $volunteer = zportfolio_theme_volunteer(array(
+        'volunteers'  => $portfolio->volunteer,
+        'years'       => $date['years'],
+        'months'      => $date['months'],
+        'error'       => isset($portfolio->error['volunteer'])?$portfolio->error['volunteer']:'',
+    ));
+    
+    $custom = zportfolio_theme_custom(array(
+       'sections'    => $portfolio->custom,
+       'years'       => $date['years'],
+       'years_to'    => $educations_date['years'],
+       'months'      => $date['months'],
+       'error'       => isset($portfolio->error['custom'])?$portfolio->error['custom']:'',
+    ));
+
+    $skill = zportfolio_theme_skill(array(
+        'skills' => $portfolio->skills,
+        'error'  => isset($portfolio->error['skill'])?$portfolio->error['skill']:'',
+        'other'  => $portfolio->other,
+    ));
+
+    $modal = theme('zportfolio_modal', array(
+        'title' => 'Z-Portfolio Help Tips',
+        'body'  => zportfolio_getVariable('zportfolio_modal_text'),
+        'zId'  => 'z-portfolio-hint-popup',
+    ));
+
+    $variables = array(
+        'portfolio'         => $portfolio,
+        'years'             => $date['years'],
+        'months'            => $date['months'],
+        'personalDetails'   => $personalDetails,
+        'educations'        => $educations,
+        'experience'        => $experience,
+        'leadership'        => $leadership,
+        'volunteer'         => $volunteer,
+        'custom'            => $custom,
+        'skill'             => $skill,
+        'hint'              => $modal,
+        'addCustomSection'  =>  zportfolio_theme_btn('add-new-custom-section','middle mb5','Add Another Section')
+    );
+    zportfolio_getTips();
+    return theme('zportfolio_builder', $variables);
+}
+
+/**
+ * Z-portfolio preview resume
+ */
+function zportfolio_previewResume($rid)
+{
+    $rid = intval($rid);
+    drupal_add_css(drupal_get_path('module', 'zportfolio') . '/css/zresume.css');
+    drupal_add_js('/'.drupal_get_path('module', 'zportfolio')  . '/js/ckeditor/ckeditor.js', 'external');
+    drupal_add_js(drupal_get_path('module', 'zportfolio')  . '/js/zresume.js');
+
+    global $user;
+    $portfolio = new zportfolio($user->uid);
+    $limit = 99999999;
+    $myResumeNames = array();
+    $myResumes = $portfolio->getCVSList($limit);
+    if (!empty($myResumes)) {
+        foreach ($myResumes as $item) {
+            $myResumeNames[] = $item->name;
+        }
+    }
+
+    drupal_add_js(
+        array(
+            'zportfolio' => array('myResumes' => json_encode($myResumeNames)),
+        ), 'setting'
+    );
+
+    // delete resume
+    if (isset($_POST['delete-resume']) && !empty($_POST['rid'])) {
+        $portfolio->deleteCVS((int)$_POST['rid']);
+        drupal_goto('all-my-resumes');
+    }
+
+    if (!empty($_POST['text'])) {
+        if (empty($_POST['rid'])) {
+            $rid = $portfolio->saveCVS($_POST['name'], $_POST['text']);
+            if(isset($_POST['download-after-submit'])){
+              $_SESSION['download-after-submit'] = true;
+            }
+            if(isset($_POST['preview-after-submit'])){
+              $_SESSION['preview-after-submit'] = true;
+            }
+            drupal_goto('z-portfolio-resume-edit/' . $rid);
+        } else {
+            $portfolio->saveCVS((int)$_POST['rid'], $_POST['text']);
+        }
+    }
+
+    if (!empty($rid)) {
+        $variables['resume'] = $portfolio->loadCVS($rid);
+    } else {
+        $variables['resume'] = $portfolio->loadCVS();
+    }
+    if (empty($variables) || (isset($variables['resume']) && !$variables['resume'])) {
+        //drupal_not_found();
+        drupal_access_denied();
+        exit();
+    }
+    $pageTitle = $variables['resume']['name'];
+
+    drupal_set_title($pageTitle);
+    if(isset($_SESSION['download-after-submit']) && !empty($rid)){
+      drupal_add_js('jQuery(document).ready(function () { jQuery("#portfolio-resume-download")[0].click(); });', 'inline');
+      unset($_SESSION['download-after-submit']);
+    }
+    if(isset($_SESSION['preview-after-submit']) && !empty($rid)){
+      drupal_add_js('jQuery(document).ready(function () {setTimeout(function() {jQuery(".preview-pdf:eq(0)").click(); }, 100) });', 'inline');
+      unset($_SESSION['preview-after-submit']);
+    }
+    return theme('zportfolio_resume', $variables);
+}
+
+function zportfolio_previewResumeJpg($rid){
+  $rid = intval($rid);
+  global $user;
+  $portfolio = new zportfolio($user->uid);
+  $images_cnt = $portfolio->generateDocument($rid,'pdf',false);
+  $images_cnt = $portfolio->loadCVS($rid);
+  $images_cnt = $images_cnt['pages'];
+  $i= 1;
+  while($i<=$images_cnt){
+    echo '<img src="/z-portfolio-resume-preview-image/'.$rid.'_'.$i++.'.php"/>';
+  }
+}
+function zportfolio_previewResumeJpgImage($filename){
+  global $user;
+  $info = pathinfo( $filename );
+  $info = explode('_',$info['filename']);
+  $portfolio = new zportfolio($user->uid);
+  if($portfolio->loadCVS((int)$info[0],true)){
+    $png_dir = $portfolio->zresumeFolder();
+    $file = $png_dir.$info[0]."_{$info[1]}.png";
+    header('Content-Type:image/png');
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+  }else{
+    foreach($portfolio->getError() as $error){
+      echo $error.'<hr/>';
+    }
+  }
+}
+/**
+ * Z-portfolio download resume
+ */
+function zportfolio_downloadResume($rid,$type)
+{
+  $rid = intval($rid);
+  global $user;
+  $portfolio = new zportfolio($user->uid);
+  $portfolio->generateDocument($rid,$type == 'docx'?'docx':'pdf');
+}
+
+
+/**
+ * All My resumes
+ */
+function zportfolio_myResumes()
+{
+    drupal_add_css(drupal_get_path('module', 'zportfolio') . '/css/my-resumes.css');
+    drupal_add_js(drupal_get_path('module', 'zportfolio')  . '/js/my-resumes.js');
+
+    global $user;
+    $limit = 10;
+    $portfolio = new zportfolio($user->uid);
+    $resumes = $portfolio->getCVSList($limit);
+
+    $myResumeNames = array();
+    if (!empty($resumes)) {
+        foreach ($resumes as $item) {
+            $myResumeNames[] = $item->name;
+        }
+    }
+
+    drupal_add_js(
+        array(
+            'zportfolio' => array('myResumes' => json_encode($myResumeNames)),
+        ), 'setting'
+    );
+
+    $variables = array(
+        'resumes' => $resumes,
+        'pager'   => theme('pager', array('tags' => array())),
+    );
+    return theme('zportfolio_my_resumes', $variables);
+}
+
+/**
+ * Delete resume (Ajax)
+ */
+function zportfolio_deleteResumeAjax()
+{
+    global $user;
+    $response = array(
+        'status' => 'ERROR',
+        'data'   => 'Résumé identificator is empty!',
+    );
+
+    if (!empty($_POST['rid'])) {
+        $zportfolio = new zportfolio($user->uid);
+        if ($zportfolio->deleteCVS((int) $_POST['rid'])) {
+            $response['status'] = 'OK';
+        } else {
+            $response['data'] = 'Error delete résumé for database!';
+        }
+    }
+
+    print json_encode($response);
+    exit();
+}
+
+/**
+ * Edit name and note for resume (Ajax)
+ */
+function zportfolio_editResumeAjax()
+{
+    global $user;
+    $response = array(
+        'status' => 'ERROR',
+        'data'   => 'Résumé data is empty!',
+    );
+
+    if (!empty($_POST['rid']) && !empty($_POST['name']) && isset($_POST['note'])) {
+        $zportfolio = new zportfolio($user->uid);
+        if ($zportfolio->saveCVSNotes((int) $_POST['rid'], $_POST['name'], $_POST['note'])) {
+            $response['status'] = 'OK';
+            $response['data'] = date('Y-m-d H:i:s');
+        } else {
+            $response['data'] = 'Error edit résumé for database!';
+        }
+    }
+
+    print json_encode($response);
+    exit();
+}
+
+/**
+ * Get additional variables
+ *
+ * @param bool $name
+ * @return array
+ */
+function zportfolio_getVariable($name = false)
+{
+    $variables = array('zportfolio_block_text', 'zportfolio_modal_text');
+
+    $query = db_select('variable_big', 'vb')
+        ->fields('vb');
+    if ($name) {
+        $query->condition('name', db_like($name), 'LIKE');
+    } else {
+        $query->condition('name', $variables, 'IN');
+    }
+    $res = $query->execute();
+    $responce = array();
+    foreach ($res as $item) {
+        $responce[$item->name] = $item->value;
+    }
+    return $name?$responce[$name]:$responce;
+}
+
+/**
+ * View list of user resume
+ *
+ * @return string
+ */
+function zportfolio_blockMyResumes()
+{
+    global $user;
+    $limit = 5;
+    $portfolio = new zportfolio($user->uid);
+    $resumes = $portfolio->getCVSList($limit);
+
+    $variables = array(
+        'resumes' => $resumes,
+    );
+    return theme('zportfolio_block_my_resumes', $variables);
+}
+
+
+/*
+ * Implementation hook_block_info
+ */
+function zportfolio_block_info()
+{
+    $items = array();
+    $pages = array(
+        'z-portfolio-resume-edit', 'z-portfolio-resume-edit/*',
+    );
+    $items['zportfolio_help_tips'] = array(
+        'info'       => t('ZoomDojo z-portfolio help tips'),
+        'status'     => true,
+        'region'     => 'sidebar_second',
+        'weight'     => 1,
+        'visibility' => BLOCK_VISIBILITY_LISTED,
+        'pages'      => implode(PHP_EOL, $pages),
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $pages = array(
+        'z-portfolio-resume-edit', 'z-portfolio-resume-edit/*', 'all-my-resumes',
+        'user', 'user/*', 'z-portfolio',
+    );
+    $items['zportfolio_my_resumes'] = array(
+        'info'       => t('ZoomDojo z-portfolio my résumés'),
+        'status'     => true,
+        'region'     => 'sidebar_second',
+        'weight'     => 0,
+        'visibility' => BLOCK_VISIBILITY_LISTED,
+        'pages'      => implode(PHP_EOL, $pages),
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zportfolio_tips'] = array(
+        'info'       => t('Z-Portfolio Tips'),
+        'status'     => true,
+        'region'     => 'right',
+        'weight'     => 0,
+        'visibility' => 1,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    return $items;
+}
+
+/**
+ * Implementation hook_block_view
+ */
+function zportfolio_block_view($delta = '')
+{
+    global $user;
+    $block = array();
+    switch ($delta) {
+        case 'zportfolio_help_tips':
+            $block['content'] = zportfolio_single_right_tip();
+            break;
+        case 'zportfolio_my_resumes':
+            if (zportfolio::hasUserResume($user->uid)) {
+                $block['title']   = t('My résumés');
+                $block['content'] = zportfolio_blockMyResumes();
+            }
+            break;
+        case 'zportfolio_tips':
+            $block['content'] = zportfolio_getTips();
+            break;
+    }
+    return $block;
+}
+
+function zportfolio_tipsTypes(){
+  return array(
+    0=>t('General'),
+    1=>t('Education'),
+    2=>t('Experience'),
+    3=>t('Leadership'),
+    4=>t('Volunteer work'),
+    5=>t('Others'),
+    6=>t('Custom')
+  );
+}
+
+// Right side menu tips (sliders)
+function zportfolio_getTips(){
+  $tips = zportfolio_getDataTips();
+  $items = array();
+  foreach($tips as $tip){
+    $items[$tip->type][$tip->id] = array(
+      'title'=>$tip->title,
+      'text'=>$tip->text
+    );
+  }
+  ksort($items);
+  return theme('zportfolio_resume_tips',array('items'=>$items));
+}
+
+function zportfolio_single_right_tip()
+{
+    $item = array(
+        'title' =>t('Z-Portfolio© - Help Tips'),
+        'text'  =>zportfolio_getVariable('zportfolio_block_text')
+    );
+    return theme('zportfolio_single_right_tips', array('item' => $item));
+}
+
+/**
+ * Get tips data by type
+ *
+ * @param null $type - type of tips
+ * @return mixed
+ */
+function zportfolio_getDataTips($type = null)
+{
+    $query = db_select('users_portfolio_tips', 'ze')
+        ->fields('ze');
+    if ($type !== null) {
+        $query->condition('type', $type);
+        return $query->execute()->fetch();
+    }
+    return $query->execute()->fetchAll();
+}
+
+/**
+ * Z-Portfolio Explained page
+ *
+ * @return string
+ */
+function zportfolio_explained()
+{
+    global $user;
+    if (!empty($user->uid)) {
+        drupal_goto('z-portfolio');
+    }
+
+    $tip = zportfolio_getDataTips(0);
+
+    $variables = array(
+        'tip' => $tip->text,
+    );
+    return theme('zportfolio_explained', $variables);
+}
+
+/**
+ * Add custom field "Downloads" to User Admin Account form
+ *
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function zportfolio_form_alter(&$form, &$form_state, $form_id)
+{
+    if ($form_id == 'user_admin_account') {
+
+        $header = array(
+            'username' => array('data' => t('Username'), 'field' => 'u.name'),
+            'status' => array('data' => t('Status'), 'field' => 'u.status'),
+            'roles' => array('data' => t('Roles')),
+            'member_for' => array('data' => t('Member for'), 'field' => 'u.created', 'sort' => 'desc'),
+            'access' => array('data' => t('Last access'), 'field' => 'u.access'),
+            'downloads'=>array('data'=>t('Resume Downloads'), 'field'=>'downloads'),
+            'operations' => array('data' => t('Operations')),
+        );
+
+        $query = db_select('users', 'u');
+        $query->condition('u.uid', 0, '<>');
+        $subQuery = '(SELECT COUNT(d.id) FROM users_portfolio_downloaded d WHERE d.user = u.uid)';
+        $query->addExpression($subQuery, 'downloads');
+
+        $limit = 50;
+        $start = 0;
+        if (!empty($_GET['page'])) {
+            $start = $_GET['page'] * $limit;
+        }
+        $query = $query->extend('TableSort');
+        $query
+            ->fields('u', array('uid', 'name', 'status', 'created', 'access'))
+            ->range($start, $limit)
+            ->orderByHeader($header);
+        $result = $query->execute();
+
+        $form['options'] = array(
+            '#type' => 'fieldset',
+            '#title' => t('Update options'),
+            '#attributes' => array('class' => array('container-inline')),
+        );
+        $options = array();
+        foreach (module_invoke_all('user_operations') as $operation => $array) {
+            $options[$operation] = $array['label'];
+        }
+        $form['options']['operation'] = array(
+            '#type' => 'select',
+            '#title' => t('Operation'),
+            '#title_display' => 'invisible',
+            '#options' => $options,
+            '#default_value' => 'unblock',
+        );
+        $options = array();
+        $form['options']['submit'] = array(
+            '#type' => 'submit',
+            '#value' => t('Update'),
+        );
+
+        $destination = drupal_get_destination();
+
+        $status = array(t('blocked'), t('active'));
+        $roles = array_map('check_plain', user_roles(TRUE));
+        $accounts = array();
+        foreach ($result as $account) {
+            $users_roles = array();
+            $roles_result = db_query('SELECT rid FROM {users_roles} WHERE uid = :uid', array(':uid' => $account->uid));
+            foreach ($roles_result as $user_role) {
+                $users_roles[] = $roles[$user_role->rid];
+            }
+            asort($users_roles);
+
+            $options[$account->uid] = array(
+                'username' => theme('username', array('account' => $account)),
+                'status' =>  $status[$account->status],
+                'roles' => theme('item_list', array('items' => $users_roles)),
+                'member_for' => format_interval(REQUEST_TIME - $account->created),
+                'access' =>  $account->access ? t('@time ago', array('@time' => format_interval(REQUEST_TIME - $account->access))) : t('never'),
+                'downloads'=>$account->downloads,
+                'operations' => array('data' => array('#type' => 'link', '#title' => t('edit'), '#href' => "user/$account->uid/edit", '#options' => array('query' => $destination))),
+            );
+        }
+
+        $form['accounts'] = array(
+            '#type' => 'tableselect',
+            '#header' => $header,
+            '#options' => $options,
+            '#empty' => t('No people available.'),
+        );
+
+    }
+}

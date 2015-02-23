@@ -1,0 +1,5 @@
+name = TinyMCE settings
+description = Overrides TinyMCE default settings
+core = 7.x
+
+package = Zoomdojo

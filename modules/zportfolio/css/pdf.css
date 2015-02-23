@@ -1,0 +1,26 @@
+table{
+  margin:0;
+  padding:0;
+  border:0;
+}
+table td{padding:0;vertical-align: top;margin:0;line-height:10px;border:0;}
+hr{
+  margin:-2px 0 0;
+  padding:0;
+  height:1px;
+  background-color:lightgray;
+}
+a{color:#cc5f50;
+  text-decoration:none;}
+div{
+  margin-top:6px;
+}
+p{
+  line-height:10px;
+}
+p,table,tr,td,ul,li{line-height:10px;}
+body{font-family: verdana;font-size:10px;}
+h1{font-size:20px;color:#5D3636;margin:0;padding:0;}
+ul{margin:0;}
+body p{margin:0;padding:0;}
+.skype_c2c_container,.skype_c2c_container img, .skype_c2c_logo_img {display:none;}

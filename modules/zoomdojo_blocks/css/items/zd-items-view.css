@@ -1,0 +1,10 @@
+.zd-toogle-items {
+    color: #00F;
+    text-decoration: underline;
+    cursor: pointer;
+    width: 100%;
+    text-align: right;
+}
+.hide-items {
+    display: none;
+}

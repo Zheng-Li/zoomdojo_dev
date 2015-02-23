@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * Implements hook_schema()
+ */
+function zoomdojo_blocks_schema(){
+    $schema['zd_tabbed_panel_tab'] = array(
+        'fields' => array(
+          'id'        => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'title'     => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'weight'    => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_tabbed_panel_block'] = array(
+        'fields' => array(
+          'id'         => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'cid'        => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'title'      => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'url'        => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'new_window' => array('type' => 'int', 'not null'    => TRUE, 'default'  => 1),
+          'bid'        => array('type' => 'int', 'not null'    => TRUE, 'default'  => 1),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_blocks'] = array(
+        'fields' => array(
+          'id'    => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'name'  => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'delta' => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_items_category'] = array(
+        'fields' => array(
+          'id'         => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'title'      => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'begin_word' => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'num_show'   => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'weight'     => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_items_content'] = array(
+        'fields' => array(
+          'id'     => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'item'   => array('type' => 'text', 'size' => 'normal', 'not null' => FALSE),
+          'cid'    => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'bid'    => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'weight' => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_slider'] = array(
+        'fields' => array(
+          'id'     => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'title'  => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'fid'    => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'weight' => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'text'   => array('type' => 'text', 'size' => 'normal', 'not null' => FALSE),
+          'url'    => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_city_focus_block'] = array(
+        'fields' => array(
+          'id'     => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+          'name'   => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'value'  => array('type' => 'varchar','length'   => 255, 'not null'  => TRUE, 'default' => ''),
+          'cid'    => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'weight' => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+      ),
+      'primary key' => array('id'),
+    );
+    $schema['zd_city_focus_description'] = array(
+        'fields' => array(
+          'cid'         => array('type' => 'int', 'not null'    => TRUE, 'default'  => 0),
+          'description' => array('type' => 'text', 'size' => 'normal', 'not null' => FALSE),
+      ),
+      'unique keys' => array(
+        'cid' => array('cid'),
+      ),
+    );
+    return $schema;
+}
+
+/**
+ * Implements hook_install()
+ */
+function zoomdojo_blocks_install(){
+    if(db_table_exists('zd_tabbed_panel_tab') == FALSE) {
+        //drupal_install_schema('zoomdojo_blocks');
+    }
+}
+
+/**
+  * Implement hook_enable()
+  */
+function zoomdojo_blocks_enable() {
+    if(db_table_exists('zd_tabbed_panel_tab') == FALSE) {
+        //drupal_install_schema('zoomdojo_blocks');
+    }
+}
+
+/**
+  * Implement hook_uninstall()
+  */
+function zoomdojo_blocks_uninstall() {
+    //drupal_uninstall_schema('zoomdojo_blocks');
+}

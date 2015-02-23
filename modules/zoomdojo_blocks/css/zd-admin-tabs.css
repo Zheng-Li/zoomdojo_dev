@@ -1,0 +1,123 @@
+#zd-tabs-add-form .hide,
+#edit-tab-bck-view .hide {
+    display: none;
+}
+#zd-tabs-add-form input[type=radio], #zd-tabs-add-form span {
+    cursor: pointer;
+}
+.bundle-type {
+    
+}
+.bundle-type h3 {
+    display: block;
+    float: left;
+}
+.bundle-type div {
+
+}
+.bundle-type label{
+    float: left;
+    margin-left: 30px;
+    margin-top: 14px;
+}
+.bundle-type span{
+    display: block;
+    margin-left: 25px;
+    margin-top: -23px;
+}
+.line-block {
+    border: 1px solid #CCCCCC;
+    margin: 5px 5px 5px 0;
+    padding: 10px;
+    width: 350px;
+}
+.groups-list input {
+    float: left;
+    margin-top: 4px;
+}
+.groups-list span {
+    display: block;
+    margin-left: 20px;
+    margin-top: 0;
+    width: 100%;
+}
+.tab-item-form {
+    margin-top: 30px;
+}
+.ui-tabs-panel div label {
+    display: inline;
+    margin-right: 10px;
+}
+.ui-tabs-panel div input {
+    margin-right: 25px;
+    width: 500px;
+}
+.ui-tabs-panel div.row {
+    margin-bottom: 15px;
+}
+#dialog label, #dialog input { 
+    display:block; 
+}
+#dialog label { 
+    margin-top: 0.5em;
+    display: inline;
+}
+#dialog .category-radios {
+    float: left;
+    cursor: pointer;
+    width: 15px;
+}
+#dialog #new-categ-name {
+    float: left;
+    height: 21px;
+    margin-right: 10px;
+    width: 202px;
+}
+#dialog .new-section {
+    margin-top: 25px;
+}
+#dialog #new-categ-btn {
+    width: 55px;
+    background-color: #EEE;
+    border: 1px solid #CCC;
+}
+#dialog input, #dialog textarea { 
+    width: 95%; 
+}
+#tabs { 
+    margin-top: 1em; 
+}
+#tabs li .ui-icon-close { 
+    float: left; 
+    margin: 0.4em 0.2em 0 0; 
+    cursor: pointer; 
+}
+#add_tab, #add_item { 
+    cursor: pointer; 
+}
+.add-item {
+    width: 100%;
+    text-align: right;
+    margin-bottom: 20px;
+}
+.inputs-left {
+    float: left;
+}
+.delete-current-row {
+    background: url("../images/remove.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+}
+.submit-btn {
+    width: 100%;
+    text-align: right;
+    margin-top: 30px;
+}
+#edit-tab-bck-view .show-children {
+    margin-bottom: 25px;
+}
+input[type=checkbox] {
+    width: 20px !important;
+}

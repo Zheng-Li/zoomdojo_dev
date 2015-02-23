@@ -1,0 +1,488 @@
+<?php
+/**
+ * Widget for select category (node)
+ */
+
+/*
+ * Implementation hook_menu
+ */
+function zoomdojo_experts_menu() 
+{
+    $items['experts-speak'] = array(
+        'title'           => t('Experts Speak'),       
+        'page callback'   => 'zoomdojo_experts_viewPage',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+    );
+    return $items;
+}
+
+/*
+ * Implementation hook_field_info()
+ */
+function zoomdojo_experts_field_info() 
+{
+    return array(
+        'zoomdojo_field_expert' => array(
+            'label'             => t('Expert speak'),
+            'description'       => t('Field for add "Expert speak" category'),
+            'default_widget'    => 'zoomdojo_field_expert_wiget',
+            'default_formatter' => 'zoomdojo_field_expert_formatter',
+        ),
+    );
+}
+
+/*
+ * Implementation hook_field_schema()
+ */
+function zoomdojo_experts_field_schema() 
+{
+    $colums = array(
+        'cid_expert' => array(
+            'type'     => 'int',
+            'length'   => 10,
+            'not null' => FALSE,
+            'default'  => 0,
+        ),
+        'type_expert' => array(
+            'type'     => 'int',
+            'length'   => 10,
+            'not null' => FALSE,
+            'default'  => 0,
+        ),
+    );
+    $indexes = array();
+    return array(
+        'columns' => $colums,
+        'indexes' => $indexes,
+    );
+}
+
+/*
+ * Implementation hook_field_is_empty
+ */
+function zoomdojo_experts_field_is_empty($item, $field) {
+    return 0;
+}
+
+
+/*
+ * Implementation hook_field_widget_info
+ */
+function zoomdojo_experts_field_widget_info() 
+{
+    return array(
+        'zoomdojo_field_expert_wiget' => array(
+            'label'       => t('Expert speak widget'),
+            'field types' => array('zoomdojo_field_expert'),
+        ),
+    );
+}
+
+/*
+ * Implementation hook_field_widget_form
+ */
+function zoomdojo_experts_field_widget_form($form, $form_state, $field, $instance, $langcode, $items, $delta, $element) 
+{
+    drupal_add_js(drupal_get_path('module', 'zoomdojo_experts') . '/js/zd-expert-speak.js');
+    $element += array(
+        '#delta' => $delta,
+    );
+
+    $element['cid_expert'] = array();
+    $element['type_expert'] = array();
+    $element['choose_expert'] = array();
+    if ($instance['widget']['type'] == 'zoomdojo_field_expert_wiget') {
+
+        $res = zoomdojo_experts_getOptions($items);
+        $options = $res['common'];
+        $extraOptionAttributes = $res['extra'];
+        $selected = $res['selected'];
+
+        $element['choose_expert'] += array(
+            '#title'                   => t('Category'),
+            '#type'                    => 'select',
+            '#options'                 => $options,
+            '#extra_option_attributes' => $extraOptionAttributes,
+            '#theme'                   => 'zoomdojo_experts_select',
+            '#prefix'                  => '<div id="zd-expert-select">',
+            '#suffix'                  => '</div>',
+            '#default_value'           => $selected,
+        );
+
+        $element['cid_expert'] += array(
+            '#type'          => 'hidden',
+            '#prefix'        => '<div id="zd-expert-cid">',
+            '#suffix'        => '</div>',
+            '#default_value' => !empty($items[0]['cid_expert'])?$items[0]['cid_expert']:$extraOptionAttributes[0]['data-cid'],
+        );
+        $element['type_expert'] += array(
+            '#type'          => 'hidden',
+            '#prefix'        => '<div id="zd-expert-type">',
+            '#suffix'        => '</div>',
+            '#default_value' => !empty($items[0]['type_expert'])?$items[0]['type_expert']:$extraOptionAttributes[0]['data-type'],
+        );
+    }
+    return $element;
+}
+
+/**
+ * Custom theme for select html element (only "choose_expert" element)
+ */
+function theme_zoomdojo_experts_select($vars) 
+{
+    $element = $vars['select'];
+    element_set_attributes($element, array('id', 'name', 'size'));
+    _form_set_class($element, array('form-select'));
+
+    return '<select' . drupal_attributes($element['#attributes']) . '>' . zoomdojo_form_select_options($element) . '</select>';
+}
+
+/**
+ * Custom theme for option html element (only "choose_expert" element)
+ */
+function zoomdojo_form_select_options($element, $choices = NULL) 
+{
+    if (!isset($choices)) {
+        $choices = $element['#options'];
+    }
+    // array_key_exists() accommodates the rare event where $element['#value'] is NULL.
+    // isset() fails in this situation.
+    $value_valid = isset($element['#value']) || array_key_exists('#value', $element);
+    $value_is_array = $value_valid && is_array($element['#value']);
+    $options = '';
+    foreach ($choices as $key => $choice) {
+        if (is_array($choice)) {
+            $options .= '<optgroup label="' . $key . '">';
+            $options .= zoomdojo_form_select_options($element, $choice);
+            $options .= '</optgroup>';
+        }
+        elseif (is_object($choice)) {
+            $options .= zoomdojo_form_select_options($element, $choice->option);
+        }
+        else {
+            $key = (string) $key;
+            if ($value_valid && (!$value_is_array && (string) $element['#value'] === $key || ($value_is_array && in_array($key, $element['#value'])))) {
+                $selected = ' selected="selected"';
+            }
+            else {
+                $selected = '';
+            }
+            $attr = '';
+            if (!empty($element['#extra_option_attributes'][$key])) {
+                $attr = drupal_attributes($element['#extra_option_attributes'][$key]);
+            }
+            $options .= '<option value="' . check_plain($key) . '"' . $selected . ' ' . $attr . ' >' . check_plain($choice) . '</option>';
+        }
+    }
+    return $options;
+}
+
+
+/*
+ * Implementation hook_theme
+ */
+function zoomdojo_experts_theme($existing, $type, $theme, $path) 
+{
+    return array(
+        'zoomdojo_experts_select' => array(
+          'render element' => 'select',
+        ),
+        'zoomdojo_expert_speak_page' => array(
+            'template'  => 'zd-expert-speak',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_experts') . '/theme',
+        ),
+        'zoomdojo_experts_block'=> array(
+            'template'  => 'zd-expert-speak-block',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_experts') . '/theme',
+        ),
+    );
+}
+
+/**
+ * Get category for admin form
+ */
+function zoomdojo_experts_getOptions($items)
+{
+    global $language ;
+    $lang  = $language->language;
+
+    $count           = 0;
+    $cityFocusVid    = 2;
+    $yangProfVid     = 1;
+    $dosDontsType    = 'dos_donts';
+    $veteransType    = 'veterans';
+    $res['selected'] = 0;
+
+    $results = db_select('taxonomy_term_data', 'ttd')
+        ->fields('ttd', array('tid', 'name'))
+        ->condition('vid', $cityFocusVid)
+        ->condition('language', $lang)
+        ->orderBy('name')
+        ->execute();
+    foreach ($results as $item) {
+        $res['common']['City Guides'][$count] = $item->name;
+        $res['extra'][$count] = array(
+            'data-cid'  => $item->tid, 
+            'data-type' => 1,
+        );
+        if (zoomdojo_experts_findSelectElement($items, $item->tid, 1)) {
+            $res['selected'] = $count;
+        }
+        $count++;
+    }
+    $results = db_select('taxonomy_term_data', 'ttd')
+        ->fields('ttd', array('tid', 'name'))
+        ->condition('vid', $yangProfVid)
+        ->condition('language', $lang)
+        ->orderBy('name')
+        ->execute();
+    foreach ($results as $item) {
+        if ($item->name != 'Young Professionals') {
+            $res['common']['Young Professionals'][$count] = $item->name;
+            $res['extra'][$count] = array(
+                'data-cid'  => $item->tid,
+                'data-type' => 1,
+            );
+            if (zoomdojo_experts_findSelectElement($items, $item->tid, 1)) {
+                $res['selected'] = $count;
+            }
+            $count++;
+        }
+    }
+
+    $results = db_select('node', 'n')
+        ->fields('n', array('nid', 'title'))
+        ->condition('type', $dosDontsType)
+        ->condition('language', $lang)
+        ->orderBy('title')
+        ->execute();
+    foreach ($results as $item) {
+        $res['common']['Job search tips'][$count] = $item->title;
+        $res['extra'][$count] = array(
+            'data-cid'  => $item->nid,
+            'data-type' => 0,
+        );
+        if (zoomdojo_experts_findSelectElement($items, $item->nid, 0)) {
+            $res['selected'] = $count;
+        }
+        $count++;
+    }
+
+    $results = db_select('node', 'n')
+        ->fields('n', array('nid', 'title'))
+        ->condition('type', $veteransType)
+        ->condition('language', $lang)
+        ->orderBy('title')
+        ->execute();
+    foreach ($results as $item) {
+        $res['common']['Veterans'][$count] = $item->title;
+        $res['extra'][$count] = array(
+            'data-cid'  => $item->nid,
+            'data-type' => 0,
+        );
+        if (zoomdojo_experts_findSelectElement($items, $item->nid, 0)) {
+            $res['selected'] = $count;
+        }
+        $count++;
+    }
+
+    return $res;
+}
+
+/**
+ * Find select element
+ */
+function zoomdojo_experts_findSelectElement($items, $cid2, $type2)
+{
+    $findSelect   = false;
+    $cid          = null;
+    $type         = null;
+    if (!empty($items[0]['cid_expert'])) {
+        $findSelect = true;
+        $cid        = $items[0]['cid_expert'];
+        $type       = $items[0]['type_expert'];
+    }
+    if ($findSelect && $cid == $cid2 && $type == $type2) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * List expert speak pages
+ */
+function zoomdojo_experts_viewPage()
+{
+    drupal_add_css(drupal_get_path('module', 'zoomdojo_experts') . '/css/zd-expert-speak.css');
+    drupal_add_js(drupal_get_path('module', 'zoomdojo_experts') . '/js/jquery.scrollTo.min.js');
+    // Scroll to expert speak article
+    drupal_add_js("
+         jQuery(document).ready(function(){
+            var elem = jQuery('#zd-expert-page-list').data('scroll');
+            jQuery.scrollTo( '#' + elem, 1200, {offset:-200});
+         });
+    ", 'inline');
+
+    // get width taxonomy pages
+    $query = db_select('field_data_field_expert', 'e')
+      ->fields('n', array('nid', 'title', 'created'))
+      ->fields('t', array('tid', 'name', 'vid'))
+      ->fields('b', array('body_value'));
+    $query->addExpression('e.entity_id', 'expertId');
+    $query->addExpression('v.name', 'groupName');
+    $query->leftJoin('node', 'n', 'n.nid=e.entity_id');
+    $query->leftJoin('field_data_body', 'b', 'b.entity_id=n.nid');
+    $query->leftJoin('taxonomy_term_data', 't', 't.tid=e.field_expert_cid_expert');
+    $query->leftJoin('taxonomy_vocabulary', 'v', 'v.vid=t.vid');
+    $results = $query->condition('e.field_expert_type_expert', 1)
+        ->orderBy('groupName', 'ASC')
+        ->orderBy('t.name', 'ASC')
+        ->orderBy('n.created', 'DESC')
+        ->execute();
+
+    $entities = array();
+    foreach ($results as $item) {
+        $entities[$item->vid]['name'] = $item->groupName;
+        $entities[$item->vid]['content'][$item->tid]['categoryTitle'] = $item->name;
+        $item->url = drupal_get_path_alias('node/' . $item->nid);
+        $item->description = cutDescription($item->body_value, 100);
+        $item->strId = preg_replace('/\W/', '-', $item->title);
+        $entities[$item->vid]['content'][$item->tid]['content'][] = $item;
+    }
+
+    // get width node pages
+    $query = db_select('field_data_field_expert', 'e')
+        ->fields('n', array('nid', 'title', 'created'))
+        ->fields('v', array('vid'))
+        ->fields('b', array('body_value'));
+    $query->addExpression('v.name', 'groupName');
+    $query->addExpression('e.field_expert_cid_expert', 'categId');
+    $query->leftJoin('node', 'n', 'n.nid=e.entity_id OR e.field_expert_cid_expert=n.nid');
+    $query->leftJoin('field_data_body', 'b', 'b.entity_id=n.nid');
+    $query->leftJoin('field_data_field_dos_donts', 'd', 'd.entity_id=e.field_expert_cid_expert');
+    $query->leftJoin('taxonomy_term_data', 't', 't.tid=d.field_dos_donts_tid');
+    $query->leftJoin('taxonomy_vocabulary', 'v', 'v.vid=t.vid');
+    $results = $query->condition('e.field_expert_type_expert', 0)
+        ->orderBy('t.name', 'ASC')
+        ->orderBy('n.created', 'DESC')
+        ->execute()
+        ->fetchAll();
+
+    $veteranCategories = array();
+    foreach ($results as $key => $item) {
+        if ($item->nid == $item->categId) {
+            $veteranCategories[$item->nid] = $item->title;
+            unset($results[$key]);
+        }
+    }
+    
+    foreach ($results as $item) {
+        if (empty($item->vid)) {
+            $item->vid = 0;
+            $item->groupName = 'Veterans';
+        }
+        $entities[$item->vid]['name'] = $item->groupName;
+        $entities[$item->vid]['content'][$item->categId]['categoryTitle'] = $veteranCategories[$item->categId];
+        if ($item->nid != $item->categId) {
+            $item->url = drupal_get_path_alias('node/' . $item->nid);
+            $item->description = cutDescription(!empty($item->body_value)?$item->body_value:'', 100);
+            $item->strId = preg_replace('/\W/', '-', $item->title);
+            $entities[$item->vid]['content'][$item->categId]['content'][] = $item;
+        }
+    }
+
+    asort($entities);
+    $variables = array(
+        'entities' => $entities,
+        'scroll'   => isset($_GET['id'])?$_GET['id']:'',
+    );
+
+    return theme('zoomdojo_expert_speak_page', $variables);
+}
+
+/*
+ * Implementation hook_block_info
+ */
+function zoomdojo_experts_block_info() 
+{
+    $items = array();
+    $items['zd_expert_speak'] = array(
+        'info'       => t('Expert Speak Block'),
+        'status'     => true,
+        'region'     => 'content',
+        'weight'     => 0,
+        'visibility' => 0,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    return $items;
+}
+
+/*
+ * Implementation hook_block_view
+ */
+function zoomdojo_experts_block_view($delta = '') 
+{
+    $block = array();
+    switch ($delta) {
+        case 'zd_expert_speak':
+            $block['content'] = zoomdojo_experts_blockView();
+            break;
+    }
+    return $block;
+}
+
+/**
+ * View block
+ */
+function zoomdojo_experts_blockView()
+{
+    global $language ;
+    $nodes   = array();
+    $results = array();
+    $lang    = $language->language;
+
+    // Nodes - type = 0
+    if (arg(0) === 'node' && is_numeric(arg(1))) {
+        $nid = intval(arg(1));
+
+        $query = db_select('node', 'n')
+          ->fields('n', array('nid', 'title', 'created'));
+        $query->leftJoin('field_data_field_expert', 'e', 'e.entity_id = n.nid');
+        $results = $query->condition('e.field_expert_type_expert', 0)
+            ->condition('e.field_expert_cid_expert', $nid)
+            ->condition('n.language', $lang)
+            ->orderBy('n.created', 'DESC')
+            ->range(0, 3)
+            ->execute();
+    }
+
+    // Taxonomy - type = 1
+    if (arg(0) === 'taxonomy' && arg(1) === 'term' && is_numeric(arg(2))) {
+        $tid = intval(arg(2));
+
+        $query = db_select('node', 'n')
+          ->fields('n', array('nid', 'title', 'created'));
+        $query->leftJoin('field_data_field_expert', 'e', 'e.entity_id = n.nid');
+        $results = $query->condition('e.field_expert_type_expert', 1)
+            ->condition('e.field_expert_cid_expert', $tid)
+            ->condition('n.language', $lang)
+            ->orderBy('n.created', 'DESC')
+            ->range(0, 3)
+            ->execute();
+    }
+
+    if (!empty($results)) {
+        foreach ($results as $item) {
+            $item->url = drupal_get_path_alias('node/' . $item->nid);
+            $nodes[] = $item;
+        }
+    }
+
+    $variables = array(
+        'nodes' => $nodes,
+    );
+    return theme('zoomdojo_experts_block', $variables);
+}

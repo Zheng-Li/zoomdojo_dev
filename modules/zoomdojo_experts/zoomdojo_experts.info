@@ -1,0 +1,6 @@
+name = Expert speak
+description = Expert speak
+package = Zoomdojo
+core = 7.x
+version = "1.0"
+project = "Zoomdojo"

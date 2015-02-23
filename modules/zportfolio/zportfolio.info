@@ -1,0 +1,8 @@
+name = Z-Portfolio
+description = Z-Portfolio builder & resumes
+package = Zoomdojo
+core = 7.x
+version = "1.0"
+files[] = zportfolio.install
+files[] = class/zportfolio.class.inc
+files[] = zportfolio_theme.inc

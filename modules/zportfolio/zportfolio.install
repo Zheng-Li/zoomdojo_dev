@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function zportfolio_install() {
+  drupal_load('module', 'filter');
+  $format = array(
+      'format' => 'zportfolio_block',
+      'name' => 'zPortfolio format',
+      'filters' => array(
+          'zportfolio_block' => array(
+              'weight' => 0,
+              'status' => 1,
+          ),
+      ),
+  );
+  $format = (object) $format;
+  filter_format_save($format);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function zportfolio_uninstall() {
+  $format = filter_format_load('zportfolio_block');
+  if($format){
+    filter_format_disable($format);
+  }
+}

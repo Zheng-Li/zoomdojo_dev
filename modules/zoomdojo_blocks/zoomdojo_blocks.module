@@ -1,0 +1,912 @@
+<?php
+
+require_once 'zoomdojo_blocks.items.inc';
+require_once 'zoomdojo_blocks.tabs.inc';
+require_once 'zoomdojo_blocks.slider.inc';
+require_once 'zoomdojo_blocks.veterans.inc';
+require_once 'zoomdojo_blocks.city-focus.inc';
+require_once 'zoomdojo_blocks.events.inc';
+ 
+/*
+ * Implementation hook_menu
+ */
+function zoomdojo_blocks_menu() 
+{
+    $items['admin/zoomdojo'] = array(
+        'title'            => t('ZoomDojo'),
+        'description'      => t('ZoomDojo menu'), 
+        'weight'           => -8,         
+        'page callback'    => 'system_admin_menu_block_page',
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'system.admin.inc',
+        'file path'        => drupal_get_path('module', 'system'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    /*********************************
+     *   Tabs block                  *
+     *********************************/
+    $items['admin/zoomdojo/tablet-panel'] = array(
+        'title'            => t('Tabbed Panels Tab'),
+        'description'      => t('Configure tabbed panels tab'),
+        'weight'           => -8,         
+        'page callback'    => 'system_admin_menu_block_page',
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'system.admin.inc',
+        'file path'        => drupal_get_path('module', 'system'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/tablet-panel/categories'] = array(
+        'title'            => t('Categories'),
+        'description'      => t('Configure tab categories'),
+        'page callback'    => 'zoomdojo_blocks_getTabs',
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/categories/add'] = array(
+        'title'            => t('Add category'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addTabsForm'),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/categories/edit/%'] = array(
+        'title'            => t('Edit category'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_editTabCategoryForm'),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/categories/delete/%'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zoomdojo_blocks_deleteTabCategory',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/categories/add-new-ajax'] = array(
+        'title'            => t('Add new category (ajax)'),
+        'page callback'    => 'zoomdojo_blocks_addNewCategoryAjax',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM,
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/tabs'] = array(
+        'title'            => t('Tabbed Panels Blocks'),
+        'description'      => t('Configure tabbed panels blocks'),
+        'page callback'    => 'zoomdojo_blocks_getTabletPanelBlocks',
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/tabs/add'] = array(
+        'title'            => t('Add block'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addTabletBlockView'),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/tabs/edit/%'] = array(
+        'title'            => t('Edit block'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_editdTabletBlockView', 5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/tabs/delete/%'] = array(
+        'page callback'    => 'zoomdojo_blocks_deleteTabBlock',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/tablet-panel/tabs/config/%'] = array(
+        'title'            => t('Configure block'),
+        'page callback'    => 'zoomdojo_blocks_configTabsBlock',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.tabs.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    /*********************************
+     *   Items block                 *
+     *********************************/
+    $items['admin/zoomdojo/items-block'] = array(
+        'title'            => t('Items blocks'),
+        'description'      => t('Configure items blocks'),
+        'weight'           => -9,         
+        'page callback'    => 'system_admin_menu_block_page',
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'system.admin.inc',
+        'file path'        => drupal_get_path('module', 'system'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/items-block/categories'] = array(
+        'title'            => t('Categories'),
+        'description'      => t('Configure item categories'),
+        'page callback'    => 'zoomdojo_blocks_getItemsCategories',
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/categories/add'] = array(
+        'title'            => t('Add category'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addItemsCategoryForm'),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/categories/edit/%'] = array(
+        'title'            => t('Edit category'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_editItemsCategoryForm'),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/categories/delete/%'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zoomdojo_blocks_deleteItemsCategory',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/blocks'] = array(
+        'title'            => t('Blocks'),
+        'description'      => t('Configure item blocks'),
+        'page callback'    => 'zoomdojo_blocks_getItemsBlocks',
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/blocks/add'] = array(
+        'title'            => t('Add block'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addItemsBlocksForm'),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/blocks/edit/%'] = array(
+        'title'            => t('Edit block'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_editItemsBlocksForm'),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/blocks/delete/%'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zoomdojo_blocks_deleteItemsBlocks',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/items-block/blocks/config/%'] = array(
+        'title'            => t('Configure block'),
+        'page callback'    => 'zoomdojo_blocks_configItemsBlock',
+        'page arguments'   => array(5),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.items.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    /*********************************
+     *   Slider block                *
+     *********************************/
+    $items['admin/zoomdojo/slider'] = array(
+        'title'            => t('Front blocks'),
+        'description'      => t('Configure front blocks'),
+        'weight'           => -9,         
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_listSlider'),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.slider.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/slider/%/delete'] = array(
+        'title'             => t('Delete slide'),
+        'page callback'     => 'zoomdojo_blocks_deleteSlide',
+        'page arguments'    => array(3, 'slider'),
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'             => 'zoomdojo_blocks.slider.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/slider/edit/%'] = array(
+        'title'             => t('Edit front block'),
+        'page callback'     => 'drupal_get_form',
+        'page arguments'    => array('zoomdojo_blocks_editSlide'),
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'             => 'zoomdojo_blocks.slider.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/slider/add'] = array(
+        'title'             => t('Add block'),
+        'page callback'     => 'drupal_get_form',
+        'page arguments'    => array('zoomdojo_blocks_addSlide'),
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_LOCAL_ACTION,
+        'file'              => 'zoomdojo_blocks.slider.inc',
+        'file path'         => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/slider/image'] = array(
+        'title'             => t('Delete image'),
+        'description'       => t('Delete image.'),
+        'page callback'     => 'zoomdojo_blocks_deleteImage',
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_CONTEXT_NONE,
+        'file'             => 'zoomdojo_blocks.slider.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    /*********************************
+     *   Veteran block               *
+     *********************************/
+    $items['admin/zoomdojo/veteran'] = array(
+        'title'            => t('The Veterans Resource Initiative'),
+        'description'      => t('Configure block'),
+        'weight'           => -9,         
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_listVeteranBlocks'),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.veterans.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/veteran/%/delete'] = array(
+        'title'             => t('Delete block'),
+        'page callback'     => 'zoomdojo_blocks_deleteSlide',
+        'page arguments'    => array(3, 'veteran'),
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'             => 'zoomdojo_blocks.slider.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/veteran/edit/%'] = array(
+        'title'             => t('Edit front block'),
+        'page callback'     => 'zoomdojo_blocks_editVeteranBlock',
+        'page arguments'    => array(4),
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_NORMAL_ITEM,
+        'file'             => 'zoomdojo_blocks.veterans.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/veteran/add'] = array(
+        'title'             => t('Add block'),
+        'page callback'     => 'zoomdojo_blocks_addVeteranBlock',
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_LOCAL_ACTION,
+        'file'              => 'zoomdojo_blocks.veterans.inc',
+        'file path'         => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/veteran/student-veterans'] = array(
+        'title'             => t('Edit Student Veterans'),
+        'page callback'     => 'zoomdojo_blocks_editStudentVeteransViewPage',
+        'access arguments'  => array('access administration pages'),
+        'type'              => MENU_LOCAL_ACTION,
+        'file'              => 'zoomdojo_blocks.veterans.inc',
+        'file path'         => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['veterans'] = array(
+        'title'           => t('Veterans Resources'),
+        'page callback'   => 'zoomdojo_blocks_veteransViewPage',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+        'file'            => 'zoomdojo_blocks.veterans.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['veterans/student-veterans'] = array(
+        'title'           => t('Student Veterans'),       
+        'page callback'   => 'zoomdojo_blocks_studentVeteransViewPage',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+        'file'            => 'zoomdojo_blocks.veterans.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    /*********************************
+     *   City-Guides block           *
+     *********************************/
+    $items['admin/zoomdojo/city-focus'] = array(
+        'title'            => t('City Guides'),
+        'description'      => t('Configure city guides block'),
+        'weight'           => -9,         
+        'page callback'    => 'zoomdojo_blocks_listCities',
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.city-focus.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/city-focus/property/%'] = array(
+        'title'            => t('City guides configure'),
+        'weight'           => -9,         
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_cityFocusConfig', 4),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.city-focus.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/city-focus/property/%/add'] = array(
+        'title'            => t('Add items'),
+        'weight'           => -9,         
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_cityFocusAddItem', 4),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.city-focus.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'type'             => MENU_LOCAL_ACTION, 
+    );
+    $items['admin/zoomdojo/city-focus/property/%/edit/%'] = array(
+        'title'            => t('Edit items'),
+        'weight'           => -9,         
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_cityFocusEditItem', 4, 6),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.city-focus.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/city-focus/property/%/delete/%'] = array(
+        'title'            => t('City guides configure'),
+        'weight'           => -9,         
+        'page callback'    => 'zoomdojo_blocks_cityFocusDeleteItem',
+        'page arguments'   => array(4, 6),
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'zoomdojo_blocks.city-focus.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    /*********************************
+     *   Events                      *
+     *********************************/
+    $items['admin/zoomdojo/event'] = array(
+        'title'            => t('Events'),
+        'description'      => t('Admin events page'),
+        'weight'           => -9,         
+        'page callback'    => 'system_admin_menu_block_page',
+        'access arguments' => array('access administration pages'), 
+        'file'             => 'system.admin.inc',
+        'file path'        => drupal_get_path('module', 'system'),
+        'position'         => 'right', 
+        'type'             => MENU_NORMAL_ITEM, 
+    );
+    $items['admin/zoomdojo/event/list'] = array(
+        'title'            => t('Event list'),
+        'description'      => t('Configure events'),
+        'page callback'    => 'zoomdojo_blocks_eventList',
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/event/list/add'] = array(
+        'title'            => t('Add event'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addEditEventForm'),
+        'type'             => MENU_LOCAL_ACTION, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/event/%/edit'] = array(
+        'title'            => t('Edit event'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_addEditEventForm', 3),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/event/%/delete'] = array(
+        'title'            => t('Delete'),
+        'page callback'    => 'zoomdojo_blocks_deleteEvent',
+        'page arguments'   => array(3),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages'),
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['events'] = array(
+        'title'           => t('Events'),
+        'page callback'   => 'zoomdojo_blocks_eventsPage',
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'zoomdojo_blocks.events.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['all-past-events'] = array(
+        'title'           => t('Past Events'),
+        'page callback'   => 'zoomdojo_blocks_eventsPageAllPast',
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'zoomdojo_blocks.events.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['events/%'] = array(
+        'title'           => t('One Events'),
+        'page callback'   => 'zoomdojo_blocks_oneEventsPage',
+        'page arguments'  => array(1),
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+        'file'            => 'zoomdojo_blocks.events.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['events/%/view'] = array(
+        'title' => 'View',
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => -10,
+    );
+    $items['events/%/edit'] = array(
+        'title' => 'Edit',
+        'page callback' => 'zoomdojo_blocks_eventFastEdit',
+        'page arguments' => array(1),
+        'access arguments' => array('access administration pages'),
+        'weight' => 0,
+        'type' => MENU_LOCAL_TASK,
+        'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    );
+    $items['events/%/detail'] = array(
+        'title'           => t('One Events'),
+        'page callback'   => 'zoomdojo_blocks_oneEventsPage',
+        'page arguments'  => array(1, true),
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+        'file'            => 'zoomdojo_blocks.events.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['get-events'] = array(
+        'title'           => t('One Events'),
+        'page callback'   => 'zoomdojo_blocks_getEventsAjax',
+        'access callback' => true, 
+        'type'            => MENU_NORMAL_ITEM, 
+        'file'            => 'zoomdojo_blocks.events.inc',
+        'file path'       => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/event/config'] = array(
+        'title'            => t('Config Eventbrite account'),
+        'description'      => t('App & User keys'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_configEventbriteAccount'),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    $items['admin/zoomdojo/event/import'] = array(
+        'title'            => t('Import events'),
+        'description'      => t('Import events with Eventbrite'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('zoomdojo_blocks_configEventbriteImport'),
+        'type'             => MENU_NORMAL_ITEM, 
+        'access arguments' => array('access administration pages') ,
+        'file'             => 'zoomdojo_blocks.events.inc',
+        'file path'        => drupal_get_path('module', 'zoomdojo_blocks'),
+    );
+    return $items;
+}
+
+/*
+ * Implementation hook_block_info
+ */
+function zoomdojo_blocks_block_info() 
+{
+    $items = array();
+    $items['zd_city_right'] = array(
+        'info'       => t('ZoomDojo city right block'),
+        'status'     => true,
+        'region'     => 'right',
+        'weight'     => 0,
+        'visibility' => 1,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_city_node_right'] = array(
+        'info'       => t('ZoomDojo city (Node list) right block'),
+        'status'     => true,
+        'region'     => 'right',
+        'weight'     => 0,
+        'visibility' => 1,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_slider'] = array(
+        'info'       => t('ZoomDojo front blocks'),
+        'status'     => true,
+        'region'     => 'content',
+        'weight'     => 0,
+        'visibility' => 1,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_city_info'] = array(
+        'info'       => t('ZoomDojo City-focus info block'),
+        'status'     => true,
+        'region'     => 'right',
+        'weight'     => 0,
+        'visibility' => 1,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_home_page_url'] = array(
+        'info'       => t('ZoomDojo home page link'),
+        'status'     => true,
+        'region'     => 'bottom_page',
+        'weight'     => 0,
+        'visibility' => 1,
+        'pages'      => '<front>',
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_top_banner'] = array(
+        'info'       => t('ZoomDojo top banner'),
+        'status'     => true,
+        'region'     => 'featured',
+        'weight'     => 0,
+        'visibility' => 0,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $items['zd_footer_form'] = array(
+        'info'       => t('ZoomDojo bottom sing up form'),
+        'status'     => true,
+        'region'     => 'footer_full_inside',
+        'weight'     => 0,
+        'visibility' => 0,
+        'cache'      => DRUPAL_NO_CACHE,
+    );
+    $blocks = db_select('zd_blocks', 'zb')
+        ->fields('zb')
+        ->execute();
+    if (!empty($blocks)) {
+        foreach ($blocks as $block) {
+            $items['zoomdojo_blocks_'.$block->id] = array(
+                'info'          => $block->name,
+                'status'        => FALSE,
+                'region'        => 'content',
+                'weight'        => 0,
+                'visibility'    => 0,
+            );
+        }
+    }
+    return $items;
+}
+
+/*
+ * Implementation hook_block_config
+ */
+function zoomdojo_blocks_block_configure($delta = '')
+{
+    $block = array();
+    $query = db_select('zd_blocks', 'zb')
+        ->fields('zb');
+    $query->addExpression("CONCAT('zoomdojo_blocks_', id)", 'new_delta');
+    $query = $query->havingCondition('new_delta', $delta)
+        ->execute()
+        ->fetch();
+    if (!empty($query)) {
+        $url = '';
+        switch ($query->delta) {
+            case 'items':
+                $url = 'admin/zoomdojo/items-block/blocks/config/' . $query->id;
+                break;
+            case 'tabs':
+                $url = 'admin/zoomdojo/tablet-panel/tabs/config/' . $query->id;
+                break;
+        }
+        $block['config'] = array(
+            '#type' => 'markup',
+            '#prefix' => '<div>'.
+                l(
+                    t('Configure content'), $url, array(
+                        'attributes' => array(
+                            'class'  => 'button',
+                            'target' => '_blank',
+                        )
+                    )
+                ),
+            '#suffix' => '</div>'
+        );
+    }
+    if ($delta == 'zd_home_page_url') {
+        $homePageLink = variable_get('zd_homepage_link', '/events');
+        $block['home_url'] = array(
+            '#type'          => 'textfield', 
+            '#title'         => t('Url:'), 
+            '#size'          => 60,
+            '#maxlength'     => 255, 
+            '#required'      => TRUE,
+            '#default_value' => $homePageLink,
+        );
+    }
+    return $block;
+}
+
+/**
+ * Implementation hook_block_save
+ */
+function zoomdojo_blocks_block_save($delta = '', $edit = array())
+{
+    if ($delta == 'zd_home_page_url') {
+        variable_set('zd_homepage_link', $edit['home_url']);
+    }
+}
+
+/**
+ * Implementation hook_block_view
+ */
+function zoomdojo_blocks_block_view($delta = '') 
+{
+    $block = array();
+    $query = db_select('zd_blocks', 'zb')
+        ->fields('zb');
+    $query->addExpression("CONCAT('zoomdojo_blocks_', id)", 'new_delta');
+    $query = $query->havingCondition('new_delta', $delta)
+        ->execute()
+        ->fetch();
+    if (!empty($query)) {
+        switch ($query->delta) {
+            case 'items':
+                $block['content'] = zoomdojo_blocks_itemsBlocksView($query->id);
+                break;
+            case 'tabs':
+                $block['content'] = zoomdojo_blocks_tabsBlocksView($query->id);
+                break;
+        }
+    }
+    switch ($delta) {
+        case 'zd_city_right':
+            $block['title']   = t('Find Cities');
+            $block['content'] = zoomdojo_blocks_cityRightBlock();
+            break;
+        case 'zd_slider':
+            $block['content'] = zoomdojo_blocks_sliderView();
+            break;
+        case 'zd_city_info':
+            $block['content'] = zoomdojo_blocks_cityFocusBlockView();
+            break;
+        case 'zd_city_node_right':
+            $block['content'] = zoomdojo_blocks_cityFocusBlockNodeListView();
+            break;
+        case 'zd_home_page_url':
+            $block['content'] = zoomdojo_blocks_homePageLinkView();
+            break;
+        case 'zd_top_banner':
+            $block['content'] = zoomdojo_blocks_topBanner();
+            break;
+        case 'zd_footer_form':
+            $block['content'] = zoomdojo_blocks_bottomFormSingUp();
+            break;
+    }
+    return $block;
+}
+
+/*
+ * Implementation hook_theme
+ */
+function zoomdojo_blocks_theme($existing, $type, $theme, $path) 
+{
+    $items = array(
+        'zoomdojo_blocks_city_right_block'=> array(
+            'template'  => 'zd-city-right-block',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_tabbed_panels_blocks_config'=> array(
+            'template'  => 'zd-tabbed-panels-blocks-config',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme/tabbed-panels',
+        ),
+        'zoomdojo_blocks_tabs_block_view'=> array(
+            'template'  => 'zd-tabs-block-view',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme/tabbed-panels',
+        ),
+        'zoomdojo_blocks_items_block_config'=> array(
+            'template'  => 'zd-items-block-config',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme/items',
+        ),
+        'zoomdojo_blocks_items_block_view'=> array(
+            'template'  => 'zd-items-block-view',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme/items',
+        ),
+        'zoomdojo_blocks_listSlider' => array(
+            'render element' => 'form',
+            'file' => 'zoomdojo_blocks.slider.inc',
+        ),
+        'zoomdojo_blocks_listVeteranBlocks' => array(
+            'render element' => 'form',
+            'file' => 'zoomdojo_blocks.veterans.inc',
+        ),
+        'zoomdojo_blocks_slider_view'=> array(
+            'template'  => 'zd-slider',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_veterans_view'=> array(
+            'template'  => 'zd-veterans',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_veterans_edit_students'=> array(
+            'template'  => 'zd-edit-veterans-student',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_veterans_students_view'=> array(
+            'template'  => 'zd-veterans-student-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_cityFocusConfig' => array(
+            'render element' => 'form',
+            'file' => 'zoomdojo_blocks.city-focus.inc',
+        ),
+        'zoomdojo_blocks_city_focus_view'=> array(
+            'template'  => 'zd-city-focus',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_city_focus_node_list_view'=> array(
+            'template'  => 'zd-city-focus-node-list',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_events_page'=> array(
+            'template'  => 'zd-events',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_events_page_simple'=> array(
+            'template'  => 'zd-events-simple-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_events_page_past_events'=> array(
+            'template'  => 'zd-events-past-all-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_one_events_page'=> array(
+            'template'  => 'zd-one-event',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+        'zoomdojo_blocks_bottom_form_sing_up'=> array(
+            'template'  => 'zd-bottom-form-sing-up',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'zoomdojo_blocks') . '/theme',
+        ),
+    );
+    return $items;
+}
+
+/*
+ * View city list (City right block)
+ */
+function zoomdojo_blocks_cityRightBlock() 
+{
+    drupal_add_css(drupal_get_path('module', 'aarp_rotator') . '/css/zd-right-block.css');
+    $cities = taxonomy_get_tree(2);
+    $variables = array(
+        'cities' => $cities,
+    );
+    return theme('zoomdojo_blocks_city_right_block', $variables);
+}
+
+
+/*
+ * Top banner view
+ */
+function zoomdojo_blocks_topBanner()
+{
+    $classText = 'big-text-banner';
+    $view   = false;
+    $output = '';
+    $class = '';
+    $additionalTitle = '';
+    if (arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2)) ) {
+        $tid = arg(2);
+        $term = taxonomy_term_load($tid);
+        $vocabularies = array('tags');
+        foreach (taxonomy_vocabulary_get_names() as $voc) {
+            if ($voc->machine_name == $term->vocabulary_machine_name) {
+                $additionalTitle = $voc->name . '<br/>';
+            }
+        }
+        $class = $term->vocabulary_machine_name;
+        if (in_array($term->vocabulary_machine_name, $vocabularies)) {
+            $view = true;
+        }
+    }
+
+    if (arg(0) == 'node' && is_numeric(arg(1)) ) {
+        $nid = arg(1);
+        $node = node_load($nid);
+        $class = 'node-' . $node->type;
+        $contentTypes = array('dos_donts', 'resumes', 'young_professionals', 'veterans', 'companies_for_veterans');
+        if (!empty($node) && in_array($node->type, $contentTypes)) {
+            $view = true;
+        }
+    }
+
+    if ($_GET['q'] == 'veterans/student-veterans') {
+        $view = true;
+    }
+
+    $finalTitle = $additionalTitle . ' ' .drupal_get_title();
+    if (strlen($finalTitle) > 50) {
+        $classText = 'small-text-banner';
+    }
+
+    $urlsEvents = array(
+        'events',
+        'all-past-events',
+        'events\/.+'
+    );
+    foreach ($urlsEvents as $pattern) {
+        if (preg_match("/^" . $pattern . "$/i", $_GET['q'])) {
+            $view = true;
+            $finalTitle = t('Events');
+        }
+    }
+
+    if ($view) {
+        $output = '<div id="top-banner" class="banner-' . $class . '">
+            <div class="'.$classText.'">
+                '. $finalTitle . '
+            </div>
+        </div>';
+    }
+    return $output;
+}
+
+/**
+ * Bottom form sing up
+ */
+function zoomdojo_blocks_bottomFormSingUp()
+{
+    $loggedIn = user_is_logged_in();
+    drupal_add_js(drupal_get_path('module', 'zoomdojo_blocks') . '/js/bottom-form-sing-up.js');
+
+    drupal_add_js(
+        array(
+            'loggedIn' => $loggedIn,
+        ), 'setting'
+    );
+
+    $variables = array(
+        'loggedIn' => $loggedIn,
+    );
+    return theme('zoomdojo_blocks_bottom_form_sing_up', $variables);
+}

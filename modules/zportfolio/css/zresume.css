@@ -1,0 +1,235 @@
+.z-resume-wrapper .hide-textarea {
+    display: none;
+}
+.z-resume-wrapper .z-line-1 {
+    border-bottom: 1px solid #000000;
+}
+.z-resume-wrapper .z-line-3 {
+    border-bottom: 3px solid #000000;
+    clear:both;
+    padding-top:15px;
+}
+.z-resume-wrapper .sub-block {
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+.z-resume-wrapper .z-address {
+    font-size: 8pt;
+    margin-bottom: 10px;
+}
+.z-resume-wrapper .z-header {
+    color: #0C7096 !important;
+    font: bold 18px;
+    margin: 20px 0 0;
+    padding: 0 0 5px;
+}
+.cke_editable.cke_editable_inline.cke_focus
+{
+    box-shadow: inset 0px 0px 20px 3px #ddd, inset 0 0 1px #000;
+    outline: none;
+    background: #eee;
+    cursor: text;
+}
+.z-resume-wrapper .z-edit-btn {
+    background: url('../img/ico-edit.png') no-repeat 0 0;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+.z-resume-wrapper .btn .remove-icon {
+    background: url("../img/trash.png") no-repeat 0 0;
+    width:20px;
+    height:20px;
+    display:block;
+    margin:0 10px;
+}
+
+.z-resume-wrapper .clear{
+  clear:both;
+}
+
+.z-resume-wrapper .z-editor{
+  clear:both;
+  margin:40px 15px;
+  text-align:left;
+  font-size:11px;
+  
+}
+.z-resume-wrapper .z-editor h1{font-size:20px;}
+
+.z-editor>p{line-height:14px;}
+.z-editor, .z-editor ul li, .z-editor table td{
+  font-size:11px;
+}
+
+.z-resume-wrapper table, .z-resume-wrapper table tbody, .z-resume-wrapper table tr{
+  background-color:transparent;
+  border:1px dashed lightgray;
+}
+
+.z-resume-wrapper table{
+  margin:0;
+}
+
+.z-resume-wrapper table td{
+  border:1px dashed white;
+  padding:0;
+  vertical-align: top;
+}
+
+.z-resume-wrapper .cke_focus table td{
+  border-color:lightgray;
+}
+
+.z-resume-wrapper .z-editor div{
+  margin-top:6px;
+}
+
+.z-resume-wrapper hr{
+  margin:0;
+  background-color:lightgrey;
+  border:0;
+  height:2px;
+  margin:-3px 0 3px;
+}
+
+.z-resume-wrapper .z-editor ul{
+  padding:0 0 0 14px;
+  margin:0;
+}
+
+.z-resume-wrapper .z-editor ul li{
+  margin:0;
+}
+
+#z-resume-form>.btn{
+  float:right;
+  margin:0 0 10px 10px;
+}
+
+#z-resume-form>.btn.btn-delete-wrapper{
+  float:left;
+  margin-right:10px;
+}
+
+/*------------------- Resume preview ---------------------------*/
+.page-z-portfolio-resume-edit  .z-editor p {
+    margin-bottom: 0px !important;
+}
+
+.page-z-portfolio-resume-edit  .z-editor a {
+    cursor: pointer !important;
+}
+
+.page-z-portfolio-resume-edit  .sub-block {
+    margin-left: 0px;
+    margin-bottom: 25px;
+}
+
+.page-z-portfolio-resume-edit  .z-line-3 .z-edit-btn {
+    margin-top: 8px;
+}
+
+.page-z-portfolio-resume-edit  .z-edit-btn {
+    background-image: url("../img/edit-icon-red.png");
+    background-repeat: no-repeat;
+    background-position: 0 0;
+
+    float: left;
+    width: 22px;
+    height: 22px;
+    margin-top: 5px;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.page-z-portfolio-resume-edit .z-line-1 {
+    border-bottom: 1px solid #000;
+    line-height: 32px;
+    font-size: 16px;
+}
+
+.page-z-portfolio-resume-edit .z-line-3 h1 {
+    margin: 0px;
+    line-height: 36px;
+    font-size: 24px;
+}
+
+.page-z-portfolio-resume-edit .z-resume-wrapper .z-address {
+    font-size: 14px;
+    line-height: 28px;
+}
+
+
+.cke_editable.cke_editable_inline.cke_focus {
+    box-shadow: inset -4px -4px 5px -4px #DDD, inset 0 0 1px black;
+    background-color: #FFF7F7;
+}
+
+.page-z-portfolio-resume-edit  .z-editor {
+    padding-left: 15px;
+}
+
+.page-z-portfolio-resume-edit .sub-block .z-editor, .page-z-portfolio-resume-edit .z-address .z-editor {
+    min-height: 35px;
+}
+/*------------------- End Resume preview ---------------------------*/
+
+.page-z-portfolio-resume-edit #view-resume-name-popup .modal-footer #zresume-popup-submit,.page-z-portfolio-resume-edit #view-resume-name-popup .modal-footer .close, .page-z-portfolio-resume-edit #view-message-popup  .modal-footer .close {
+    font-size: 14px !important;
+    padding: 3px 25px !important;
+    display: inline-block !important;
+    text-align: center !important;
+    line-height: 24px !important;
+    width: 50px !important;
+    height: 25px !important;
+}
+
+.page-z-portfolio-resume-edit #view-message-popup .modal-body {
+    min-height: 65px;
+}
+
+.page-z-portfolio-resume-edit #block-zportfolio-zportfolio-help-tips p, .page-z-portfolio-resume-edit #block-zportfolio-zportfolio-help-tips ul>li {
+    font-size: 13px !important;
+    text-align: left;
+}
+
+.page-z-portfolio-resume-edit #block-zportfolio-zportfolio-help-tips .content {
+    padding-top: 10px;
+}
+
+.page-z-portfolio-resume-edit .sidebar h2 {
+    padding: 15px 12px;
+}
+
+#block-zportfolio-zportfolio-my-resumes .z-view-all-resumes {
+    font-weight: bold;
+}
+
+#block-zportfolio-zportfolio-my-resumes .content {
+    padding-top: 5px;
+}
+
+#view-resume-preview-popup{width:813px;}
+
+@media print {
+    #view-resume-preview-popup {display: none !important;}
+}
+
+.btn.preview-pdf{position:relative}
+.btn i.loading{
+  position:absolute;
+  background-image:url(/sites/all/themes/zoomdojo/img/ajax-loader.gif);
+  width:16px;
+  height:11px;
+  display:block;
+  top:11px;
+  left:15px;
+}
+
+#z-resume-form > div.z-editor table {
+  table-layout: fixed;
+}
+#z-resume-form > div.z-editor table td {
+  word-wrap:break-word;
+}

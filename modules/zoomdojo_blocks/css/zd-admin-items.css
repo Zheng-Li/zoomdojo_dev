@@ -1,0 +1,82 @@
+.ui-tabs-panel div label {
+    display: inline;
+    margin-right: 10px;
+}
+.ui-tabs-panel div input {
+    margin-right: 25px;
+    width: 600px;
+}
+.ui-tabs-panel div.row {
+    margin-bottom: 15px;
+}
+#dialog label, #dialog input { 
+    display:block; 
+}
+#dialog label { 
+    margin-top: 0.5em; 
+}
+#dialog input, #dialog textarea { 
+    width: 95%; 
+}
+#tabs { 
+    margin-top: 1em; 
+}
+#tabs li .ui-icon-close { 
+    float: left; 
+    margin: 0.4em 0.2em 0 0; 
+    cursor: pointer; 
+}
+#add_tab, #add_item { 
+    cursor: pointer; 
+}
+.add-item {
+    width: 100%;
+    text-align: right;
+}
+.delete-current-row {
+    background: url("../images/remove.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.item-textarea-multy {
+    height: 50px;
+    width: 100%;
+}
+div.form-type-textarea {
+    float:left;
+    width: 97%;
+}
+.inputs-left {
+    float: left;
+    width: 98%;
+}
+.ui-tabs-panel div.row {
+    margin-bottom: 50px;
+}
+.submit-btn {
+    width: 100%;
+    text-align: right;
+    margin-top: 30px;
+}
+.table-items {
+    margin-top: 20px;
+    border: none;
+}
+.table-items td:nth-child(1) {
+    width: 35px;
+}
+.table-items td:nth-child(3) {
+    width: 20px;
+}
+.tableDragClass {
+    background-color: green;
+}
+.input-field-veteran-st {
+    width: 100%;
+}
+.veteran-st-admin-wrapper .table-items td {
+    width: auto;
+}

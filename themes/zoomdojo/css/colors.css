@@ -1,0 +1,62 @@
+
+/* ---------- Color Module Styles ----------- */
+
+body,
+body.overlay {
+  color: #3b3b3b;
+}
+.comment .comment-arrow {
+  border-color: #ffffff;
+}
+
+
+#main-menu-links li a.active,
+#main-menu-links li.active-trail a {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
+.tabs ul.primary li a.active {
+  background-color: #ffffff;
+}
+.tabs ul.primary li.active a {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+#header {
+  background: url(../img/footer-noise.png);
+  position: fixed;
+	width: 100%;
+	z-index: 100;
+}
+a {
+  color: #cc5f50;
+}
+a:hover,
+a:focus {
+  color: #7d7d7d;
+  text-decoration: none;
+}
+a:active {
+  color: #7d7d7d;
+  /*font-weight: bold;*/
+}
+.sidebar .block {
+  background-color: #f1f1f1;
+  border: none;
+}
+#page-wrapper {
+  background: url(../img/body-bg.png);
+}
+
+#footer-wrapper  {
+background: #1c1c1c;
+}
+
+
+.region-header,
+.region-header a,
+.region-header li a.active,
+#name-and-slogan,
+#name-and-slogan a {
+  color: #fffeff;
+}

@@ -1,0 +1,757 @@
+#footer-wrapper{
+  clear:both;
+}
+.z-portfolio-wrapper .accordion-heading {
+    width: 875px;
+    background-color:#cc5f50;
+    position:relative;
+}
+.z-portfolio-wrapper label {
+    display: inline;
+}
+.z-portfolio-wrapper .red {
+    color: red;
+}
+#personal-details .address textarea,
+#leadership .address textarea,
+.skills-wrapper textarea.other {
+    width: 90%;
+}
+.z-portfolio-wrapper .icon {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+.z-portfolio-wrapper .add-icon {
+    background: url("../img/add-sign.png") no-repeat 0 0;
+}
+.z-portfolio-wrapper .remove-icon {
+    background: url("../img/trash-icon.png") no-repeat 0 0;
+}
+.z-portfolio-wrapper .dotted-border {
+    /*border: 1px dashed #949494;
+    padding: 10px;
+    margin-bottom: 10px;*/
+}
+.z-portfolio-wrapper .small-icon {
+    cursor: pointer;
+    height: 10px;
+    width: 12px;
+}
+.z-portfolio-wrapper .icon-plus {
+    background: url("../img/plus-sign.gif") no-repeat 0 0;
+}
+.z-portfolio-wrapper .icon-minus {
+    background: url("../img/icon-minus.gif") no-repeat 0 0;
+    vertical-align:top;
+    margin-top: 12px;
+}
+.btn-add-js {
+    width: 350px;
+    height: 50px;
+    background-color: red;
+}
+.z-portfolio-wrapper .error {
+    /*background-color: red;*/
+    border: 1px solid red;
+    box-shadow: 0px 0px 5px red;
+}
+.z-portfolio-wrapper .hide {
+    display: none;
+}
+.parsley-error-list {
+    color: #D5243F !important;
+    background-color: #d9edf7;
+    border: 1px solid #1CB4D3;
+    border-radius: 4px;
+    display: block;
+    font-size: 12px;
+    list-style: none outside none;
+    padding: 2px;
+    position: relative;
+    text-decoration: none;
+    width: 180px;
+    z-index: 9999;
+}
+
+.z-portfolio-wrapper textarea {
+    resize: none;
+}
+
+.z-portfolio-wrapper .span1 {
+    width: 2.5% !important;
+}
+
+.z-portfolio-wrapper .span11 {
+    width: 95% !important;
+    margin-left: 15px !important;
+}
+
+
+.z-portfolio-wrapper input, .z-portfolio-wrapper textarea, .z-portfolio-wrapper select,  .z-portfolio-wrapper  input[type="checkbox"] {
+    margin-bottom: 0px !important;
+    font-size: 12px !important;
+    margin-top: 0px !important;
+}
+.z-portfolio-wrapper input[type="checkbox"] {
+    width: auto !important;
+}
+
+.z-portfolio-wrapper .span4.offset3 {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.z-portfolio-wrapper .head-btn {
+    margin-top: 3px;
+    float: right;
+    font-size: 14px;
+}
+
+/*----------------------------- personal-details -------------------------- */
+.z-portfolio-wrapper .accordion-inner {
+    padding: 10px;
+}
+
+.z-portfolio-wrapper #personal-details label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ad4b3e;
+}
+
+.z-portfolio-wrapper #personal-details input {
+    margin-bottom: 0px;
+    font-size: 12px;
+}
+
+.z-portfolio-wrapper #personal-details .address textarea {
+    width: 98.3%;
+    margin-bottom: 0px;
+    font-size: 12px;
+}
+
+.z-portfolio-wrapper #personal-details .span4:last-child input {
+    width: 74%;
+}
+
+.z-portfolio-wrapper #personal-details .clr-red {
+    color: #FF0000;
+    font-size: 12px;
+}
+
+.z-portfolio-wrapper .accordion-heading a {
+    width: 98%;
+    /* padding-left: 20px; */
+}
+
+
+/*----------------------------- End personal-details -------------------------- */
+
+.z-portfolio-wrapper .prior-reduce, .z-portfolio-wrapper .prior-add{
+  color: #fff;
+  font-weight:bold;
+  cursor:pointer;
+  text-align:center;
+}
+
+/*----------------------------- Education -------------------------- */
+
+.z-portfolio-wrapper .education, .z-portfolio-wrapper .experience, .z-portfolio-wrapper .leadership, .z-portfolio-wrapper .volunteer, .z-portfolio-wrapper .skills-wrapper>.row-fluid, .z-portfolio-wrapper .custom-item {
+    margin-bottom: 10px;
+    background: url("../img/inner-block-bg.png") repeat-y 0 0;
+    border: 1px dashed #cc5f50;
+    border-left: none;
+}
+
+.z-portfolio-wrapper .education .span1, .z-portfolio-wrapper .experience .span1, .z-portfolio-wrapper .leadership .span1, .z-portfolio-wrapper .volunteer  .span1, .z-portfolio-wrapper .skills-wrapper .span1,.z-portfolio-wrapper .custom-item .span1 {
+    padding: 5px 0px 5px 5px;
+}
+
+.z-portfolio-wrapper .education .span11, .z-portfolio-wrapper .experience .span11, .z-portfolio-wrapper .leadership .span11, .z-portfolio-wrapper .volunteer  .span11, .z-portfolio-wrapper .skills-wrapper .span11,.z-portfolio-wrapper .custom-item .span11 {
+    padding: 5px 5px 5px 5px;
+}
+
+.z-portfolio-wrapper .education label, .z-portfolio-wrapper .experience label, .z-portfolio-wrapper .leadership label, .z-portfolio-wrapper .volunteer label, .z-portfolio-wrapper .skills-wrapper label,.z-portfolio-wrapper .custom-item label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #ad4b3e;
+    text-align: left;
+}
+
+.z-portfolio-wrapper .education .span12:first-child label, .z-portfolio-wrapper .experience .span12:first-child label, .z-portfolio-wrapper .leadership .span12:first-child label, .z-portfolio-wrapper .volunteer .span12:first-child label, .z-portfolio-wrapper .skills-wrapper .span12:first-child label,.z-portfolio-wrapper .custom-item .span12:first-child label {
+    max-width: 25%;
+    line-height: 26px;
+    display: inline-block;
+}
+
+
+.z-portfolio-wrapper .education .clr-red, .z-portfolio-wrapper .experience .clr-red, .z-portfolio-wrapper .leadership .clr-red, .z-portfolio-wrapper .volunteer .clr-red, .z-portfolio-wrapper .skills-wrapper .clr-red,.z-portfolio-wrapper .custom-item .clr-red {
+    color: #FF0000;
+    font-size: 12px;
+}
+.z-portfolio-wrapper .education input, .z-portfolio-wrapper .experience input, .z-portfolio-wrapper .leadership input, .z-portfolio-wrapper .volunteer input, .z-portfolio-wrapper .skills-wrapper input,.z-portfolio-wrapper .custom-item input {
+    margin-bottom: 0px;
+}
+
+.z-portfolio-wrapper .education .row-fluid, .z-portfolio-wrapper .experience .row-fluid, .z-portfolio-wrapper .leadership .row-fluid, .z-portfolio-wrapper .volunteer  .row-fluid,.z-portfolio-wrapper .custom-item .row-fluid {
+    margin: 0px 0px 10px 0px;
+}
+
+.z-portfolio-wrapper .education .remove-icon, .z-portfolio-wrapper .experience .remove-icon, .z-portfolio-wrapper .leadership  .remove-icon, .z-portfolio-wrapper .volunteer .remove-icon, .z-portfolio-wrapper .skills-wrapper .remove-icon,.z-portfolio-wrapper .custom-item .remove-icon {
+    background: url("../img/trash.png") no-repeat 0 0;
+}
+
+.z-portfolio-wrapper .prior-add{
+    background: url("../img/bottom-arrow.png") no-repeat 0 0;
+    width:20px;
+    height:20px;
+    cursor:pointer;
+    margin:3px auto auto 1px;
+}
+
+.z-portfolio-wrapper .prior-reduce{
+    background: url("../img/top-arrow.png") no-repeat 0 0;
+    width:20px;
+    height:20px;
+    cursor:pointer;
+    margin:3px auto auto 1px;
+}
+
+.z-portfolio-wrapper .skills-wrapper .inner-space {
+    padding: 0px 0px 0px 40px;
+}
+
+.z-portfolio-wrapper .skills-wrapper>.row-fluid {
+    padding: 10px 0px;
+}
+
+.z-portfolio-wrapper .skills-wrapper>.row-fluid label {
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.z-portfolio-wrapper .education .span4 label {
+    width: 25%;
+    display: inline-block;
+}
+.z-portfolio-wrapper .education .span4 input {
+    max-width: 67%;
+    width: 100%;
+}
+
+.z-portfolio-wrapper .education .span12 label {
+    display: inline-block;
+    margin-bottom: 0 !important;
+    width: 19%;
+}
+
+.z-portfolio-wrapper .education .span12 input {
+    width: 78.5%;
+}
+
+
+
+.z-portfolio-wrapper .education .span12:first-child label {
+    display: inline-block;
+    margin-bottom: 0 !important;
+    width: 25%;
+}
+
+.z-portfolio-wrapper .for-textarea{
+  vertical-align:top;
+}
+
+.z-portfolio-wrapper .education .span12:first-child input,.z-portfolio-wrapper .education .span12:first-child textarea {
+    width: 72.5%;
+}
+
+.z-portfolio-wrapper .education .education-coursework .span12:first-child input,.z-portfolio-wrapper .education .education-coursework .span12:first-child textarea {
+    width: 96%;
+}
+
+.z-portfolio-wrapper .education .span6 label {
+    width: 20%;
+}
+
+.z-portfolio-wrapper .education .span6 select {
+    width: 42.5%;
+    text-align: center;
+}
+
+.z-portfolio-wrapper .education .span6:last-child {
+    text-align: right;
+}
+
+.z-portfolio-wrapper .education  #gpa .span4 label {width: 31%;}
+.z-portfolio-wrapper .education  #gpa .span4 input {width: 61%;}
+.z-portfolio-wrapper .education  #gpa .span4:first-child + .span4 + .span4 input {width: 45%;}
+.z-portfolio-wrapper .education  #gpa .span4:first-child + .span4 + .span4 label {width: 47%;}
+
+.z-portfolio-wrapper .education .row-fluid:last-child .span6:first-child + .span6 label {
+    width: 41%;
+    display: inline-block;
+}
+
+.z-portfolio-wrapper .education  .row-fluid:last-child .span6:first-child + .span6  input {
+    width: 54%;
+    display: inline-block;
+}
+
+.z-portfolio-wrapper .education .row-fluid:last-child .span6 label {
+    width: 33%;
+    display: inline-block;
+}
+
+.z-portfolio-wrapper .education  .row-fluid:last-child .span6 input {
+    width: 62%;
+    display: inline-block;
+}
+
+.z-portfolio-wrapper .head-btn.add-coursework{
+  float:left;
+}
+
+.z-portfolio-wrapper .education .btn-mini {
+    font-size: 14px !important;
+    float: right;
+    width: 135px;
+    padding: 5px 10px;
+    min-width: 100px;
+    margin-right: 2px;
+    margin-top: 0px;
+}
+
+.z-portfolio-wrapper .education  .row-fluid:last-child .span12 input {
+
+}
+.z-portfolio-wrapper  .education .span12 input[name*=course]{width:72.5%}
+
+.z-portfolio-wrapper  .education .row-fluid .span6:first-child, .z-portfolio-wrapper  .education .row-fluid .span6:nth-child(2) {
+    margin-left: 0;
+}
+
+.z-portfolio-wrapper .education .row-fluid .span6:nth-child(2) label {
+    display: inline-block;
+    width: 30%;
+    text-align: left;
+}
+
+.z-portfolio-wrapper .education .row-fluid .span6:nth-child(2) select {
+    width: 33.5%;
+}
+/*----------------------------- END Education -------------------------- */
+/*---------------------------------------------------------------------- */
+/*---------------------------------------------------------------------- */
+/*-----------------------------  EXPERIENCE  --------------------------- */
+
+.z-portfolio-wrapper .experience .row-fluid:first-child input.input-xxlarge  {
+    width: 75%;
+    float: right;
+}
+
+.z-portfolio-wrapper .experience .row-fluid input.input-xxlarge  {
+    width: 92%;
+    float: right;
+}
+
+.z-portfolio-wrapper .experience .span4 label {
+    width: 25%;
+    display: inline-block;
+    text-align: right;
+}
+
+.z-portfolio-wrapper .experience .span4:first-child label {
+    text-align: left;
+}
+.z-portfolio-wrapper .experience .span4 input {
+    max-width: 67%;
+    width: 100%;
+}
+
+.z-portfolio-wrapper .experience #time-period .span4 label { }
+.z-portfolio-wrapper .experience #time-period .span4 span { height: 30px; line-height: 27px;
+    font-weight: bold;
+    font-size: 13px;
+}
+.z-portfolio-wrapper .experience #time-period .span4 select { width: 35%; }
+.z-portfolio-wrapper .experience #time-period .span4 input { width: 10%; }
+.z-portfolio-wrapper .experience #time-period .span4:last-child {
+    font-weight: bold;
+    font-size: 13px;
+}
+.z-portfolio-wrapper .custom-item #time-period .span4:last-child {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.z-portfolio-wrapper .experience .span6 textarea {
+    width: 96%;
+}
+
+.z-portfolio-wrapper .experience .span6:first-child textarea {
+    width: 91%;
+}
+
+.z-portfolio-wrapper .experience .btn-mini {
+    font-size: 14px !important;
+    float: right;
+    width: 100px;
+    padding: 5px 10px;
+    min-width: 100px;
+    margin-right: 2px;
+    margin-top: 0px;
+}
+
+/*----------------------------- END  EXPERIENCE --------------------------- */
+/*------------------------------------------------------------------------- */
+/*------------------------------------------------------------------------- */
+/*-------------------------------- LEADERSHIP ----------------------------- */
+
+.z-portfolio-wrapper .leadership .row-fluid:first-child input.input-xxlarge  {
+    width: 75%;
+    float: right;
+}
+
+.z-portfolio-wrapper .leadership .span4 label {
+    width: 25%;
+    display: inline-block;
+    text-align: right;
+}
+
+.z-portfolio-wrapper .leadership .span4:first-child label {
+    text-align: left;
+}
+.z-portfolio-wrapper .leadership .span4 input {
+    max-width: 67%;
+    width: 100%;
+}
+
+
+
+.z-portfolio-wrapper .leadership #time-period .span4 label { }
+.z-portfolio-wrapper .leadership #time-period .span4 span { height: 30px; line-height: 27px;
+    font-weight: bold;
+    font-size: 13px;
+}
+.z-portfolio-wrapper .leadership #time-period .span4 select { width: 35%; }
+.z-portfolio-wrapper .leadership #time-period .span4 input { width: 10%; }
+.z-portfolio-wrapper .leadership #time-period .span4:last-child {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.z-portfolio-wrapper .leadership .address textarea {width: 91% !important; }
+
+.z-portfolio-wrapper .leadership #leader-add {margin-bottom: 0px;}
+.z-portfolio-wrapper .leadership #leader-add  .span4 label { width: 100%; text-align: center; margin-bottom: 10px; }
+.z-portfolio-wrapper .leadership .leadership-responsibility .span4 textarea { width: 94%; max-width: 100%;}
+.z-portfolio-wrapper .leadership .leadership-responsibility  .span4:first-child textarea { width: 86%;}
+
+
+
+.z-portfolio-wrapper .leadership .btn-mini {
+    font-size: 14px !important;
+    float: right;
+    width: 100px;
+    padding: 5px 10px;
+    min-width: 100px;
+    margin-right: 2px;
+    margin-top: 0px;
+}
+.z-portfolio-wrapper .leadership .row-fluid:nth-child(2) .input-xxlarge {
+    width: 93.5%;
+}
+.z-portfolio-wrapper .leadership .textarea-large {
+    width: 96%;
+}
+/*----------------------------- END  LEADERSHIP --------------------------- */
+/*------------------------------------------------------------------------- */
+/*------------------------------------------------------------------------- */
+/*----------------------------- Volunteer --------------------------- */
+
+.z-portfolio-wrapper .volunteer .row-fluid:first-child input.input-xxlarge  {
+    width: 75%;
+    float: right;
+}
+
+.z-portfolio-wrapper .volunteer .row-fluid input.input-xxlarge  {
+    width: 92.5%;
+    float: right;
+}
+
+.z-portfolio-wrapper .volunteer .span4 span, .z-portfolio-wrapper .volunteer .span4 {
+    height: 30px;
+    line-height: 27px;
+    font-weight: bold;
+    font-size: 13px;
+}
+.z-portfolio-wrapper .custom-item .span4 span, .z-portfolio-wrapper .custom-item .span4 {
+    height: 30px;
+    line-height: 27px;
+    font-weight: bold;
+    font-size: 13px;
+}
+.z-portfolio-wrapper .volunteer textarea {width: 85% !important; float: right;}
+.z-portfolio-wrapper .volunteer .textarea-large {
+    width: 96% !important;
+}
+/*----------------------------- End Volunteer --------------------------- */
+/*------------------------------------------------------------------------- */
+/*------------------------------------------------------------------------- */
+/*----------------------------- Custom blocks --------------------------- */
+
+.z-portfolio-wrapper .middle {float:none;margin:0 auto;}
+
+.z-portfolio-wrapper .mb5{margin-bottom:5px;}
+
+.z-portfolio-wrapper .custom-item textarea {width: 85% !important; float: right; }
+
+.z-portfolio-wrapper .custom-item .date-type-select{width:160px}
+.accordion-group-custom .accordion-heading div {
+  position:relative;
+}
+.accordion-heading a.custom-delete{
+  height: 22px;
+width: 22px;
+background: url('../img/trash.png') no-repeat 0 0;
+display:inline-block;
+position:absolute;
+
+  top: 6px;
+left:6px;
+cursor:pointer;
+}
+
+.accordion-heading a.custom-rename{
+  height: 22px;
+width: 22px;
+background: url('../img/edit-icon.png') no-repeat 0 0;
+display:inline-block;
+position:absolute;
+
+  top: 6px;
+left:41px;
+cursor:pointer;
+}
+.accordion-group-custom .accordion-heading a.accordion-toggle{
+  padding-left: 80px;
+  width:90.5%;
+}
+#add-section-popup .modal-footer .btn{
+  font-size: 14px !important;
+padding: 3px 25px;
+text-align: center !important;
+line-height: 22px;
+width: 50px;
+height:25px;
+}
+#add-new-custom-section{float:right}
+
+.page-z-portfolio #view-message-popup .modal-body {
+min-height: 30px;
+}
+/*----------------------------- End Custom blocks --------------------------- */
+/*------------------------------------------------------------------------- */
+/*------------------------------------------------------------------------- */
+/*----------------------------- OTHERS --------------------------- */
+.z-portfolio-wrapper .skill-language .span6 select {
+    width:90%;
+    margin-bottom: 5px !important;
+}
+
+.z-portfolio-wrapper .skill-language .span6 .checkbox  {
+    padding-top: 0px;
+}
+
+.z-portfolio-wrapper .skill-language .span6 .checkbox input {
+    margin-top: 4px !important;
+}
+
+.z-portfolio-wrapper .skill-language .span6:last-child {
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+.z-portfolio-wrapper .skill-language .span6:first-child {
+    text-align: left;
+}
+
+.z-portfolio-wrapper .skill-language .span6:first-child input {
+    margin-left: 17px;
+    margin-bottom: 5px !important;
+    clear: both;
+    width: 86%;
+}
+
+.z-portfolio-wrapper .skill-language .row-fluid:first-child + .row-fluid select {
+    margin-left: 17px;
+}
+
+.z-portfolio-wrapper .skill-language .row-fluid:last-child .span6:last-child {
+    line-height: 30px;
+}
+
+/*.z-portfolio-wrapper .skills-wrapper .skill-language .btn-mini {*/
+#add-new-language-row, #add-new-skill-2-row, #add-new-skill-3-row, #add-new-skill-4-row {
+    font-size: 14px !important;
+    float: right !important;
+    width: 100px !important;
+    padding: 5px 10px !important;
+    min-width: 100px !important;
+    margin-right: 25px !important;
+    margin-top: 0px !important;
+}
+
+.z-portfolio-wrapper .other-skill {
+    float: left;
+    margin-bottom: 10px;
+    margin-right: 15px;
+    width: 47.5%;
+}
+.z-portfolio-wrapper .margin0 {
+    margin-left: 0px !important;
+}
+
+.z-portfolio-wrapper .other-skill textarea {
+    width: 90%;
+}
+
+.z-portfolio-wrapper #z-other {
+    width: 95%;
+}
+
+.zportfolio-submit, #zportfolio-clear-form {
+    float: right;
+    margin-top: 2px !important;
+    margin-left: 10px !important;
+}
+.accordion-inner .zportfolio-submit {
+    float: none;
+    font-size: 14px !important;
+    margin-left: 0 !important;
+    margin-top: 3px !important;
+    max-width: 85px !important;
+    width: 85px !important;
+}
+.z-portfolio-wrapper .submit-portfolio-top-btn {
+    position: absolute;
+    right: 24px;
+    top: 48px;
+}
+.page-z-portfolio .back-block {
+    margin-top: 65px;
+}
+
+.page-z-portfolio .z-portfolio-wrapper  .skills-wrapper .inner-space .row-fluid:first-child {
+    margin-bottom: 0;
+}
+
+.custom-item input.input-xxlarge {
+    width: 92%;
+}
+select option.m-group {
+    border-bottom: 1px dotted #cccccc;
+}
+
+/*----------------------------- END OTHERS --------------------------- */
+
+
+.page-z-portfolio .modal-footer .close {
+    font-size: 14px !important;
+    padding: 3px 25px;
+    display: block;
+    text-align: center !important;
+    line-height: 22px;
+    width: 50px;
+}
+
+#block-zportfolio-zportfolio-my-resumes li {
+    list-style-image: url(/misc/menu-leaf.png);
+    list-style-type: square;
+}
+
+#block-zportfolio-zportfolio-my-resumes .z-view-all-resumes {
+    font-weight: bold;
+}
+
+#block-zportfolio-zportfolio-my-resumes .content {
+    padding-top: 5px;
+}
+
+.page-z-portfolio .z-portfolio-wrapper .row-fluid:first-child {
+    margin-bottom: 10px;
+}
+
+.page-z-portfolio .z-portfolio-wrapper form .accordion {
+    margin-bottom: 5px !important;
+}
+
+.page-z-portfolio #z-portfolio-hint-popup .modal-body {
+    font-size: 13px;
+}
+
+/*-------------------- Z-Portfolio Tips ----------------------*/
+#block-zportfolio-zportfolio-tips{
+  padding:0;
+  background-color:transparent;
+}
+#zportfolio-tips .accordion-body ul{
+  margin-left:16px;
+}
+#zportfolio-tips .accordion-body li{
+  background-color: transparent;
+  font-size: 0.914em;
+    line-height: 1.4;
+    list-style: disc outside;
+    display: list-item;
+    padding:1px 0;
+}
+
+/*-------------------- IE hacks ----------------------*/
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    /* IE10-specific styles go here */
+
+    .z-portfolio-wrapper .volunteer .row-fluid:first-child input.input-xxlarge {
+        width: 80%;
+    }
+    .z-portfolio-wrapper .volunteer .row-fluid input.input-xxlarge {
+        width: 93.5%;
+    }
+}
+
+@media screen and (min-width:0\0) {
+
+    .z-portfolio-wrapper .education #gpa .span4 label {
+        width: 31%;
+    }
+
+    .z-portfolio-wrapper .education #gpa .span4 input {
+        width: 61%;
+    }
+
+
+    .z-portfolio-wrapper .education .row-fluid:last-child .span6:last-child label {
+        display: inline-block;
+        width: 41%;
+    }
+
+    .z-portfolio-wrapper .education .row-fluid:last-child .span6:last-child input {
+        display: inline-block;
+        width: 54%;
+    }
+
+    .z-portfolio-wrapper .volunteer .row-fluid:first-child input.input-xxlarge {
+        width: 76.5%;
+    }for-textarea
+
+    .z-portfolio-wrapper .volunteer .row-fluid input.input-xxlarge {
+        width: 93.5%;
+    }
+}
+
+/*-------------------- END IE hacks ----------------------*/
+
+.z-portfolio-wrapper .input-small {
+    width: 85px;
+}

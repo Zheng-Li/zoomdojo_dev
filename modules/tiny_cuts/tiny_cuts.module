@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Informs Wysiwyg module about the custom Tiny cuts plugin for TinyMCE.
+ */
+/**
+ * Implements hook_wysiwyg_plugin().
+ * @see wysiwyg.api.php
+ */
+function tiny_cuts_wysiwyg_plugin($editor, $version) {
+  if ($editor == 'tinymce') {
+    return array(
+      'tiny_cuts' => array(
+        'path' => wysiwyg_get_path('tinymce_plugins') . '/tiny_cuts',
+        'extensions' => array('tiny_cuts' => 'Extra shortcurts'), // Key is the internal name, value is the display name under "Buttons and plugins"
+        'filename' => 'editor_plugin.js',
+        'load' => TRUE, // Explicitly load the plugin file.
+        'internal' => FALSE, // Plugin is NOT located in the TinyMCE library itself.
+      ),
+    );
+  }
+}
+?>

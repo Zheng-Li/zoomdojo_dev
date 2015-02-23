@@ -1,0 +1,5 @@
+name = Regiastration Honeypot
+description = Using of non captcha technique
+core = 7.x
+package = Authentication
+files[] = user_regiastration_honeypot.module

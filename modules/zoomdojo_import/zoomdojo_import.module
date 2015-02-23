@@ -1,0 +1,95 @@
+<?php
+
+/*
+ * Implementation hook_menu
+ */
+function zoomdojo_import_menu()
+{
+    $items['user-import'] = array(
+        'title'            => t('User import'),
+        'page callback'    => 'zoomdojo_import_user',
+        'access arguments' => array('access administration pages'),
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['user-delete-bots'] = array(
+        'title'            => t('Delete bot users'),
+        'page callback'    => 'zoomdojo_import_delete_bots',
+        'access arguments' => array('access administration pages'),
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+function zoomdojo_import_delete_bots()
+{
+  $bots = db_query("SELECT `u`.`uid`
+          FROM `users` `u`
+            LEFT JOIN `field_data_field_first_name`                 `ff` ON `ff`.`entity_id` = `u`.`uid`
+            LEFT JOIN `field_data_field_last_name`                  `fl` ON `fl`.`entity_id` = `u`.`uid`
+            LEFT JOIN `field_data_field_mobile`                     `fm` ON `fm`.`entity_id` = `u`.`uid`
+            LEFT JOIN `field_data_field_college_university`         `fc` ON `fc`.`entity_id` = `u`.`uid`
+            LEFT JOIN `field_data_field_degree_you_are_studying_fo` `fd` ON `fd`.`entity_id` = `u`.`uid`
+            LEFT JOIN `field_data_field_year_you_are_studying_for`  `fy` ON `fy`.`entity_id` = `u`.`uid`
+          WHERE 
+            (`u`.`status` = 0 OR `u`.`status` IS NULL)
+            AND `u`.`created` >= 1385596800 #28-11-2013 00:00:00
+            AND `ff`.`field_first_name_value` = `fl`.`field_last_name_value`
+            AND `u`.`name` NOT LIKE CONCAT('%',`ff`.`field_first_name_value`,'%')
+            AND (`fm`.`field_mobile_value`                     IS NULL OR `fm`.`field_mobile_value`                     = '')
+            AND (`fc`.`field_college_university_value`         IS NULL OR `fc`.`field_college_university_value`         = '')
+            AND (`fd`.`field_degree_you_are_studying_fo_value` IS NULL OR `fd`.`field_degree_you_are_studying_fo_value` = '')
+            AND (`fy`.`field_year_you_are_studying_for_value`  IS NULL OR `fy`.`field_year_you_are_studying_for_value`  = '')");
+  $bots_to_delete = array();
+  foreach ($bots as $bot) {
+    $bots_to_delete[] = $bot->uid;
+  }
+  user_delete_multiple($bots_to_delete);
+  die('DELETED: '.sizeof($bots_to_delete));
+}
+
+function zoomdojo_import_user()
+{
+    require_once ("/var/www/zoomdojo-main/marge/them.class.php");
+    $them = new Them();
+    foreach ($them->getUsers() as $user) {
+        $new_user = array(
+            'name' => $user['name'],
+            'pass' => '',
+            'mail' => $user['mail'],
+            'signature_format' => $user['signature_format'],
+            'status' => 1,
+            'timezone' => $user['timezone'],
+            'init' => $user['init'],
+            'roles' => 'Roles',
+//            'access' => $user['access'],
+//            'login' => $user['login'],
+            'field_first_name' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['firstName']))),
+            'field_last_name' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['lastName']))),
+            'field_college_university' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['collegeuniversity']))),
+            'field_degree_you_are_studying_fo' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['degree']))),
+            'field_year_you_are_studying_for' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['year']))),
+            'field_mobile' =>
+                array(LANGUAGE_NONE =>
+                    array(0 =>
+                        array('value' => $user['mobile']))),
+        );
+        $account= user_save(NULL, $new_user);
+
+    }
+    return 'OK';
+}

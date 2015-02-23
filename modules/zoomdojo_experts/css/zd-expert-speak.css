@@ -1,0 +1,52 @@
+.page-experts-speak .container-fluid {
+    padding: 0px;
+}
+
+.page-experts-speak .row-fluid {
+ /*   padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #b1b1b1;*/
+}
+
+.page-experts-speak .row-fluid>.row-fluid {
+    margin-left: 30px;
+}
+.page-experts-speak .row-fluid>.category {
+    margin-left: 15px;
+}
+.page-experts-speak .row-fluid>.category h3 {
+    margin: 15px 0px;
+}
+
+.page-experts-speak .row-fluid:last-child {
+    border: none;
+}
+
+.page-experts-speak .row-fluid  h2 {
+    background-repeat: no-repeat;
+    background-position: center left;
+    color: #950000;
+    margin: 0px 0px 15px 0px !important;
+}
+
+.page-experts-speak .row-fluid .one-speak {
+    padding-bottom: 5px;
+    padding-top: 0px;
+    border-left: 4px solid #C20101;
+    padding-left: 5px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+
+.page-experts-speak .row-fluid .one-speak h3 {
+    margin: 0px 0px 5px 0px;
+}
+
+.page-experts-speak .row-fluid .one-speak h3>a {
+    color: #C20101;
+}
+
+.page-experts-speak .row-fluid .one-speak .description {
+    font-size: 12px;
+    color: #525252;
+}

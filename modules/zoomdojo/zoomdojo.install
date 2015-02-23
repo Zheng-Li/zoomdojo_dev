@@ -1,0 +1,6 @@
+<?php
+
+function zoomdojo_enable()
+{
+    variable_set('mail_system', array('default-system' => 'HtmlMailSystem'));
+}
