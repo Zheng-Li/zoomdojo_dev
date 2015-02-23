@@ -547,13 +547,6 @@ function organization_manager_menu()
         'file'             => 'organization_manager_jobs.inc',
     );
 
-    $items['find-positions']                                 = array(
-        'title'            => t('Test Job Search Results'),
-        'page callback'    => 'organization_manager_get_urls',
-        'access callback'  => TRUE,
-        'file'             => 'organization_manager_jobs.inc',
-        'type'             => MENU_NORMAL_ITEM,
-        );
     //   ]] -- Zheng
 
     return $items;
