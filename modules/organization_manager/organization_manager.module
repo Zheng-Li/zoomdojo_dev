@@ -528,6 +528,34 @@ function organization_manager_menu()
 
     /////////////////////////////////////////////
 
+    // New jobs list function
+    // Zheng -- [[
+    $items['admin/organization-manager/jobs']       = array(
+        'title'            => t('Jobs List'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_jobs'),
+        'access arguments' => array('administer site configuration'),
+        'file'             => 'organization_manager_jobs.inc',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['admin/organization-manager/jobs/edit/%']       = array(
+        'title'            => t('Edit Job'),
+        'page callback'    => 'organization_manager_jobs_edit',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'             => 'organization_manager_jobs.inc',
+    );
+
+    $items['find-positions']                                 = array(
+        'title'            => t('Test Job Search Results'),
+        'page callback'    => 'organization_manager_get_urls',
+        'access callback'  => TRUE,
+        'file'             => 'organization_manager_jobs.inc',
+        'type'             => MENU_NORMAL_ITEM,
+        );
+    //   ]] -- Zheng
+
     return $items;
 }
 
@@ -641,6 +669,12 @@ function organization_manager_theme($existing, $type, $theme, $path)
         ),
         'organization_manager_list_broken_links' => array(
             'template'  => 'zd-organization-broken-list',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        // Job Edit function -- Zheng
+        'organization_manager_edit_job' => array(
+            'template'  => 'zd-edit-job',
             'variables' => array('variables' => NULL),
             'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
         ),
