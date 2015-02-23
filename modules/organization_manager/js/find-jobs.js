@@ -140,6 +140,8 @@
                     sendServerRequest: function() {
                         var selfObject = this;
                         selfObject.loadingBig(true);
+                        //console.log(this.model.url);
+                        //alert('url before send :');
                         this.model.save({id:0}, {
                             success: function(modal, resp) {
                                 if (typeof resp.needLogIn !== 'undefined' && resp.needLogIn) {

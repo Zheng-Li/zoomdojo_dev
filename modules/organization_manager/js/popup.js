@@ -26,12 +26,16 @@
                                 job_industry: 0,
                                 company_name: query
                             };
+
                             selfObject.sendAjaxRequest('GET', url, params, function(resp){
                                 _.each(resp.data, function(item){
-                                    availableTags.push(item.name);
+                                    availableTags.push(item.name); 
                                 });
+                                
                                 return process(availableTags);
-                            }, function(resp){
+                            }, 
+
+                            function(resp){
                                 return process(availableTags);
                             });
                         }, '300');

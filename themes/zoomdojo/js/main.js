@@ -197,7 +197,7 @@ function trackAjaxRequest(title, url) {
 jQuery(document).ready(function($) {
     
     // Search Form validation -- [[
-    $('#findJobsForm, #findJobsFormMini, #findNewJobsForm').submit(function(){
+    $('#findJobsForm, #findNewJobsForm').submit(function(){
         if($(this).find('input[name=company_name]').length > 0 && $(this).find('input[name=company_name]').val() != ""){
             $(this).find('select').val('');
             $(this).find('select, input').filter(function() { return $(this).val() == ""; }).attr('disabled','disabled');

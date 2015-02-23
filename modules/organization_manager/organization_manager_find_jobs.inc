@@ -1,4 +1,4 @@
-<?php
+ <?php
 include_once 'organization_manager_job_types.inc';
 include_once 'organization_manager_job_inustries.inc';
 include_once 'organization_manager_locations.inc';
@@ -68,6 +68,10 @@ function organization_manager_find_jobs_popup()
 
 function organization_manager_find_jobs_header_form()
 {
+    //drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
+    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/typeahead.min.js');
+    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/position_popup.js');
+    /*
     $job_types = array();
     foreach (organization_manager_job_types_get_data() as $item) {
         $job_types[$item->id] = $item->title;
@@ -79,12 +83,11 @@ function organization_manager_find_jobs_header_form()
     }
 
     $locations = _ajax_organization_manager_getCountriesOptions();
+    */
+    $keywords='';
+    $location='';
 
-    return theme('organization_manager_find_jobs_header_form', array(
-        'jobTypes'      => $job_types,
-        'industryTypes' => $industry_types,
-        'locations'     => $locations,
-    ));
+    return theme('organization_manager_find_jobs_header_form');
 }
 
 function organization_manager_find_jobs_getOrganizationsData($get)
@@ -111,6 +114,9 @@ function organization_manager_find_jobs_getOrganizationsData($get)
     }
 
     if ( !$user->uid && ($limit > 5 || $currentPage > 0)) {
+        
+        //the information can be more protected here
+
         $requested_limit = $limit;
         $requested_page = $currentPage;
         $limit = 5;
@@ -255,7 +261,7 @@ function organization_manager_find_jobs_getOrganizationsData($get)
     $sql .= " GROUP BY `zo`.`id` ";
 
     $sql .= " ORDER BY `zo`.`name` ASC LIMIT " . ($currentPage * $limit) . ", " . $limit;
-    //print $sql;
+    
     $result = db_query($sql, $params);
 
     $countRows = db_query('SELECT FOUND_ROWS();')->fetchField();
@@ -273,6 +279,8 @@ function organization_manager_find_jobs_getOrganizationsData($get)
         $record->encodeName = urlencode($record->name);
         $organizations[] = $record;
     }
+
+    
 
     $featuredJobs = false;
     if (!empty($get['type']) && $get['type'] == 'featured_jobs') {
@@ -293,6 +301,27 @@ function organization_manager_find_jobs_getOrganizationsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
+
+    //////////////////////////////
+    $jobId = 1;
+
+    $query = db_select('zd_dev_jobs','zdj');
+    $query->leftJoin('zd_dev_location_city','zdlc','zdj.City_id = zdlc.ID');
+    $query->leftJoin('zd_dev_location_district','zdld','zdj.District_id = zdld.ID');
+    $query->leftJoin('zd_dev_location_country','zdlco','zdj.Country_id = zdlco.ID');
+    $query->leftJoin('zd_organization','zo','zdj.Org_id = zo.id');
+    $query = $query->fields('zdj')
+                ->fields('zdlc',array('Name'))
+                ->fields('zdld',array('Name'))
+                ->fields('zdlco',array('Name'))
+                ->fields('zo',array('name'))
+                ->condition('zdj.ID',$jobId)
+                ->execute()
+                ->fetch();
+    print_r($query);
+
+
+    //////////////////////////////
     return array(
         'organizations' => $organizations,
         'limit'         => $limit,
@@ -420,6 +449,8 @@ function organization_manager_find_jobs()
 function organization_manager_find_jobs_getOrganizations()
 {
     $post = (array) json_decode(file_get_contents("php://input"));
+
+
     if (!empty($post)) {
         $post['location'] = (array) $post['location'];
         $variables = organization_manager_find_jobs_getOrganizationsData($post);
@@ -514,6 +545,8 @@ function organization_manager_find_jobs_getJobsData($get)
     if ($countRows > $limit) {
         $countPage = ceil($countRows / $limit);
     }
+    //ting
+    
 
     return array(
         'jobs'           => $jobs,
@@ -618,70 +651,17 @@ function organization_manager_featured_jobs()
         ->execute();
 
 
-    $industries_url_overload = array(
-        "36" => "internships-jobs-accounting-spring-summer-2015",//Accounting
-        "2" => "spring-summer-2015-internships-aerospace-defense",//Aerospace & Defense
-        "47" => "internships-spring-summer-2015-aaeid",//Architecture, Architectural Engineering, Interior Design
-        "16" => "spring-summer-2015-internships-arts-culture-dance-museums-music",//Art
-        "6" => "spring-summer-2015-internships-conglomerates",//conglomerates
-        "7" => "spring-summer-internships-2015-consulting",//consulting
-        "26" => "spring-summer-2015-internships-environment-non-profits",//environment-non-profits
-        "5" => "spring-summer-fall-internships-jobs-2015-finance",//finance
-        "17" => "spring-summer-fall-internships-2015-petroleum-energy-industry",//petroleum-energy-industry
-        "1" => "spring-summer-2015-internships-entry-level-jobs-marketing-communications",//marketing
-		"4" => "spring-summer-internships-2015-automotive",//automotive
-		"29" => "public-broadcasting-internships-2015",//public-broadcasting-internships
-        "3" => "spring-summer-2015-internships-airlines-air-couriers-transportation-logistics",//airline...
-        "56" => "2015-internships-entry-level-jobs-agribusiness",//agribusiness
-        "24" => "internships-2015-–-not-profits-development-relief-social-need",//
-        "21" => "internships-2015-–-chemicals-paper",//
-        "8" => "internships-2015-–-consumer-goods",//
-        "23" => "internships-2015-–-media-entertainment-consumer-electronics",//
-        "28" => "internships-2015-–-not-profits-policy",//
-        "9" => "engineering-construction-machinery",//
-        "10" => "fashion-apparel",//
-        "11" => "food-beverages",//
-        "41" => "internships-2015-–-forestry",//
-        "40" => "internships-2015-–-general-trading",//
-        "12" => "internships-2015-–-healthcare",//
-        "14" => "internships-2015-–-insurance",//
-        "34" => "internships-2015-–-hospitals",//
-        "13" => "internships-2015-–-hotels-tourism-travel-hospitality",//
-        "51" => "internships-2015-–-investment-firm-hedge-fund",//
-        "15" => "internships-2015-–-metals-mining",//
-        "20" => "internships-2015-–-technology",//
-        "59" => "spring-summer-internships-2015-education",//
-        "31" => "spring-summer-internships-2015-not-profit-organizations-foundations",//
-        "61" => "spring-summer-2015-internships-government-agency",//
-        "52" => "spring-summer-2015-internships-recruitment-hr-companies",//
-        "38" => "spring-summer-2015-internships-law-firms",//
-        "18" => "spring-summer-internships-2015-pharmaceuticals-biotechnology",//
-        "48" => "spring-summer-internships-2015-public-relations-pr",//
-        "46" => "spring-summer-internships-2015-real-estate",//
-        "19" => "spring-summer-internships-2015-retail-groceries-drugstores",//
-        "39" => "spring-summer-internships-2015-shipping-rails-transportation-logistics",//
-        "33" => "spring-summer-internships-2015-utilities",//
-        "58" => "spring-summer-internships-2015-digital-marketing",//
-        "53" => "spring-summer-internships-2015-e-commerce",//
-        "57" => "spring-summer-internships-2015-business-process-outsourcing",//
-        "50" => "spring-summer-internships-2015-printing-and-publishing",//
-        "22" => "spring-summer-internships-2015-telecommunications",//
-        "55" => "spring-summer-internships-2015-tax-advisory",//
-        "62" => "internships-los-angeles",//
-        "60" => "spring-summer-internships-2015-trade-associations",//
-        "63" => "internships-new-york-city",//
-        "64" => "internships-atlanta",//
-        "65" => "internships-bangalore",//
-        "66" => "internships-shanghai",//
-        "67" => "internships-washington-dc",//
-        "68" => "internships-boston",//
-        "69" => "internships-san-francisco",//
-        "70" => "internships-london",//
-        "71" => "internships-singapore",//
-        "72" => "international-internships",//
-        "73" => "exclusive-zoomdojo-internship-opportunities",//
-		);
-    $title_overload = array();
+    $industries_url_overload = array();
+    $title_overload = array(
+		"36" => "Accounting",
+		"7"  => "Consulting",
+		"5"  => "Finance",
+		"26" => "Environment",
+		"1"  => "Marketing & Communications",
+		"2"  => "Aerospace & Defence",
+		"29" => "Public Broadcasting",
+		"17" => "Petroleum & Energy",
+	);
 
     $industries = array();
     foreach ($results as $res) {
@@ -703,10 +683,12 @@ function organization_manager_featured_jobs()
         $industries[] = $res;
     }
 
+
     $variables = array(
         'industries' => $industries,
         'pager'      => theme('pager', array('tags' => array()))
     );
+
     return theme('organization_manager_featured_jobs', $variables);
 }
 
@@ -770,9 +752,10 @@ function organization_manager_featured_jobs_organizationList($industryId, $page 
         'limit'        => 5,
     );
     $variables = organization_manager_find_jobs_getOrganizationsData($get);
+
     $variables['path'] = drupal_get_path('module', 'organization_manager');
     $variables['industryStr'] = $industryType->title;
-
+    
     drupal_add_js(
         array(
         'location'    => $variables['location'],
@@ -801,6 +784,7 @@ function organization_manager_preprocess_html(&$variables) {
 function organization_manager_featured_jobs_getAjaxOrganizationList()
 {
     $post = (array) json_decode(file_get_contents("php://input"));
+
     if (!empty($post)) {
         $post['location'] = 0;
         $post['type'] = 'featured_jobs';
@@ -824,7 +808,7 @@ function organization_manager_find_jobs_getEmployers()
         $query->leftJoin('zd_org_job_types', 'zojt', 'zojt.organizationId = zo.id');
         $query->leftJoin('zd_org_loc', 'zol', 'zol.organizationId = zo.id');
         $query = $query->fields('zo', array('name'))
-            ->condition('name', '%' . db_like($companyName) . '%', 'LIKE');
+            ->condition('name', db_like($companyName) . '%', 'LIKE');
         // is location country
         if (!empty($_GET['location']['country'])) {
             $query->condition('zol.countryId', $_GET['location']['country']);

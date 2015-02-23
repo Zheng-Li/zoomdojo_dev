@@ -1,5 +1,6 @@
 <?php
 include_once 'organization_manager_find_jobs.inc';
+include_once 'organization_manager_position.inc';
 
 function organization_manager_block_info()
 {
@@ -144,7 +145,7 @@ function organization_manager_menu()
         'type'             => MENU_NORMAL_ITEM,
     );
 
-    $items['featured-jobs-get-org']             = array(
+    $items['featured-jobs-get-org']                          = array(
         'title'            => t('Featured Jobs'),
         'weight'           => 0, // menu order
         'page callback'    => 'organization_manager_featured_jobs_getAjaxOrganizationList',
@@ -156,14 +157,6 @@ function organization_manager_menu()
         'title'            => t('Get organizations'),
         'weight'           => 0, // menu order
         'page callback'    => 'organization_manager_find_jobs_getOrganizations',
-        'access callback'  => true,
-        'type'             => MENU_NORMAL_ITEM,
-    );
-    
-    $items['find-jobs-get-jobs']                      = array(
-        'title'            => t('Get jobs'),
-        'weight'           => 0, // menu order
-        'page callback'    => 'organization_manager_find_jobs_getJobs',
         'access callback'  => true,
         'type'             => MENU_NORMAL_ITEM,
     );
@@ -265,6 +258,7 @@ function organization_manager_menu()
         'access callback' => array('organization_manager_bad_links_access'),
         'file'            => 'organization_manager_organizations.inc',
     );
+
     $items['admin/organization-manager/organizations/delete/%'] = array(
         'title'            => t('Delete Organization'),
         'page callback'    => 'drupal_get_form',
@@ -423,6 +417,117 @@ function organization_manager_menu()
     );
     // ]] -- Industry Types
     
+    
+    // Classified by tags --Ting -- [[
+    $items['admin/organization-manager/tags']       = array(
+        'title'            => t('Grouped by tags'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments' => array('organization_manager_tags_list'),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['admin/organization-manager/tags/add']        = array(
+        'title'            => t('Add tags'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_tags_add'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_tags.inc',
+    );
+    $items['admin/organization-manager/tags/edit/%']     = array(
+        'title'            => t('Edit Tags'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_tags_add', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+    );
+    $items['admin/organization-manager/tags/delete/%']   = array(
+        'title'            => t('Delete Tags'),
+        'page callback'    => 'organization_manager_tags_delete',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+    );
+    // ]] -- Tags
+    
+    //new developed functions by ting
+    $items['find-positions']                      = array(
+        'title'            => t('Search Results'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_positions',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['get-keywords']                  = array(
+        'title'            => t('Get Positions (Ajax)'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getPositions',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['get-location']                  = array(
+        'title'            => t('Get Location (Ajax)'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getLocation',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['find-jobs-get-positions']                      = array(
+        'title'            => t('Get positions'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_getPositions',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['find-jobs-get-jobs']                      = array(
+        'title'            => t('Get jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getJobs',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['jobs-by-key-get-pos']             = array(
+        'title'            => t('Jobs BY Keywords'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_keyword_getAjaxjobsList',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['jobs-by-keywords']                      = array(
+        'title'            => t('Featured Jobs by Keywords'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['jobs-by-keywords/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords_List',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['jobs-by-keywords/%/page/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords_List',
+        'page arguments'   => array(1, 3),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    /////////////////////////////////////////////
+
     return $items;
 }
 
@@ -460,6 +565,13 @@ function organization_manager_theme($existing, $type, $theme, $path)
             'render element' => 'form',
             'file'           => 'organization_manager_job_inustries.inc',
         ),
+        
+        //theme for tags -- ting
+        'organization_manager_tags_list' => array(
+            'render element' => 'form',
+            'file'           => 'organization_manager_tags.inc',
+        ),
+        
         'organization_manager_locations_list' => array(
             'render element' => 'form',
             'file'           => 'organization_manager_locations.inc',
@@ -469,6 +581,19 @@ function organization_manager_theme($existing, $type, $theme, $path)
             'variables' => array('variables' => NULL),
             'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
         ),
+        //ting
+        'organization_manager_positions' => array(
+            'template'  => 'zd-find-position-page',
+            'variables' => array('variables'=> NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        //ting
+        'organization_manager_jobs_by_keywords' => array(
+            'template'  => 'zd-keywords-jobs',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+
         'organization_manager_find_jobs_popup' => array(
             'template'  => 'zd-find-jobs-popup',
             'variables' => array('variables' => NULL),

@@ -72,8 +72,8 @@
                 </select>
             </div>
             <div class="span5 rightpart">
-                <h3>I know the employer<br/>I want to search</h3>
-                <label>Enter the desired employer name</label>
+                <h3>I know the employer</h3>
+                <!--label>Enter the desired employer name</label-->
                 <input name="company_name" value="" id="employer-autocomplete" type="text" autocomplete="off" placeholder="Type employer name" class="fullwidth employer-autocomplete"/>
             </div>
         </div>
@@ -157,8 +157,8 @@
                     </select>
                 </div>
                 <div class="span5 rightpart">
-                    <h3>I know the employer<br/>I want to search</h3>
-                    <label>Enter the desired employer name</label>
+                    <h3>I know the employer</h3>
+                    <!--label>Enter the desired employer name</label-->
                     <input name="company_name" value="<?php echo (isset($_GET['company_name']))?$_GET['company_name']:''; ?>" type="text" placeholder="Type employer name" class="fullwidth employer-autocomplete"/>
                 </div>
             </div>
