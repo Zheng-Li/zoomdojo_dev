@@ -547,7 +547,6 @@ function organization_manager_menu()
         'file'             => 'organization_manager_jobs.inc',
     );
 
-   
     //   ]] -- Zheng
 
     return $items;
