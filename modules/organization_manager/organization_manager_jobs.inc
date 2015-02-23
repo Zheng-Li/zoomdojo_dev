@@ -1,388 +1,781 @@
 <?php
 
-function organization_manager_jobs_list()
-{
-    $organizationId = arg(3);
-    $header         = array(
-        array('data'  => t('ID'), 'field' => 'id'),
-        array('data'  => t('Title'), 'field' => 'title'),
-        array('data'  => t('Created'), 'field' => 'created'),
-        array('data'  => t('Last update'), 'field' => 'updated'),
-        array('data'  => t('Operations'), 'colspan' => 3)
-    );
-
-    $query  = db_select('zd_jobs', 'j');
-    $query->fields('j', array('id', 'title', 'created', 'updated'));
-    $query->where('organizationId = :organizationId', array(':organizationId' => $organizationId));
-//    $query->extend('PagerDefault')->limit(25);
-    $query  = $query
-        ->extend('TableSort')
-        ->orderByHeader($header)
-        ->extend('PagerDefault')
-        ->limit(20);
-    $result = $query->execute();
-    $rows   = array();
-    foreach ($result as $item) {
-        $rows[] = array(
-            $item->id,
-            $item->title,
-            $item->created,
-            $item->updated,
-            l(t('Edit'), 'admin/organization-manager/job/edit/' . $item->id),
-            l(t('Delete'), 'admin/organization-manager/job/delete/' . $item->id),
-        );
-    }
-    $build['pager_top']      = array(
-        '#theme'  => 'pager',
-        '#weight' => 1
-    );
-    $build['category_table'] = array(
-        '#theme'  => 'table',
-        '#header' => $header,
-        '#rows'   => $rows,
-        '#weight' => 2,
-    );
-    $build['pager_bottom']   = array(
-        '#theme'  => 'pager',
-        '#weight' => 3
-    );
-    return $build;
-}
-
-function organization_manager_job_edit()
-{
-    $id = intval(arg(4));
-
-    if ($id) {
-        $job = db_select('zd_jobs', 'o')
-            ->fields('o', array('organizationId', 'title', 'description', 'url'))
-            ->condition('id', $id)
-            ->execute()
-            ->fetch();
-
-        $orgIndustriesData = db_select('zd_jobs_industries', 'i')
-            ->fields('i', array('industryId'))
-            ->condition('jobId', $id)
-            ->execute()
-            ->fetchAll();
-        $orgIndustries     = array();
-        foreach ($orgIndustriesData as $item)
-            $orgIndustries[]   = $item->industryId;
-
-        $orgTypesData = db_select('zd_jobs_job_types', 't')
-            ->fields('t', array('typeId'))
-            ->condition('jobId', $id)
-            ->execute()
-            ->fetchAll();
-        $orgTypes     = array();
-        foreach ($orgTypesData as $item)
-            $orgTypes[]   = $item->typeId;
-
-        $orgLocationsData = db_select('zd_jobs_locations', 'l')
-            ->fields('l', array('locationId'))
-            ->condition('jobId', $id)
-            ->execute()
-            ->fetchAll();
-        $orgLocations     = array();
-        foreach ($orgLocationsData as $item)
-            $orgLocations[]   = $item->locationId;
-    }
-
-    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/select2.css');
-    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/organization_manager.css');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/select2.min.js');
-
-    $form['id'] = array(
-        '#type'          => 'hidden',
-        '#default_value' => $id ? $id : ''
-    );
-
-    $form['organizationId'] = array(
-        '#type'          => 'hidden',
-        '#default_value' => $id ? $job->organizationId : arg(3)
-    );
-
-    $form['title']       = array(
-        '#type'          => 'textfield',
-        '#title'         => t('Job Title'),
-        '#size'          => 60,
-        '#maxlength'     => 255,
-        '#required'      => TRUE,
-        '#default_value' => $id ? $job->title : ''
-    );
-    $form['description'] = array(
-        '#type'          => 'textarea',
-        '#title'         => t('Description'),
-        '#cols'          => 30,
-        '#rows'          => 5,
-        '#required'      => FALSE,
-        '#default_value' => $id ? $job->description : ''
-    );
-    $form['url']       = array(
-        '#type'          => 'textfield',
-        '#title'         => t('Job apply url'),
-        '#size'          => 60,
-        '#maxlength'     => 255,
-        '#default_value' => $id ? $job->url : ''
-    );
-
-    $job_types = array();
-    foreach (organization_manager_job_types_get_data() as $item) {
-        $job_types[$item->id] = $item->title;
-    }
-
-    $industry_types = array();
-    foreach (organization_manager_job_industries_get_data() as $item) {
-        $industry_types[$item->id] = $item->title;
-    }
-
-    $locations = array();
-    foreach (organization_manager_locations_get_data() as $item) {
-        $locations[$item->id] = $item->title;
-    }
-
-    $form['industry_types'] = array(
-        '#title'         => 'Industry Types',
-        '#type'          => 'select',
-        '#options'       => $industry_types,
-        '#multiple'      => TRUE,
-        '#attributes'    => array(
-            'class' => array('select2'),
-            'style' => 'width:400px;'
-        ),
-        '#default_value' => $id ? $orgIndustries : array()
-    );
-    $form['job_types']      = array(
-        '#title'         => 'Job Types',
-        '#type'          => 'select',
-        '#options'       => $job_types,
-        '#multiple'      => TRUE,
-        '#attributes'    => array(
-            'class' => array('select2'),
-            'style' => 'width:400px;'
-        ),
-        '#default_value' => $id ? $orgTypes : array()
-    );
-
-    $form['locations'] = array(
-        '#title'         => 'Locations',
-        '#type'          => 'select',
-        '#options'       => $locations,
-        '#multiple'      => TRUE,
-        '#attributes'    => array(
-            'class' => array('select2'),
-            'style' => 'width:400px;'
-        ),
-        '#default_value' => $id ? $orgLocations : array()
-    );
-
-
-    $form['save'] = array(
-        '#type'  => 'submit',
-        '#value' => 'save'
-    );
-
-    return $form;
-}
-
-/**
- * Add & Edit form for Organization Jobs
- */
-function organization_manager_job_addEditForm($orgId, $id = 0)
-{
-    if (isset($_POST['op'])) {
-        organization_manager_job_edit_submit($_POST);
-    }
-    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/select2.css');
-    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/organization_manager.css');
-
-    drupal_add_js('/sites/all/libraries/tinymce/jscripts/tiny_mce/tiny_mce.js', 'external');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/select2.min.js');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
-    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
-
-    $job = new stdClass();
-    $job->id          = 0;
-    $job->title       = '';
-    $job->description = '';
-    $job->url         = '';
-    $orgIndustries    = array();
-    $orgTypes         = array();
-    $locations        = array();
-    
-    if($id){
-        $job = db_select('zd_jobs', 'o')
-            ->fields('o', array('id', 'organizationId', 'title', 'description', 'url'))
-            ->condition('id', $id)
-            ->execute()
-            ->fetch();
-
-        $orgIndustriesData = db_select('zd_jobs_industries', 'i')
-            ->fields('i', array('industryId'))
-            ->condition('jobId', $id)
-            ->execute()
-            ->fetchAll();
-        $orgIndustries     = array();
-        foreach ($orgIndustriesData as $item)
-            $orgIndustries[]   = $item->industryId;
-
-        $orgTypesData = db_select('zd_jobs_job_types', 't')
-            ->fields('t', array('typeId'))
-            ->condition('jobId', $id)
-            ->execute()
-            ->fetchAll();
-        $orgTypes     = array();
-        foreach ($orgTypesData as $item)
-            $orgTypes[]   = $item->typeId;
-
-        $query = db_select('zd_jobs_locations', 'l');
-        $query->fields('l', array('countryId', 'stateId', 'cityId'));
-        $locations = $query->condition('l.jobId', $id)
-            ->execute()
-            ->fetchAll();
-    }
-
-    if (!is_numeric($orgId)) {
-        $orgId = $job->organizationId;
-    }
-    
-    $countries = _ajax_organization_manager_getCountriesOptions(true);
-    $states    = _ajax_organization_manager_getStatesOptions($countries[0]->id);
-    $cities    = _ajax_organization_manager_getCitiesOptions($states[0]->id);
-
-    $variables = array(
-        'job'            => $job,
-        'orgId'          => $orgId,
-        'orgIndustries'  => $orgIndustries,
-        'orgTypes'       => $orgTypes,
-        'locations'      => $locations,
-        'countries'      => $countries,
-        'states'         => $states,
-        'cities'         => $cities,
-        'industry_types' => organization_manager_job_industries_get_data(),
-        'job_types'      => organization_manager_job_types_get_data(true),
-    );
-    return theme('organization_manager_edit_organization_job', $variables);
-}
-
-function organization_manager_job_edit_submit($val)
-{
-    $location = array();
-    foreach ($val['location']['country'] as $k => $v) {
-        $location[] = (object) array(
-            'countryId' => $v,
-            'stateId'   => $val['location']['state'][$k],
-            'cityId'    => $val['location']['city'][$k],
-        );
-    }
-    $val['location'] = $location;
-    
-    $fields = array(
-        'title'          => $val['title'],
-        'organizationId' => $val['organizationId'],
-        'description'    => $val['description'],
-        'url'            => $val['url'],
-        'updated'        => date('Y-m-d h:i:s'),
-    );
-
-    $status = db_merge('zd_jobs')
-        ->key(array('id' => $val['id'] ? $val['id'] : null))
-        ->fields($fields)
-        ->execute();
-
-    if ($status == MergeQuery::STATUS_INSERT) {
-        $lastId = db_query("SELECT LAST_INSERT_ID()")->fetchField();
-    } else {
-        $lastId = $val['id'];
-    }
-
-    if ($val['id'] && $lastId) {
-        db_delete('zd_jobs_locations')
-            ->condition('jobId', $lastId)
-            ->execute();
-        db_delete('zd_jobs_job_types')
-            ->condition('jobId', $lastId)
-            ->execute();
-        db_delete('zd_jobs_industries')
-            ->condition('jobId', $lastId)
-            ->execute();
-    }
-
-    if (sizeof($val['location'])) {
-        $query = db_insert('zd_jobs_locations')->fields(array('jobId', 'countryId', 'stateId', 'cityId'));
-        foreach ($val['location'] as $v){
-            $query->values(
-                array(
-                    'jobId'     => $lastId,
-                    'countryId' => $v->countryId,
-                    'stateId'   => $v->stateId,
-                    'cityId'    => $v->cityId,
-                )
+    /*
+     *Show job details classified by the job itself
+     */
+    function organization_manager_jobs() {  
+        //Building the structure of the form
+        $form['filters'] = array(
+            '#type'   => 'form',
             );
+    
+        $form['filters']['fieldset'] = array(
+            '#type'   => 'fieldset',
+            '#collapsible'=>TRUE,
+            '#collapsed'=>TRUE,
+            '#title' => t('Filters'),
+            );
+
+        $form['filters']['fieldset']['location'] = array (
+            '#type' => 'textfield',
+            '#title' => t('Location filter'),
+            '#size' => 35,           
+            );
+
+        $form['filters']['fieldset']['organization'] = array (
+            '#type' => 'textfield',
+            '#title' => t('Organization filter'),
+            '#size' => 35,           
+            );
+
+        $form['filters']['fieldset']['tag'] = array (
+            '#type' => 'textfield',
+            '#title' => t('Tag filter'),
+            '#size' => 35,           
+            );
+
+        $form['filters']['fieldset']['submit'] = array( 
+            '#type' => 'submit', 
+            '#value' => 'Apply the filters', 
+            '#submit' => array('apply_filter') 
+            );
+
+        //Fetch the content of the form
+        $header = array(
+            array('data' => 'ID', 'field' => 'id'),
+            array('data' => 'Title', 'field' => 'title'),
+            array('data' => 'Snippet', 'field' => 'snippet'),
+            array('data' => 'Url', 'field' => 'url'),
+            array('data' => 'Url Status', 'field' => 'url_status'),
+            array('data' => 'Organization', 'field' => 'org_name'),
+            array('data' => 'City', 'field' => 'city'),
+            array('data' => 'District', 'field' => 'district'),
+            array('data' => 'Country', 'field' => 'country'),
+            array('data' => 'Created On', 'field' => 'date_created'),
+            array('data' => 'Expired On', 'field' => 'date_expired'),
+            array('data' => 'Counter 1', 'field' => 'counter_1'),
+            array('data' => 'Counter 2', 'field' => 'counter_2'), 
+            array('data' => 'Delete Flag', 'field' => 'delete_flag'),
+            array('data' => t('Operations'), 'colspan' => 2),
+        );
+
+        $query = db_select('zd_dev_jobs', 'j');
+        $query -> join('zd_dev_organizations', 'o', 'j.Org_id = o.ID');
+        $query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
+        $query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
+        $query -> join('zd_dev_location_country', 't', 'j.Country_id = t.ID');
+        $query -> fields('j', array('ID', 'Title', 'Snippet', 'Url', 'Url_status'));
+        $query -> fields('o', array('Name'));
+        $query -> fields('c', array('Name'));
+        $query -> fields('d', array('Name'));
+        $query -> fields('t', array('Name'));
+        $query -> fields('j', array('Created_on', 'Expired_on','Counter_1', 'Counter_2', 'Delete_flag'));
+
+        // Apply the filter for the sql query
+        if(isset($form['filters']['fieldset']['location'])) {
+            // var_dump('WTF!');
+        }
+
+        if(isset($form['filters']['fieldset']['organization'])) {
+            // var_dump('WTF!WTF!');
+        }
+
+        if(isset($form['filters']['fieldset']['tag'])) {
+            // var_dump('WTF!WTF!WTF!');
+        }
+
+
+        $query = $query
+            ->extend('TableSort')
+            ->orderByHeader($header)
+            ->extend('PagerDefault')
+            ->limit(10);
+        $result = $query->execute();
+        $deleteText = array(
+            'Undeleted' => 'Are you sure you want to delete this record?',
+            'Deleted' => 'Are you sure you want to undelete this row?',
+        );
+        $rows = array();
+        foreach ($result as $item) {
+            $rows[] = array(
+                $item->ID,
+                $item->Title,
+                strlen($item->Snippet) > 50 ? substr($item->Snippet,0,20)."..." : $item->Snippet,
+                strlen($item->Url) > 25 ? substr($item->Url,0,16)."..." : $item->Url,
+                $item->Url_status,
+                $item->Name,
+                $item->c_Name,
+                $item->d_Name,
+                $item->t_Name,
+                $item->Created_on,
+                $item->Expired_on,
+                $item->Counter_1,
+                $item->Counter_2,
+                $status = $item->Delete_flag ? "Deleted" : "Undeleted",
+                l(t('Edit'), 'admin/organization-manager/jobs/edit/'. $item->ID,array('query' => drupal_get_destination())),
+                l(t('Change Flag'), 'admin/organization-manager/jobs/flag-delete/' . $item->ID . '/' . $item->Delete_flag, array(
+                    'attributes' => array(
+                        'onClick' => 'if (!confirm("'.$deleteText[$status].'")) {return false;}'
+                    ))
+                ),
+            );
+        }
+
+        $form['pager_top'] = array(
+            '#theme' => 'pager',
+            '#weight' => 1,
+        );
+
+        $form['job_urls'] = array(
+            '#theme' => 'table',
+            '#header' => $header,
+            '#rows' => $rows,
+            '#weight' => 2,
+            '#empty' => t('No matching result in the database.'),
+        );
+
+        $form['pager_bottom'] = array(
+            '#theme' => 'pager',
+            '#weight' => 3,
+        );
+
+        // $form['actions']           = array('#type' => 'actions');
+        // $form['actions']['submit'] = array('#type'  => 'submit', '#value' => t('Save Changes'));
+        return $form;
+    }
+
+    /*
+     * Job editing page with pre-defined organization
+     */
+    function organization_manager_jobs_edit($id = 0) {
+        if (isset($_POST['op'])) {
+            organization_manager_job_edit_submit($_POST);
+        }
+
+        drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/select2.css');
+        drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/organization_manager.css');
+
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/select2.min.js');
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
+
+        $job = new stdClass();
+        $job->org_id           = 0;
+        $job->org_name         = '';
+        $job->org_url          = '';
+        $job->org_tags         = '';
+        $job->job_id           = 0;
+        $job->job_title        = '';
+        $job->job_snippet      = '';
+        $job->job_url          = '';
+        $job->job_url_status   = 200;
+        $job->date_created     = '';
+        $job->date_expired     = '';
+        $job->city             = '';
+        $job->district         = '';
+        $job->country          = '';
+        $job->weight           = 0;
+        $job->job_tags         = '';
+        
+        if($id) {
+            $job_query = db_select('zd_dev_jobs', 'j');
+            $job_query -> leftJoin('zd_dev_jobs_tags', 't', 'j.ID = t.ID');
+            $job_query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
+            $job_query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
+            $job_query -> join('zd_dev_location_country', 'cc', 'j.Country_id = cc.ID');
+            $job_query -> fields('j', array('ID', 'Title', 'Url', 'Url_status', 'Org_id', 'Job_weight', 'Created_on', 'Expired_on', 'Updated_on', 'Snippet'));
+            $job_query -> fields('t', array('Tag'));
+            $job_query -> fields('c', array('Name'));
+            $job_query -> fields('d', array('Name', 'Alias'));
+            $job_query -> fields('cc', array('Name'));
+            $job_query -> condition('j.ID', $id);
+            $job_query -> addExpression('GROUP_CONCAT(DISTINCT Tag)', 'Tag_list');
+            $job_query -> groupBy('j.ID');
+            $job_result = $job_query -> execute();
+
+            foreach($job_result as $item) {
+                $job->job_id = $item->ID;
+                $job->job_title = $item->Title;
+                $job->job_tags = $item->Tag_list;
+                $job->job_url = $item->Url;
+                $job->job_url_status = $item->Url_status;
+                $job->org_id = $item->Org_id;
+                $job->job_snippet = $item->Snippet;
+                $job->weight = $item->Job_weight;
+                $job->date_created = $item->Created_on;
+                $job->date_updated = $item->Updated_on;
+                $job->date_expired = $item->Expired_on;
+                $job->city = $item->Name;
+                $job->district = $item->d_Name.', '.$item->Alias;
+                $job->country = $item->cc_Name;
+            }
+
+            $org_query = db_select('zd_dev_organizations', 'o');
+            $org_query -> leftJoin('zd_dev_organizations_tags', 't', 'o.ID = t.ID');
+            $org_query -> fields('o', array('ID', 'Name', 'Url'));
+            $org_query -> fields('t', array('Tag'));
+            $org_query -> condition('o.ID', $job->org_id);
+            $org_query -> addExpression('GROUP_CONCAT(DISTINCT Tag)', 'Tag_list');
+            $org_query -> groupBy('o.ID');
+            $org_result = $org_query -> execute();
+
+            foreach ($org_result as $item) {
+                $job->org_name = $item->Name;
+                $job->org_url = $item->Url;
+                $job->org_tags = $item->Tag_list;
+            }
+        }
+
+        $variables = array(
+            'org_id'        => $job->org_id,
+            'org_name'      => $job->org_name,
+            'org_url'       => $job->org_url,
+            'org_tags'      => $job->org_tags,
+            'job_id'        => $job->job_id,
+            'job_title'     => $job->job_title,
+            'job_tags'      => $job->job_tags,
+            'job_url'       => $job->job_url,
+            'job_url_status'=> $job->job_url_status,
+            'job_snippet'   => $job->job_snippet,
+            'date_created'  => $job->date_created,
+            'date_expired'  => $job->date_expired,
+            'date_updated'  => $job->date_updated,
+            'weight'        => $job->weight,
+            'city'          => $job->city,
+            'district'      => $job->district,
+            'country'       => $job->country,
+            );
+
+        return theme('organization_manager_edit_job', $variables);
+    }
+
+    /*
+     * Adding or Editing job with pre-defined organization
+     */
+    function organization_manager_job_edit_submit($var) {  
+        $org_fields = array(
+            'ID'        => $var['org-id'],
+            'Name'      => $var['org-name'],
+            'Url'       => $var['org-url'],
+            );
+
+        $org_tags = array(
+            'ID'        => $var['org-id'],
+            'Tag'           => explode(",", $var['org-tags']),       
+            );
+
+        $job_fields = array(
+            'ID'            => $var['job-id'],
+            'Org_id'        => $var['org-id'],
+            'Title'         => $var['job-title'],
+            'Job_weight'    => $var['job-weight'],
+            'Url'           => $var['job-url'],
+            'Url_status'    => $var['url-status'],
+            'Snippet'       => $var['job-snippet'],
+            'Created_on'    => $var['date-created'],
+            'Expired_on'    => $var['date-expired'],  
+            'Updated_on'    => date("Y-m-d"),
+            'City_id'       => 0,
+            'District_id'   => 0,
+            'Country_id'    => 0,
+            );
+
+        $job_tags = array(
+            'ID'        => $var['job-id'],
+            'Tag'           => explode(",", $var['job-tags']),
+            );
+
+        $location = array(
+            'City'          => $var['city'],
+            'District'      => $var['district'],
+            'Country'       => $var['country'],
+            );
+
+        $loc_query = db_select('zd_dev_location_city', 'c')
+            ->fields('c', array('ID'))
+            ->condition('Name', $location['City'])
+            ->execute();
+        $num = $loc_query->rowCount();
+        if($num) {
+            $job_fields['City_id'] = $loc_query->fetchField();
+        } else {
+            $insert = db_insert('zd_dev_location_city')
+                        ->fields(array('Name' => $var['city'],))
+                        ->execute();
+            $job_fields['City_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        }
+
+        $district = explode(",", $location['District']);
+        $loc_query = db_select('zd_dev_location_district', 'd')
+            ->fields('d', array('ID'))
+            ->condition('Name', trim($district[0]))
+            ->condition('Alias', trim($district[1]))
+            ->execute();
+        $num = $loc_query->rowCount();
+        if($num) {
+            $job_fields['District_id'] = $loc_query->fetchField();
+        } else {
+            $insert = db_insert('zd_dev_location_district')
+                        ->fields(array(
+                            'Name' => $district[0], 
+                            'Alias' => $district[1],))
+                        ->execute();
+            $job_fields['District_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        }
+
+        $loc_query = db_select('zd_dev_location_country', 'c')
+            ->fields('c', array('ID'))
+            ->condition('Name', $location['Country'])
+            ->execute();
+        $num = $loc_query->rowCount();
+        if($num) {
+            $job_fields['Country_id'] = $loc_query->fetchField();
+        } else {
+            $insert = db_insert('zd_dev_location_country')
+                        ->fields(array('Name' => $var['country'],))
+                        ->execute();
+            $job_fields['Country_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        }
+
+        $org_status = db_merge('zd_dev_organizations')
+            ->key(array('ID' => $var['org-id']?$var['org-id']:null))
+            ->fields($org_fields)
+            ->execute();
+        if($org_status == MergeQuery::STATUS_INSERT) {
+            $job_fields['org_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        } else {
+            $job_fields['org_id'] = $var['org-id'];
+        }
+
+        $org_query = db_delete('zd_dev_organizations_tags')
+            ->condition('ID', $org_tags['ID'])
+            ->execute();
+        $org_query = db_insert('zd_dev_organizations_tags')
+            ->fields(array('ID', 'Tag'));
+        foreach ($org_tags['Tag'] as $t) {
+            $org_query->values(array($org_tags['ID'], $t));
+        }
+        $org_query->execute();
+
+        $job_status = db_merge('zd_dev_jobs')
+            ->key(array('ID' => $var['job-id']?$var['job-id']:null))
+            ->fields($job_fields)
+            ->execute();
+        if($job_status == MergeQuery::STATUS_INSERT) {
+            $last_id = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        } else {
+            $last_id = $var['job-id'];
+        }
+
+        $job_query = db_delete('zd_dev_jobs_tags')
+            ->condition('ID', $job_tags['ID'])
+            ->execute();
+        $job_query = db_insert('zd_dev_jobs_tags')
+            ->fields(array('ID', 'Tag'));
+        foreach ($job_tags['Tag'] as $t) {
+            $job_query->values(array($job_tags['ID'], $t));
+        }
+        $job_query->execute();
+
+        // $status = db_merge('zd_test_jobs')
+        //     ->key(array('job_id' => $var['job-id']?$var['job-id']:null))
+        //     ->fields($job_fields)
+        //     ->execute();
+        // if( $status == MergeQuery::STATUS_INSERT ) {
+        //     $last_id = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        // } else {
+        //     $last_id = $var['job-id'];
+        // }
+
+        drupal_goto();
+    }
+
+// function organization_manager_jobs_list()
+// {
+//     $organizationId = arg(3);
+//     $header         = array(
+//         array('data'  => t('ID'), 'field' => 'id'),
+//         array('data'  => t('Title'), 'field' => 'title'),
+//         array('data'  => t('Created'), 'field' => 'created'),
+//         array('data'  => t('Last update'), 'field' => 'updated'),
+//         array('data'  => t('Operations'), 'colspan' => 3)
+//     );
+
+//     $query  = db_select('zd_jobs', 'j');
+//     $query->fields('j', array('id', 'title', 'created', 'updated'));
+//     $query->where('organizationId = :organizationId', array(':organizationId' => $organizationId));
+// //    $query->extend('PagerDefault')->limit(25);
+//     $query  = $query
+//         ->extend('TableSort')
+//         ->orderByHeader($header)
+//         ->extend('PagerDefault')
+//         ->limit(20);
+//     $result = $query->execute();
+//     $rows   = array();
+//     foreach ($result as $item) {
+//         $rows[] = array(
+//             $item->id,
+//             $item->title,
+//             $item->created,
+//             $item->updated,
+//             l(t('Edit'), 'admin/organization-manager/job/edit/' . $item->id),
+//             l(t('Delete'), 'admin/organization-manager/job/delete/' . $item->id),
+//         );
+//     }
+//     $build['pager_top']      = array(
+//         '#theme'  => 'pager',
+//         '#weight' => 1
+//     );
+//     $build['category_table'] = array(
+//         '#theme'  => 'table',
+//         '#header' => $header,
+//         '#rows'   => $rows,
+//         '#weight' => 2,
+//     );
+//     $build['pager_bottom']   = array(
+//         '#theme'  => 'pager',
+//         '#weight' => 3
+//     );
+//     return $build;
+// }
+
+// function organization_manager_job_edit()
+// {
+//     $id = intval(arg(4));
+
+//     if ($id) {
+//         $job = db_select('zd_jobs', 'o')
+//             ->fields('o', array('organizationId', 'title', 'description', 'url'))
+//             ->condition('id', $id)
+//             ->execute()
+//             ->fetch();
+
+//         $orgIndustriesData = db_select('zd_jobs_industries', 'i')
+//             ->fields('i', array('industryId'))
+//             ->condition('jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//         $orgIndustries     = array();
+//         foreach ($orgIndustriesData as $item)
+//             $orgIndustries[]   = $item->industryId;
+
+//         $orgTypesData = db_select('zd_jobs_job_types', 't')
+//             ->fields('t', array('typeId'))
+//             ->condition('jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//         $orgTypes     = array();
+//         foreach ($orgTypesData as $item)
+//             $orgTypes[]   = $item->typeId;
+
+//         $orgLocationsData = db_select('zd_jobs_locations', 'l')
+//             ->fields('l', array('locationId'))
+//             ->condition('jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//         $orgLocations     = array();
+//         foreach ($orgLocationsData as $item)
+//             $orgLocations[]   = $item->locationId;
+//     }
+
+//     drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/select2.css');
+//     drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/organization_manager.css');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/select2.min.js');
+
+//     $form['id'] = array(
+//         '#type'          => 'hidden',
+//         '#default_value' => $id ? $id : ''
+//     );
+
+//     $form['organizationId'] = array(
+//         '#type'          => 'hidden',
+//         '#default_value' => $id ? $job->organizationId : arg(3)
+//     );
+
+//     $form['title']       = array(
+//         '#type'          => 'textfield',
+//         '#title'         => t('Job Title'),
+//         '#size'          => 60,
+//         '#maxlength'     => 255,
+//         '#required'      => TRUE,
+//         '#default_value' => $id ? $job->title : ''
+//     );
+//     $form['description'] = array(
+//         '#type'          => 'textarea',
+//         '#title'         => t('Description'),
+//         '#cols'          => 30,
+//         '#rows'          => 5,
+//         '#required'      => FALSE,
+//         '#default_value' => $id ? $job->description : ''
+//     );
+//     $form['url']       = array(
+//         '#type'          => 'textfield',
+//         '#title'         => t('Job apply url'),
+//         '#size'          => 60,
+//         '#maxlength'     => 255,
+//         '#default_value' => $id ? $job->url : ''
+//     );
+
+//     $job_types = array();
+//     foreach (organization_manager_job_types_get_data() as $item) {
+//         $job_types[$item->id] = $item->title;
+//     }
+
+//     $industry_types = array();
+//     foreach (organization_manager_job_industries_get_data() as $item) {
+//         $industry_types[$item->id] = $item->title;
+//     }
+
+//     $locations = array();
+//     foreach (organization_manager_locations_get_data() as $item) {
+//         $locations[$item->id] = $item->title;
+//     }
+
+//     $form['industry_types'] = array(
+//         '#title'         => 'Industry Types',
+//         '#type'          => 'select',
+//         '#options'       => $industry_types,
+//         '#multiple'      => TRUE,
+//         '#attributes'    => array(
+//             'class' => array('select2'),
+//             'style' => 'width:400px;'
+//         ),
+//         '#default_value' => $id ? $orgIndustries : array()
+//     );
+//     $form['job_types']      = array(
+//         '#title'         => 'Job Types',
+//         '#type'          => 'select',
+//         '#options'       => $job_types,
+//         '#multiple'      => TRUE,
+//         '#attributes'    => array(
+//             'class' => array('select2'),
+//             'style' => 'width:400px;'
+//         ),
+//         '#default_value' => $id ? $orgTypes : array()
+//     );
+
+//     $form['locations'] = array(
+//         '#title'         => 'Locations',
+//         '#type'          => 'select',
+//         '#options'       => $locations,
+//         '#multiple'      => TRUE,
+//         '#attributes'    => array(
+//             'class' => array('select2'),
+//             'style' => 'width:400px;'
+//         ),
+//         '#default_value' => $id ? $orgLocations : array()
+//     );
+
+
+//     $form['save'] = array(
+//         '#type'  => 'submit',
+//         '#value' => 'save'
+//     );
+
+//     return $form;
+// }
+
+// /**
+//  * Add & Edit form for Organization Jobs
+//  */
+// function organization_manager_job_addEditForm($orgId, $id = 0)
+// {
+//     if (isset($_POST['op'])) {
+//         organization_manager_job_edit_submit($_POST);
+//     }
+//     drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/select2.css');
+//     drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/organization_manager.css');
+
+//     drupal_add_js('/sites/all/libraries/tinymce/jscripts/tiny_mce/tiny_mce.js', 'external');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/select2.min.js');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
+//     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
+
+//     $job = new stdClass();
+//     $job->id          = 0;
+//     $job->title       = '';
+//     $job->description = '';
+//     $job->url         = '';
+//     $orgIndustries    = array();
+//     $orgTypes         = array();
+//     $locations        = array();
+    
+//     if($id){
+//         $job = db_select('zd_jobs', 'o')
+//             ->fields('o', array('id', 'organizationId', 'title', 'description', 'url'))
+//             ->condition('id', $id)
+//             ->execute()
+//             ->fetch();
+
+//         $orgIndustriesData = db_select('zd_jobs_industries', 'i')
+//             ->fields('i', array('industryId'))
+//             ->condition('jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//         $orgIndustries     = array();
+//         foreach ($orgIndustriesData as $item)
+//             $orgIndustries[]   = $item->industryId;
+
+//         $orgTypesData = db_select('zd_jobs_job_types', 't')
+//             ->fields('t', array('typeId'))
+//             ->condition('jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//         $orgTypes     = array();
+//         foreach ($orgTypesData as $item)
+//             $orgTypes[]   = $item->typeId;
+
+//         $query = db_select('zd_jobs_locations', 'l');
+//         $query->fields('l', array('countryId', 'stateId', 'cityId'));
+//         $locations = $query->condition('l.jobId', $id)
+//             ->execute()
+//             ->fetchAll();
+//     }
+
+//     if (!is_numeric($orgId)) {
+//         $orgId = $job->organizationId;
+//     }
+    
+//     $countries = _ajax_organization_manager_getCountriesOptions(true);
+//     $states    = _ajax_organization_manager_getStatesOptions($countries[0]->id);
+//     $cities    = _ajax_organization_manager_getCitiesOptions($states[0]->id);
+
+//     $variables = array(
+//         'job'            => $job,
+//         'orgId'          => $orgId,
+//         'orgIndustries'  => $orgIndustries,
+//         'orgTypes'       => $orgTypes,
+//         'locations'      => $locations,
+//         'countries'      => $countries,
+//         'states'         => $states,
+//         'cities'         => $cities,
+//         'industry_types' => organization_manager_job_industries_get_data(),
+//         'job_types'      => organization_manager_job_types_get_data(true),
+//     );
+//     return theme('organization_manager_edit_organization_job', $variables);
+// }
+
+// function organization_manager_job_edit_submit($val)
+// {
+//     $location = array();
+//     foreach ($val['location']['country'] as $k => $v) {
+//         $location[] = (object) array(
+//             'countryId' => $v,
+//             'stateId'   => $val['location']['state'][$k],
+//             'cityId'    => $val['location']['city'][$k],
+//         );
+//     }
+//     $val['location'] = $location;
+    
+//     $fields = array(
+//         'title'          => $val['title'],
+//         'organizationId' => $val['organizationId'],
+//         'description'    => $val['description'],
+//         'url'            => $val['url'],
+//         'updated'        => date('Y-m-d h:i:s'),
+//     );
+
+//     $status = db_merge('zd_jobs')
+//         ->key(array('id' => $val['id'] ? $val['id'] : null))
+//         ->fields($fields)
+//         ->execute();
+
+//     if ($status == MergeQuery::STATUS_INSERT) {
+//         $lastId = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+//     } else {
+//         $lastId = $val['id'];
+//     }
+
+//     if ($val['id'] && $lastId) {
+//         db_delete('zd_jobs_locations')
+//             ->condition('jobId', $lastId)
+//             ->execute();
+//         db_delete('zd_jobs_job_types')
+//             ->condition('jobId', $lastId)
+//             ->execute();
+//         db_delete('zd_jobs_industries')
+//             ->condition('jobId', $lastId)
+//             ->execute();
+//     }
+
+//     if (sizeof($val['location'])) {
+//         $query = db_insert('zd_jobs_locations')->fields(array('jobId', 'countryId', 'stateId', 'cityId'));
+//         foreach ($val['location'] as $v){
+//             $query->values(
+//                 array(
+//                     'jobId'     => $lastId,
+//                     'countryId' => $v->countryId,
+//                     'stateId'   => $v->stateId,
+//                     'cityId'    => $v->cityId,
+//                 )
+//             );
             
-            $itemExists = db_query("SELECT count(*) FROM zd_org_loc WHERE organizationId = {$fields['organizationId']} AND countryId = {$v->countryId} AND stateId = {$v->stateId} AND cityId = {$v->cityId}")->fetchField();
-            if(!$itemExists){
-                db_insert('zd_org_loc')
-                    ->fields(
-                        array(
-                            'organizationId' => $fields['organizationId'],
-                            'countryId'      => $v->countryId,
-                            'stateId'        => $v->stateId,
-                            'cityId'         => $v->cityId,
-                        )
-                    )
-                    ->execute();
-            }
-        }
-        $query->execute();
-    }
+//             $itemExists = db_query("SELECT count(*) FROM zd_org_loc WHERE organizationId = {$fields['organizationId']} AND countryId = {$v->countryId} AND stateId = {$v->stateId} AND cityId = {$v->cityId}")->fetchField();
+//             if(!$itemExists){
+//                 db_insert('zd_org_loc')
+//                     ->fields(
+//                         array(
+//                             'organizationId' => $fields['organizationId'],
+//                             'countryId'      => $v->countryId,
+//                             'stateId'        => $v->stateId,
+//                             'cityId'         => $v->cityId,
+//                         )
+//                     )
+//                     ->execute();
+//             }
+//         }
+//         $query->execute();
+//     }
 
-    if (sizeof($val['industry_types'])) {
-        $query = db_insert('zd_jobs_industries')->fields(array('jobId', 'industryId'));
-        foreach ($val['industry_types'] as $v){
-            $query->values(
-                array(
-                    'jobId'      => $lastId,
-                    'industryId' => $v
-                )
-            );
-            $itemExists = db_query("SELECT count(*) FROM zd_org_industries WHERE organizationId = {$fields['organizationId']} AND industryId = {$v}")->fetchField();
-            if(!$itemExists){
-                db_query("INSERT INTO zd_org_industries (organizationId, industryId) VALUES ({$fields['organizationId']}, {$v})")->execute();
-            }
-        }
-        $query->execute();
-    }
+//     if (sizeof($val['industry_types'])) {
+//         $query = db_insert('zd_jobs_industries')->fields(array('jobId', 'industryId'));
+//         foreach ($val['industry_types'] as $v){
+//             $query->values(
+//                 array(
+//                     'jobId'      => $lastId,
+//                     'industryId' => $v
+//                 )
+//             );
+//             $itemExists = db_query("SELECT count(*) FROM zd_org_industries WHERE organizationId = {$fields['organizationId']} AND industryId = {$v}")->fetchField();
+//             if(!$itemExists){
+//                 db_query("INSERT INTO zd_org_industries (organizationId, industryId) VALUES ({$fields['organizationId']}, {$v})")->execute();
+//             }
+//         }
+//         $query->execute();
+//     }
 
-    if (sizeof($val['job_types'])) {
-        $query = db_insert('zd_jobs_job_types')->fields(array('jobId', 'typeId'));
-        foreach ($val['job_types'] as $v){
-            $query->values(
-                array(
-                    'jobId'  => $lastId,
-                    'typeId' => $v
-                )
-            );
-            $itemExists = db_query("SELECT count(*) FROM zd_org_job_types WHERE organizationId = {$fields['organizationId']} AND typeId = {$v}")->fetchField();
-            if(!$itemExists){
-                db_query("INSERT INTO zd_org_job_types (organizationId, typeId) VALUES ({$fields['organizationId']}, {$v})")->execute();
-            }
-        }
-        $query->execute();
-    }
+//     if (sizeof($val['job_types'])) {
+//         $query = db_insert('zd_jobs_job_types')->fields(array('jobId', 'typeId'));
+//         foreach ($val['job_types'] as $v){
+//             $query->values(
+//                 array(
+//                     'jobId'  => $lastId,
+//                     'typeId' => $v
+//                 )
+//             );
+//             $itemExists = db_query("SELECT count(*) FROM zd_org_job_types WHERE organizationId = {$fields['organizationId']} AND typeId = {$v}")->fetchField();
+//             if(!$itemExists){
+//                 db_query("INSERT INTO zd_org_job_types (organizationId, typeId) VALUES ({$fields['organizationId']}, {$v})")->execute();
+//             }
+//         }
+//         $query->execute();
+//     }
 
-    drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
-}
+//     drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
+// }
 
-function organization_manager_job_delete()
-{
-    $id = intval(arg(4));
-    $organizationId = db_query("SELECT organizationId FROM zd_jobs WHERE id = '{$id}'")->fetchField();
-    db_delete('zd_jobs')
-        ->condition('id', $id)
-        ->execute();
+// function organization_manager_job_delete()
+// {
+//     $id = intval(arg(4));
+//     $organizationId = db_query("SELECT organizationId FROM zd_jobs WHERE id = '{$id}'")->fetchField();
+//     db_delete('zd_jobs')
+//         ->condition('id', $id)
+//         ->execute();
     
-    drupal_goto("admin/organization-manager/organization/{$organizationId}/jobs");
-}
+//     drupal_goto("admin/organization-manager/organization/{$organizationId}/jobs");
+// }
+
+?>
