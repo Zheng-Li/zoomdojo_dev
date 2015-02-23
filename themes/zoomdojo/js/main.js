@@ -197,7 +197,8 @@ function trackAjaxRequest(title, url) {
 jQuery(document).ready(function($) {
     
     // Search Form validation -- [[
-    $('#findJobsForm, #findNewJobsForm').submit(function(){
+    /*
+    $('#findJobsForm, #findJobsFormMini, #findNewJobsForm').submit(function(){
         if($(this).find('input[name=company_name]').length > 0 && $(this).find('input[name=company_name]').val() != ""){
             $(this).find('select').val('');
             $(this).find('select, input').filter(function() { return $(this).val() == ""; }).attr('disabled','disabled');
@@ -216,7 +217,9 @@ jQuery(document).ready(function($) {
         $(this).find('select, input').filter(function() { return $(this).val() == ""; }).attr('disabled','disabled');
     });
     // ]] --
-
+    */
+    //ting
+    ///////////
     $('#findJobsForm input[name=company_name], #findNewJobsForm input[name=company_name]').on('change', function(e){
         $(e.currentTarget).parents('form').find('select').val('');
     });

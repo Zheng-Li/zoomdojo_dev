@@ -2793,15 +2793,16 @@ ul.pager>li.pager-current {
 .front-tb-left {
     width: 20%;
     float: left;
-    font-size: 28px;
+    font-size: 15px;
     font-weight: bold;
-    text-align: left;
-    line-height: 42px;
-    padding-left: 10px;
+    text-align: center;
+    line-height: 80px;
+    padding-left: 17px;
+    color:#524747;
 }
 .front-tb-right {
     width: 75%;
-    float: left;
+    float: right;
     margin-left: 40px;
     padding: 25px 0px 10px 0px;
 }
@@ -3002,8 +3003,8 @@ ul#secondary-menu-links a:hover {
 }
 
 .user-profile-wrapper .row-fluid .span6 {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .user-profile-wrapper .row-fluid .span6:first-child {
@@ -3112,7 +3113,7 @@ ul#secondary-menu-links a:hover {
 }
 
 /*#findJobsForm */ul.typeahead > li > a {
-    padding: 3px 10px;
+    padding: 5px 215px 5px 6px;
 }
 
 #zd-filter-panel .dropdown-menu > .active > a, #zd-filter-panel .dropdown-menu > .active > a:hover, #zd-filter-panel .dropdown-menu > .active > a:focus, #findJobsForm .dropdown-menu > .active > a, #findJobsForm .dropdown-menu > .active > a:hover, #findJobsForm .dropdown-menu > .active > a:focus, #findNewJobsPopup .dropdown-menu > .active > a, #findNewJobsPopup .dropdown-menu > .active > a:hover, #findNewJobsPopup .dropdown-menu > .active > a:focus {
@@ -3241,6 +3242,20 @@ i#share-btn {
     max-height: 475px;
 
 }
+
+.input-large {
+  width: 0px;
+  height: 30px !important;
+  margin-bottom: 0px !important;
+  line-height: 20px !important;
+  padding: 7px 10px !important;
+  font-size: 10px !important;
+  -webkit-border-radius: 10px;
+     -moz-border-radius: 10px;
+          border-radius: 10px;
+}
+
+
 
 
 /*------------------------  PROFILE ---------------------------------*/
@@ -4255,8 +4270,8 @@ h2.fg-red {
     .front-tb-left {
         width: 14%;
         font-size: 18px;
-        padding-top: 20px;
-        line-height: 20px;
+        padding-top: 15px;
+        line-height: 10px;
     }
     .front-tb-right {
         margin-left: 10px;
@@ -4400,7 +4415,7 @@ h2.fg-red {
         width: 13%;
         font-size: 16px;
         padding-top: 20px;
-        line-height: 20px;
+        line-height: 15px;
     }
     .front-tb-right {
         margin-left: 10px;
@@ -4690,11 +4705,11 @@ h2.fg-red {
         width: 100%;
         float: none;
         margin-left: 0px;
-        padding: 5px 0px;
+        padding: 3px 0px;
     }
 
     .front-tb-right a {
-        float: right;
+        float: left;
         margin-right: 8px;
     }
 
