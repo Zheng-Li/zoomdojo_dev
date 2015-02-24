@@ -112,7 +112,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         }
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Url, zo.name
+            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, zo.name
                 FROM zd_dev_jobs AS zdj
                 LEFT JOIN zd_dev_jobs_tags AS zdjt
                 ON zdj.ID = zdjt.ID
@@ -188,6 +188,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         
         foreach ($results as $record) {
             $record->encodeName = urlencode($record->Title);
+            $record->Url = 'detailed-job-page/'.$record->ID;
             $positions[] = $record;
         }
 
@@ -248,7 +249,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
-    
+
     return array(
         'positions'     => $positions,
         'limit'         => $limit,
@@ -606,7 +607,7 @@ function organization_manager_jobs_keyword_getAjaxjobsList()
 function organization_manager_jobDetails($jobId)
 {
     global $user, $base_url;
-    //drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
+    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
     //drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/job-detail-page.js');
@@ -643,9 +644,18 @@ function organization_manager_jobDetails($jobId)
                 ->execute()
                 ->fetch();
 
-    
-    //////////////////////////////////////////////
+    $query->location = "";
+    if ($query->Name != ""){$query->location.= " ".$query->Name;}
+    if ($query->zdld_Name != ""){$query->location.=" ".$query->zdld_Name;}
+    if ($query->zdlco_Name != ""){$query->location.= " ".$query->zdlco_Name;}
 
+    $tag_query = db_select('zd_dev_jobs_tags','zdjt');
+    $tag_query = $tag_query->fields('zdjt',array('Tag'))
+                condition('zdjt.ID',$jobId)
+                ->execute()
+                ->fetch();
+    //////////////////////////////////////////////
+    /*
     $query = db_select('zd_jobs', 'zj');
     $query->leftJoin('zd_save_entity', 'zde', 'zde.uid = '.$user->uid.' AND zde.entity_type = 1 AND zde.entity_id = zj.id');
     $query->leftJoin('zd_jobs_locations', 'zjl', 'zjl.jobId=zj.id');
@@ -657,9 +667,12 @@ function organization_manager_jobDetails($jobId)
         ->condition('zj.id', $jobId)
         ->execute()
         ->fetch();
+    
+
     if (empty($query->url)) {
         $query->url = $query->homePageUrl;
     }
+
     $query->date = date('d/m/Y', strtotime($query->updated));
     $query->location = organization_manager_getOrganizationLocationById(
         array(
@@ -668,6 +681,7 @@ function organization_manager_jobDetails($jobId)
             'city'    => $query->cityId,
         )
     );
+    */
 
     $variables = array(
         'job'  => $query,
