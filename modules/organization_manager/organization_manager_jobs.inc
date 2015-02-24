@@ -23,6 +23,7 @@
         $form['filters']['fieldset']['location'] = array (
             '#type' => 'textfield',
             '#title' => t('Location filter'),
+            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array(),
             '#name' => 'location',
             '#size' => 35,           
             );
@@ -30,6 +31,7 @@
         $form['filters']['fieldset']['organization'] = array (
             '#type' => 'textfield',
             '#title' => t('Organization filter'),
+            '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array(),
             '#name' => 'organization',
             '#size' => 35,           
             );
@@ -37,6 +39,7 @@
         $form['filters']['fieldset']['tag'] = array (
             '#type' => 'textfield',
             '#title' => t('Tag filter'),
+            '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array(),
             '#name' => 'tag',
             '#size' => 35,           
             );
