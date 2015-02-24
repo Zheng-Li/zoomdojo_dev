@@ -1,5 +1,0 @@
-name = Organization manager
-description = Provides functionality to manage organizations
-package = Zoomdojo
-core = 7.x
-version = "1.0"
