@@ -60,7 +60,7 @@
         );
 
         $query = db_select('zd_dev_jobs', 'j');
-        $query -> join('zd_dev_organizations', 'o', 'j.Org_id = o.ID');
+        $query -> leftjoin('zd_dev_organizations', 'o', 'j.Org_id = o.ID');
         $query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
         $query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
         $query -> join('zd_dev_location_country', 't', 'j.Country_id = t.ID');
