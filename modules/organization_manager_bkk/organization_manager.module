@@ -1,0 +1,658 @@
+<?php
+include_once 'organization_manager_find_jobs.inc';
+include_once 'organization_manager_position.inc';
+
+function organization_manager_block_info()
+{
+    $items = array();
+    $items['find_jobs_popup'] = array(
+        'info'       => t('Find Jobs Popup'),
+        'status'     => true,
+        'region'     => 'hidden',
+        'weight'     => 0,
+        'visibility' => 0,
+    );
+    $items['find_jobs_header_form'] = array(
+        'info'       => t('Find Jobs Header Form'),
+        'status'     => true,
+        'region'     => 'highlighted',
+        'weight'     => 0,
+        'visibility' => 1,
+    );
+    return $items;
+}
+
+function organization_manager_block_view($delta = '') 
+{
+    $block = array();
+     switch ($delta) {
+        case 'find_jobs_popup':
+            $block['content'] = organization_manager_find_jobs_popup();
+            break;
+        case 'find_jobs_header_form':
+            $block['content'] = organization_manager_find_jobs_header_form();
+            break;
+        default:
+            $block['content'] = '';
+            break;
+    }
+    return $block;
+}
+
+
+
+function organization_manager_menu()
+{
+    $items['find-jobs']                      = array(
+        'title'            => t('Job Search Results'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    //ting
+    $items['find-positions']                      = array(
+        'title'            => t('Position Search Results'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_positions',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    //ting
+    $items['get-positions']                  = array(
+        'title'            => t('Get Positions (Ajax)'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getPositions',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+
+    $items['get-employers']                  = array(
+        'title'            => t('Get Employers (Ajax)'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getEmployers',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['job-details/%']                      = array(
+        'title'            => t('Job details'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_jobDetails',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['featured-jobs/internships']                      = array(
+        'title'            => t('2015 Internships & Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_featured_jobs',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    //ting 
+    $items['jobs-by-keywords']                      = array(
+        'title'            => t('Featured Jobs by Keywords'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['saved-organizations']                = array(
+        'title'            => t('My saved organizations'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_userSavedOrganizations',
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['get-saved-organizations-data']                = array(
+        'title'            => t('My saved organizations'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_userSavedOrganizationsAjax',
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['saved-jobs']                        = array(
+        'title'            => t('My saved jobs'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_userSavedJobs',
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['get-saved-jobs-data']                = array(
+        'title'            => t('My saved jobs'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_userSavedJobsAjax',
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['save-entity/%/type/%']                        = array(
+        'title'            => t('Save entity'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_save_entity',
+        'page arguments'   => array(1, 3),
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['delete-entity/%/type/%']                        = array(
+        'title'            => t('Delete entity'),
+        'weight'           => 0, 
+        'page callback'    => 'organization_manager_user_delete_entity',
+        'page arguments'   => array(1, 3),
+        'access callback'  => 'user_is_logged_in',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['featured-jobs/internships/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_featured_jobs_organizationList',
+        'page arguments'   => array(2),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    //ting
+    
+    $items['jobs-by-keywords/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords_List',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['jobs-by-keywords/%/page/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobs_by_keywords_List',
+        'page arguments'   => array(1, 3),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['featured-jobs/internships/%/page/%']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_featured_jobs_organizationList',
+        'page arguments'   => array(2, 4),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['featured-jobs-get-org']             = array(
+        'title'            => t('Featured Jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_featured_jobs_getAjaxOrganizationList',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
+    $items['find-jobs-get-organizations']                      = array(
+        'title'            => t('Get organizations'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getOrganizations',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['find-jobs-get-jobs']                      = array(
+        'title'            => t('Get jobs'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_find_jobs_getJobs',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    $items['admin/organization-manager']                      = array(
+        'title'            => t('Organization Manager'),
+        'weight'           => -8, // menu order
+        'page callback'    => 'system_admin_menu_block_page',
+        'access callback' => array('organization_manager_bad_links_access'),
+        'file path'        => drupal_get_path('module', 'system'),
+        'file'             => 'system.admin.inc',
+        'position'         => 'right',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    
+    // Organization Jobs -- [[
+    $items['admin/organization-manager/organization/%/jobs']        = array(
+        'title'            => t('Organization Jobs List'),
+        'page callback'    => 'organization_manager_jobs_list',
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_jobs.inc',
+    );
+    $items['admin/organization-manager/job/edit/%']        = array(
+        'title'            => t('Job Edit'),
+        'page callback'    => 'organization_manager_job_addEditForm',
+        'page arguments'   => array(3, 4),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_jobs.inc',
+    );
+    $items['admin/organization-manager/organization/%/jobs/add']        = array(
+        'title'            => t('Add Job'),
+        'page callback'    => 'organization_manager_job_addEditForm',
+        'page arguments'   => array(3),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_jobs.inc',
+    );
+    $items['admin/organization-manager/job/delete/%']        = array(
+        'title'            => t('Job Delete'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_job_delete'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_jobs.inc',
+    );
+    // ]] --
+    
+    // Organizations -- [[
+    $items['admin/organization-manager/organizations']        = array(
+        'title'            => t('Organizations List'),
+        'page callback'    => 'organization_manager_organizations_list',
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/add']    = array(
+        'title'            => t('Add Organization'),
+        'page callback'    => 'organization_manager_organization_edit',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/broken-links']    = array(
+        'title'            => t('Broken links'),
+        'page callback'    => 'organization_manager_getOrganizationBrokenLinks',
+        'access callback' => array('organization_manager_bad_links_access'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/broken-links/error']    = array(
+        'title'            => t('Broken links - Http Error'),
+        'page callback'    => 'organization_manager_getOrganizationBrokenLinks',
+        'access callback' => array('organization_manager_bad_links_access'),
+        'type'             => MENU_DEFAULT_LOCAL_TASK,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+        $items['admin/organization-manager/organizations/flag/%'] = array(
+        'title'           => t('Flag organization (ajax)'),
+        'page callback'   => 'organization_manager_flagDeleteButton_flag_action',
+        'page arguments'   => array(4),
+        'access callback' => array('organization_manager_bad_links_access'),
+        'type'            => MENU_CONTEXT_NONE,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/broken-links/unknown-error']    = array(
+        'title'            => t('Broken links - Unknown error'),
+        'page callback'    => 'organization_manager_getOrganizationBrokenLinksUnknownError',
+        'access callback' => array('organization_manager_bad_links_access'),
+        'type'             => MENU_LOCAL_TASK,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/edit/%'] = array(
+        'title'            => t('Edit Organization'),
+        'page callback'    => 'organization_manager_organization_edit',
+        'page arguments'   => array(4),
+        'access callback' => array('organization_manager_bad_links_access'),
+        'file'            => 'organization_manager_organizations.inc',
+    );
+
+    $items['admin/organization-manager/organizations/delete/%'] = array(
+        'title'            => t('Delete Organization'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_organization_delete', 5),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/change-status/%/%'] = array(
+        'title'            => t('Change status'),
+        'page callback'    => 'organization_manager_organization_change_status',
+        'page arguments'   => array(4, 5),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['admin/organization-manager/organizations/change-status/%'] = array(
+        'title'            => t('Change status (ajax)'),
+        'page callback'    => 'organization_manager_statusButton_action',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['get-states/%']             = array(
+        'title'           => t('Get states'),
+        'weight'          => 0, // menu order
+        'page callback'   => 'organization_manager_ajax_getStates',
+        'page arguments'  => array(1),
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['get-cities/%']             = array(
+        'title'           => t('Get cities'),
+        'weight'          => 0, // menu order
+        'page callback'   => 'organization_manager_ajax_getCities',
+        'page arguments'  => array(1),
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['get-states-admin/%']             = array(
+        'title'           => t('Get states'),
+        'weight'          => 0, // menu order
+        'page callback'   => 'organization_manager_ajax_getAdminStates',
+        'page arguments'  => array(1),
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    $items['get-cities-admin/%']             = array(
+        'title'           => t('Get cities'),
+        'weight'          => 0, // menu order
+        'page callback'   => 'organization_manager_ajax_getAdminCities',
+        'page arguments'  => array(1),
+        'access callback' => true,
+        'type'            => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_organizations.inc',
+    );
+    // ]] -- Organizations
+    
+    // Locations -- [[
+    $items['admin/organization-manager/locations']        = array(
+        'title'            => t('Locations'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments' => array('organization_manager_locations_list'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_locations.inc',
+    );
+    $items['admin/organization-manager/locations/add']    = array(
+        'title'            => t('Add Location'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_location_edit'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_locations.inc',
+    );
+    $items['admin/organization-manager/locations/edit/%'] = array(
+        'title'            => t('Edit Location'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_location_edit', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_locations.inc',
+    );
+    $items['admin/organization-manager/locations/delete/%'] = array(
+        'title'            => t('Delete Location'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_location_delete', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_locations.inc',
+    );
+    // ]] -- Locations
+    
+    // Job Types -- [[
+    $items['admin/organization-manager/job-types']            = array(
+        'title'            => t('Job Types'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments' => array('organization_manager_job_types_list'),
+        'access arguments' => array('administer menu'),
+        'type'             => MENU_NORMAL_ITEM,
+        'file'            => 'organization_manager_job_types.inc',
+    );
+    $items['admin/organization-manager/job-types/add']        = array(
+        'title'            => t('Add Job Type'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_job_type_add'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_job_types.inc',
+    );
+    $items['admin/organization-manager/job-types/edit/%']     = array(
+        'title'            => t('Add Job Type'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_job_type_add', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_job_types.inc',
+    );
+    $items['admin/organization-manager/job-types/delete/%']   = array(
+        'title'            => t('Add Job Type'),
+        'page callback'    => 'organization_manager_job_type_delete',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_job_types.inc',
+    );
+    // ]] -- Job Types
+    
+    // Industry Types -- [[
+    $items['admin/organization-manager/industry-types']       = array(
+        'title'            => t('Industry Types'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments' => array('organization_manager_job_industries_list'),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_job_inustries.inc',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['admin/organization-manager/industry-types/add']        = array(
+        'title'            => t('Add Industry Type'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_job_industry_add'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_job_inustries.inc',
+    );
+    $items['admin/organization-manager/industry-types/edit/%']     = array(
+        'title'            => t('Edit Industry Type'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_job_industry_add', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_job_inustries.inc',
+    );
+    $items['admin/organization-manager/industry-types/delete/%']   = array(
+        'title'            => t('Delete Industry Type'),
+        'page callback'    => 'organization_manager_job_industry_delete',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_job_inustries.inc',
+    );
+    // ]] -- Industry Types
+    
+    
+    // Classified by tags --Ting -- [[
+    $items['admin/organization-manager/tags']       = array(
+        'title'            => t('Grouped by tags'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments' => array('organization_manager_tags_list'),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['admin/organization-manager/tags/add']        = array(
+        'title'            => t('Add Keywords'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_tags_add'),
+        'access arguments' => array('administer site configuration'),
+        'type'             => MENU_LOCAL_ACTION,
+        'file'            => 'organization_manager_tags.inc',
+    );
+    $items['admin/organization-manager/tags/edit/%']     = array(
+        'title'            => t('Edit Tags'),
+        'page callback'    => 'drupal_get_form',
+        'page arguments'   => array('organization_manager_tags_add', 4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+    );
+    $items['admin/organization-manager/tags/delete/%']   = array(
+        'title'            => t('Delete Industry Type'),
+        'page callback'    => 'organization_manager_tags_delete',
+        'page arguments'   => array(4),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_tags.inc',
+    );
+    // ]] -- Industry Types
+
+    return $items;
+}
+
+function organization_manager_permission(){
+  return array(
+    'editing_bad_links' => array(
+      'title' => t('Organization manager bad links.'),
+      'description' => t('Allowing to edit bad links on Organization Manager.'),
+    )
+  );
+}
+
+function organization_manager_bad_links_access($account = NULL){
+  if (!$account) {
+    global $user;
+    $account = $user;
+  }
+  if(user_access('editing_bad_links', $account) 
+      && !user_access('administer site configuration', $account)
+      && $_GET['q'] == 'admin/organization-manager'){
+    drupal_goto('admin/organization-manager/organizations/broken-links');
+  }
+  return user_access('administer site configuration', $account) || user_access('editing_bad_links', $account);
+}
+
+function organization_manager_theme($existing, $type, $theme, $path)
+{
+    return array(
+        // Theme function for the 'parent/child' example.
+        'organization_manager_job_types_list' => array(
+            'render element' => 'form',
+            'file'           => 'organization_manager_job_types.inc',
+        ),
+        'organization_manager_job_industries_list' => array(
+            'render element' => 'form',
+            'file'           => 'organization_manager_job_inustries.inc',
+        ),
+        
+        //theme for tags -- ting
+        'organization_manager_tags_list' => array(
+            'render element' => 'form',
+            'file'           => 'organization_manager_tags.inc',
+        ),
+        
+        'organization_manager_locations_list' => array(
+            'render element' => 'form',
+            'file'           => 'organization_manager_locations.inc',
+        ),
+        'organization_manager_find_jobs' => array(
+            'template'  => 'zd-find-jobs-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        //ting
+        'organization_manager_positions' => array(
+            'template'  => 'zd-find-position-page',
+            'variables' => array('variables'=> NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+
+
+        'organization_manager_find_jobs_popup' => array(
+            'template'  => 'zd-find-jobs-popup',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_find_jobs_header_form' => array(
+            'template'  => 'zd-find-jobs-header-form',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_find_jobs_jobDetails' => array(
+            'template'  => 'zd-find-jobs-job-details',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_featured_jobs' => array(
+            'template'  => 'zd-featured-jobs',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        //ting
+        'organization_manager_jobs_by_keywords' => array(
+            'template'  => 'zd-keywords-jobs',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_user_saved_organizations' => array(
+            'template'  => 'zd-user-saved-organizations',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_user_saved_jobs' => array(
+            'template'  => 'zd-user-saved-jobs',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_share_email_template' => array(
+            'template'  => 'zd-share-email-template',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_edit_organization' => array(
+            'template'  => 'zd-edit-organization',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_edit_organization_job' => array(
+            'template'  => 'zd-edit-organization-job',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        'organization_manager_list_broken_links' => array(
+            'template'  => 'zd-organization-broken-list',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+    );
+}
+
+function organization_manager_node_view($node, $view_mode) {
+    if ($node->type=="companies_for_veterans"){
+      global $user;
+      drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
+    drupal_add_js(drupal_get_path('module', 'organization_manager')  . '/js/typeahead.min.js');
+    drupal_add_js(drupal_get_path('module', 'organization_manager')  . '/js/find-jobs.js');
+       $variables = organization_manager_find_jobs_getOrganizationsData(array(
+          'job_type'=>8,
+          'location'=>array(
+            'country'=>3,
+            'state'=>0,
+            'city'=>0,
+          ),
+          'display'=>3000
+        )); 
+       $variables['path'] = drupal_get_path('module', 'organization_manager');
+    $variables['user'] = $user;
+    drupal_add_js(
+        array(
+        'location'    => $variables['location'],
+        'page'        => $variables['currentPage'],
+        'jobType'     => $variables['jobType'],
+        'jobIndustry' => $variables['jobIndustry'],
+        'companyName' => $variables['companyName'],
+        'display'     => $variables['limit'],
+        ), 'setting'
+    );
+       $node->search_results = theme('organization_manager_find_jobs', $variables);
+    }    
+}
+
