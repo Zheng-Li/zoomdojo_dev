@@ -420,7 +420,7 @@ function organization_manager_menu()
     
     // Classified by tags --Ting -- [[
     $items['admin/organization-manager/tags']       = array(
-        'title'            => t('Grouped by tags'),
+        'title'            => t('Static Url Pages'),
         'page callback'    => 'drupal_get_form',
         'page arguments' => array('organization_manager_tags_list'),
         'access arguments' => array('administer site configuration'),
