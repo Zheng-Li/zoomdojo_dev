@@ -1838,6 +1838,10 @@ span.feature-shadow {
     background: url("../img/feature-shadow.png") no-repeat;
 }
 
+#below-content{
+    float: left;
+}
+
 .interships-2013 {
     background-image: url("../img/fall-interships-2013-background.png");
     background-repeat: no-repeat;

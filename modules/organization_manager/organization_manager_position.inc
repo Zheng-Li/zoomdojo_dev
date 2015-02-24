@@ -1,6 +1,8 @@
 <?php
 include_once 'organization_manager_find_jobs.inc';
 
+
+
 /**
  * $items['find-positions'] get jobs from new database
  */
