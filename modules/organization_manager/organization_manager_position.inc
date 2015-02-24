@@ -191,7 +191,7 @@ function organization_manager_find_jobs_getPositionsData($get)
             $record->Url = 'detailed-job-page/'.$record->ID;
             $positions[] = $record;
         }
-
+        print_r($positions);
     ///////////////////////////////////////////////////////////////
         $countRows = db_query('SELECT FOUND_ROWS();')->fetchField();
 
@@ -651,9 +651,11 @@ function organization_manager_jobDetails($jobId)
 
     $tag_query = db_select('zd_dev_jobs_tags','zdjt');
     $tag_query = $tag_query->fields('zdjt',array('Tag'))
-                condition('zdjt.ID',$jobId)
+                ->condition('zdjt.ID',$jobId)
                 ->execute()
-                ->fetch();
+                ->fetchAll();
+
+    print_r($tag_query);
     //////////////////////////////////////////////
     /*
     $query = db_select('zd_jobs', 'zj');

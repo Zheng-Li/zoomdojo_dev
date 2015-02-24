@@ -18,6 +18,7 @@
                         <div class="company-name"><?php print $job->name; ?></div>
                         <div class="company-location"><?php print $job->location; ?></div>
                     </div>
+
                     <div class="span4 text-right job-btns share-view">
                         <?php if(!empty($job->Url)): ?>
                             <?php if ($user->uid > 0): ?>
@@ -37,6 +38,11 @@
                         </a>
                         
                     </div>
+                  <div class="span8 text-left">
+
+                        <div class="company-name"><?php print $job->name; ?></div>
+                        
+                    </div>  
                 </div>
             </div>
         </div>
