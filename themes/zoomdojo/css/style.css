@@ -1838,6 +1838,7 @@ span.feature-shadow {
     background: url("../img/feature-shadow.png") no-repeat;
 }
 
+
 #below-content{
     float: left;
 }
@@ -1860,7 +1861,7 @@ span.feature-shadow {
 }
 .interships-2013 > p > span {
     font-size: 22px;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 .social-bg {
