@@ -302,23 +302,7 @@ function organization_manager_find_jobs_getOrganizationsData($get)
       $userCanEdit = $router_item['access'];
     }
 
-    //////////////////////////////
-    $jobId = 1;
-
-    $query = db_select('zd_dev_jobs','zdj');
-    $query->leftJoin('zd_dev_location_city','zdlc','zdj.City_id = zdlc.ID');
-    $query->leftJoin('zd_dev_location_district','zdld','zdj.District_id = zdld.ID');
-    $query->leftJoin('zd_dev_location_country','zdlco','zdj.Country_id = zdlco.ID');
-    $query->leftJoin('zd_organization','zo','zdj.Org_id = zo.id');
-    $query = $query->fields('zdj')
-                ->fields('zdlc',array('Name'))
-                ->fields('zdld',array('Name'))
-                ->fields('zdlco',array('Name'))
-                ->fields('zo',array('name'))
-                ->condition('zdj.ID',$jobId)
-                ->execute()
-                ->fetch();
-    print_r($query);
+    
 
 
     //////////////////////////////
