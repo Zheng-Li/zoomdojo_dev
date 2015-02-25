@@ -40,7 +40,14 @@
                     </div>
                   <div class="span8 text-left">
 
-                        <div class="company-name"><?php print $job->name; ?></div>
+                        <div class="span8 text-left company-info">
+                            <?php if(!empty($job->Tags))?>
+                            <ul>
+                            <?php foreach ($job->Tags as $tag): ?>
+                            <li><?php print $tag ?></li>
+                            <?php endforeach;?>
+                            </ul> 
+                        </div>
                         
                     </div>  
                 </div>
