@@ -821,8 +821,8 @@ function zoomdojo_blocks_homePageLinkView()
 {
     //$homePageLink = variable_get('zd_homepage_link', '/events');
     $homePageLink = '/featured-jobs/internships';
-    return '<div class="interships-2013">
-                    <p id="below-content" class="btn btn-danger btn-lg" href="'.$homePageLink.'">'.t('Click here').'</a></p>
-                 <span style="font-size:22px;">'.t('Just posted! Exclusive Job and Internship Opportunities and new International &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Internships!').'</span>
+    return '<div class="interships-2013" style="height:60px;">
+                <p id="below-content" class="btn btn-danger btn-lg" href="'.$homePageLink.'">'.t('Click here').'</a></p>
+                 <span style="font-size:22px; float:left; width:900px;height:50px;margin:5px; padding-left:25px;">'.t('Just posted! Exclusive Job and Internship Opportunities and new International Internships!').'</span>
            </div>';
 }

@@ -1843,6 +1843,7 @@ span.feature-shadow {
     float: left;
 }
 
+
 .interships-2013 {
     background-image: url("../img/fall-interships-2013-background.png");
     background-repeat: no-repeat;
@@ -3088,6 +3089,7 @@ ul#secondary-menu-links a:hover {
     padding-left: 0px;
     margin-top: 0px;
     text-align: left;
+
 }
 
 /*#findJobsForm */ul.typeahead {
@@ -3136,6 +3138,7 @@ ul#secondary-menu-links a:hover {
 
 #zd-filter-panel ul.typeahead > li:last-child > a, #findJobsForm ul.typeahead, #findNewJobsPopup  ul.typeahead {
     border-bottom: none;
+
 }
 
 #findNewJobsForm .leftpart h3 {
@@ -4265,6 +4268,7 @@ h2.fg-red {
     }
     #secondary-menu .dropdown-menu {
         top: 80px !important;
+
     }
 
     #secondary-menu {
@@ -4404,6 +4408,7 @@ h2.fg-red {
 
     .dropdown-menu {
         top: 80px !important;
+
     }
 
     .greetings {
@@ -4743,7 +4748,7 @@ h2.fg-red {
     }
 
     .interships-2013 {
-        margin: 0px 7px 0px 7px;
+        margin: 0px 7px 20px 7px;
     }
 
     .featured-jobs-wrapper a {
