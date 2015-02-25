@@ -205,11 +205,33 @@ function organization_manager_find_jobs_getPositionsData($get)
             if ($record->city_name != ""){$record->location.= " ".$record->city_name;}
             if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
             if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
-            $record->postTime = ceil(($now - strtotime($record->Created_on))/3600);
+
+            
+            $postTime = (int)ceil(($now - strtotime($record->Created_on))/3600);
+            
+            
+            if($postTime >= 24){
+                $postTime = (int)($postTime/24);
+                
+                if($postTime == 1){$postFormat = strval($postTime)." day";}
+                else{
+                    if($postTime > 30){
+                        $postTime = 30;
+                        $postFormat=strval($postTime)."+ days";}
+                    else{$postFormat=strval($postTime)." days";}
+                    }
+                
+            }
+            
+            else{
+                if($postTime <= 1){$postFormat = strval($postTime)." hour";}
+                else{{$postFormat = strval($postTime)." hours";}}
+            }
+            $record->post = $postFormat;
+            
             $record->Tags = array();
             $positions[$record->ID] = $record;
             $pos_ids[] = $record->ID;
-         
         }
 
     ///////////////////////////////////////////////////////////////
