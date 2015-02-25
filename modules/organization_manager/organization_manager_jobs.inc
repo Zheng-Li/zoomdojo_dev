@@ -4,6 +4,10 @@
      *Show job details classified by the job itself
      */
     function organization_manager_jobs() {  
+        if(isset($_POST['op']) && $_POST['op'] == 'Apply the filters'){
+            organization_manager_organizations_list_filters_submit($_POST);
+        }
+
         //Building the structure of the form
         $form['filters'] = array(
             '#type'   => 'form',
@@ -19,25 +23,31 @@
         $form['filters']['fieldset']['location'] = array (
             '#type' => 'textfield',
             '#title' => t('Location filter'),
+            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array(),
+            '#name' => 'location',
             '#size' => 35,           
             );
 
         $form['filters']['fieldset']['organization'] = array (
             '#type' => 'textfield',
             '#title' => t('Organization filter'),
+            '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array(),
+            '#name' => 'organization',
             '#size' => 35,           
             );
 
         $form['filters']['fieldset']['tag'] = array (
             '#type' => 'textfield',
             '#title' => t('Tag filter'),
+            '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array(),
+            '#name' => 'tag',
             '#size' => 35,           
             );
 
         $form['filters']['fieldset']['submit'] = array( 
             '#type' => 'submit', 
             '#value' => 'Apply the filters', 
-            '#submit' => array('apply_filter') 
+            '#submit' => array('apply_filter'), 
             );
 
         //Fetch the content of the form
@@ -72,18 +82,22 @@
         $query -> fields('j', array('Created_on', 'Expired_on','Counter_1', 'Counter_2', 'Delete_flag'));
 
         // Apply the filter for the sql query
-        if(isset($form['filters']['fieldset']['location'])) {
-            // var_dump('WTF!');
+        if(variable_get('location') != "") {
+            $or = db_or()
+                -> condition('c.Name', '%'.db_like(variable_get('location')).'%', 'LIKE')
+                -> condition('d.Name', '%'.db_like(variable_get('location')).'%', 'LIKE')
+                -> condition('t.Name', '%'.db_like(variable_get('location')).'%', 'LIKE');
+            $query -> condition($or);
         }
 
-        if(isset($form['filters']['fieldset']['organization'])) {
-            // var_dump('WTF!WTF!');
+        if(variable_get('organization') != "") {
+            $query -> condition('o.Name', '%'.db_like(variable_get('organization')).'%', 'LIKE');
         }
 
-        if(isset($form['filters']['fieldset']['tag'])) {
-            // var_dump('WTF!WTF!WTF!');
+        if(variable_get('tag') != "") {
+            $query -> join('zd_dev_jobs_tags', 's', 'j.ID = s.ID');
+            $query -> condition('s.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
         }
-
 
         $query = $query
             ->extend('TableSort')
@@ -248,6 +262,27 @@
             );
 
         return theme('organization_manager_edit_job', $variables);
+    }
+
+    /*
+     * Apply the filter by button
+     */
+    function organization_manager_organizations_list_filters_submit($form) {
+        variable_set($form['location'], '');
+        variable_set($form['organization'], '');
+        variable_set($form['tag'], '');
+        // Apply the filter for the sql query
+        if(isset($form['location'])) {
+            variable_set('location', $form['location']);
+        }
+        if(isset($form['organization'])) {
+            variable_set('organization', $form['organization']);
+        }
+        if(isset($form['tag'])) {
+            variable_set('tag', $form['tag']);
+        }
+
+        drupal_goto($_SERVER['HTTP_REFERER']);
     }
 
     /*
