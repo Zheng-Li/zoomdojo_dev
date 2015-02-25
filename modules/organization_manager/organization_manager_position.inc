@@ -216,7 +216,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         $countRows = db_query('SELECT FOUND_ROWS();')->fetchField();
 
     /////////////process tags////////////////
-        
+        if(!empty($positions)){
         $results_tag = db_select("zd_dev_jobs_tags","zdjt")
             ->fields("zdjt")
             ->condition("ID", $pos_ids, "IN")
@@ -225,7 +225,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         foreach ($results_tag as $result_tag) {
            $positions[$result_tag->ID]->Tags[]=$result_tag->Tag;
         }
-        
+        }
     ///////////////////////////////////////////////////////////////
     }
 
