@@ -41,7 +41,6 @@ function organization_manager_positions()
  */
 function organization_manager_find_jobs_getPositionsData($get)
 {
-    
     global $user, $base_url;
     $dotted       = 3;
     $url          = array();
@@ -112,12 +111,18 @@ function organization_manager_find_jobs_getPositionsData($get)
         }
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Url, zo.name
+            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Created_on,zo.name,zdlc.Name AS city_name ,zdld.Name AS district_name, zdlco.Name AS country_name
                 FROM zd_dev_jobs AS zdj
                 LEFT JOIN zd_dev_jobs_tags AS zdjt
                 ON zdj.ID = zdjt.ID
                 LEFT JOIN zd_organization AS zo
                 ON zdj.Org_id = zo.id
+                LEFT JOIN zd_dev_location_city AS zdlc
+                ON zdj.City_id = zdlc.ID
+                LEFT JOIN zd_dev_location_district AS zdld
+                ON zdj.District_id = zdld.ID
+                LEFT JOIN zd_dev_location_country AS zdlco
+                ON zdj.Country_id = zdlco.ID
                 WHERE ( CONCAT(IFNULL(zdjt.Tag, zdj.Title),',',zdj.Title,',',zdj.Snippet,',',zo.name) like :kw0
         ";
         
@@ -184,34 +189,43 @@ function organization_manager_find_jobs_getPositionsData($get)
 
         $results = db_query($sql,$params);
 
+        $now=strtotime(date("y-m-d"));
+
         $positions = array();
         
+        $pos_ids = array();
+
         foreach ($results as $record) {
             $record->encodeName = urlencode($record->Title);
-            $positions[] = $record;
+            $record->Url = 'detailed-job-page/'.$record->ID;
+            if(strlen($record->Snippet)>255){
+                $record->Snippet = substr($record->Snippet,0,255)."...";
+            }
+            $record->location = "";
+            if ($record->city_name != ""){$record->location.= " ".$record->city_name;}
+            if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
+            if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
+            $record->postTime = ceil(($now - strtotime($record->Created_on))/3600);
+            $record->Tags = array();
+            $positions[$record->ID] = $record;
+            $pos_ids[] = $record->ID;
+         
         }
 
     ///////////////////////////////////////////////////////////////
         $countRows = db_query('SELECT FOUND_ROWS();')->fetchField();
 
     /////////////process tags////////////////
-        /*
-        $sql_temp = str_replace("SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Url, zo.name","SELECT distinct zdj.ID",$sql);
+        
+        $results_tag = db_select("zd_dev_jobs_tags","zdjt")
+            ->fields("zdjt")
+            ->condition("ID", $pos_ids, "IN")
+            ->execute();
 
-        $sql_temp = str_replace("ORDER BY Job_weight ASC, Created_on DESC","ORDER BY ID",$sql_temp);
-
-        $sql_tags="select ID, tag 
-                   from zd_dev_jobs_tags
-                   where ID in ( ".$sql_temp." )";
-       
-        $results = db_query($sql_tags);
-
-        $db_tags = array();
-
-        foreach ($results as $key => $value) {
-            echo $key.": ".$value;
+        foreach ($results_tag as $result_tag) {
+           $positions[$result_tag->ID]->Tags[]=$result_tag->Tag;
         }
-    */
+        
     ///////////////////////////////////////////////////////////////
     }
 
@@ -248,7 +262,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
-    
+
     return array(
         'positions'     => $positions,
         'limit'         => $limit,
@@ -606,11 +620,17 @@ function organization_manager_jobs_keyword_getAjaxjobsList()
 function organization_manager_jobDetails($jobId)
 {
     global $user, $base_url;
-    //drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
+    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
     //drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/job-detail-page.js');
 
+    if($user->uid>1){
+    db_update('zd_dev_jobs')
+    ->expression('Counter_1', 'Counter_1 + 1')
+    ->condition('ID', $jobId)
+    ->execute();
+    }
     ///////////////////start query/////////////////
     /*
     $params[':jobId'] = $jobId
@@ -643,9 +663,24 @@ function organization_manager_jobDetails($jobId)
                 ->execute()
                 ->fetch();
 
+    $query->location = "";
+    if ($query->Name != ""){$query->location.= " ".$query->Name;}
+    if ($query->zdld_Name != ""){$query->location.=" ".$query->zdld_Name;}
+    if ($query->zdlco_Name != ""){$query->location.= " ".$query->zdlco_Name;}
+
+    $tags_query = db_select('zd_dev_jobs_tags','zdjt');
+    $tags_query = $tags_query->fields('zdjt',array('Tag'))
+                ->condition('zdjt.ID',$jobId)
+                ->execute()
+                ->fetchAll();
+
+    $query->Tags = array();
+    foreach ($tags_query as $tag_query) {
+        $query->Tags[]=$tag_query->Tag;
+    }
     
     //////////////////////////////////////////////
-
+    /*
     $query = db_select('zd_jobs', 'zj');
     $query->leftJoin('zd_save_entity', 'zde', 'zde.uid = '.$user->uid.' AND zde.entity_type = 1 AND zde.entity_id = zj.id');
     $query->leftJoin('zd_jobs_locations', 'zjl', 'zjl.jobId=zj.id');
@@ -657,9 +692,12 @@ function organization_manager_jobDetails($jobId)
         ->condition('zj.id', $jobId)
         ->execute()
         ->fetch();
+    
+
     if (empty($query->url)) {
         $query->url = $query->homePageUrl;
     }
+
     $query->date = date('d/m/Y', strtotime($query->updated));
     $query->location = organization_manager_getOrganizationLocationById(
         array(
@@ -668,6 +706,7 @@ function organization_manager_jobDetails($jobId)
             'city'    => $query->cityId,
         )
     );
+    */
 
     $variables = array(
         'job'  => $query,

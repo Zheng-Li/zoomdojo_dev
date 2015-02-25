@@ -88,13 +88,27 @@
                                     <!--Save button deleted here-->
                                 </div>
                             </div>
+                                <div class="org-meta-desc">
+                                    <span><?php print $position->name; ?></span>
+                                    <span> | </span>
+                                    <span><?php print $position->location; ?></span>
+                                </div>
                             <div class="row-fluid">
                                 <div class="span12 text-left">
                                     <div class="org-meta-desc">
                                         <?php if (!empty($position->Snippet)): ?>
                                             <?php print $position->Snippet; ?>
                                         <?php else: ?>
-                                            <?php print t('Please click on organisation name for more info'); ?>
+                                            <?php print t('Please click on job name for more info'); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="org-meta-desc">
+                                        <?php if (!empty($position->Tags)): ?>
+                                        <ul>
+                                            <?php foreach ($position->Tags as $Tag): ?>
+                                            <li><?php print $Tag?></li> 
+                                            <?php endforeach; ?>
+                                        </ul>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -173,6 +187,11 @@
             <div class="span5 text-right share-view">
             </div>
         </div>
+            <div class="org-meta-desc">
+                <span><%= name %></span>
+                <span> | </span>
+                <span><%= location %></span>
+            </div>
         <div class="row-fluid">
             <div class="span12 text-left">
                 <div class="org-meta-desc">
@@ -182,7 +201,14 @@
                             <?php print t('Please click on organisation name for more info'); ?>
                         <% } %>
                 </div>
-            </div>
+                <div class="org-meta-desc">
+                        <ul>
+                            <% _.each(Tags,function(Tag) { %> 
+                            <li><%= Tag %></li> 
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
         </div>
         <div class="row-fluid">
             <div class="span12 text-center">
