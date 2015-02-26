@@ -175,36 +175,36 @@ function organization_manager_menu()
     // Organization Jobs -- [[
     $items['admin/organization-manager/organization/%/jobs']        = array(
         'title'            => t('Organization Jobs List'),
-        'page callback'    => 'organization_manager_jobs_list',
+        'page callback'    => 'organization_manager_jobs',
         'access arguments' => array('administer site configuration'),
         'type'             => MENU_NORMAL_ITEM,
         'file'            => 'organization_manager_jobs.inc',
     );
-    $items['admin/organization-manager/job/edit/%']        = array(
-        'title'            => t('Job Edit'),
-        'page callback'    => 'organization_manager_job_addEditForm',
-        'page arguments'   => array(3, 4),
-        'access arguments' => array('administer site configuration'),
-        'type'             => MENU_NORMAL_ITEM,
-        'file'            => 'organization_manager_jobs.inc',
-    );
-    $items['admin/organization-manager/organization/%/jobs/add']        = array(
-        'title'            => t('Add Job'),
-        'page callback'    => 'organization_manager_job_addEditForm',
-        'page arguments'   => array(3),
-        'access arguments' => array('administer site configuration'),
-        'type'             => MENU_LOCAL_ACTION,
-        'file'            => 'organization_manager_jobs.inc',
-    );
-    $items['admin/organization-manager/job/delete/%']        = array(
-        'title'            => t('Job Delete'),
-        'page callback'    => 'drupal_get_form',
-        'page arguments'   => array('organization_manager_job_delete'),
-        'access arguments' => array('administer site configuration'),
-        'type'             => MENU_NORMAL_ITEM,
-        'file'            => 'organization_manager_jobs.inc',
-    );
-    // ]] --
+    // $items['admin/organization-manager/job/edit/%']        = array(
+    //     'title'            => t('Job Edit'),
+    //     'page callback'    => 'organization_manager_job_addEditForm',
+    //     'page arguments'   => array(3, 4),
+    //     'access arguments' => array('administer site configuration'),
+    //     'type'             => MENU_NORMAL_ITEM,
+    //     'file'            => 'organization_manager_jobs.inc',
+    // );
+    // $items['admin/organization-manager/organization/%/jobs/add']        = array(
+    //     'title'            => t('Add Job'),
+    //     'page callback'    => 'organization_manager_job_addEditForm',
+    //     'page arguments'   => array(3),
+    //     'access arguments' => array('administer site configuration'),
+    //     'type'             => MENU_LOCAL_ACTION,
+    //     'file'            => 'organization_manager_jobs.inc',
+    // );
+    // $items['admin/organization-manager/job/delete/%']        = array(
+    //     'title'            => t('Job Delete'),
+    //     'page callback'    => 'drupal_get_form',
+    //     'page arguments'   => array('organization_manager_job_delete'),
+    //     'access arguments' => array('administer site configuration'),
+    //     'type'             => MENU_NORMAL_ITEM,
+    //     'file'            => 'organization_manager_jobs.inc',
+    // );
+    // ]] -- Organization
     
     // Organizations -- [[
     $items['admin/organization-manager/organizations']        = array(
