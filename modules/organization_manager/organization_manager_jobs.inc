@@ -225,7 +225,11 @@
                 $job->date_updated = $item->Updated_on;
                 $job->date_expired = $item->Expired_on;
                 $job->city = $item->Name;
-                $job->district = $item->d_Name.', '.$item->Alias;
+                if($item->Alias) {
+                    $job->district = $item->d_Name.', '.$item->Alias;
+                } else {
+                    $job->district = $item->d_name;
+                }
                 $job->country = $item->cc_Name;
             }
 
