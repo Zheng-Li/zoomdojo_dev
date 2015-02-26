@@ -430,7 +430,7 @@
         }
         $job_query->execute();
 
-        // drupal_goto();
+        drupal_goto();
     }
 
 
