@@ -228,7 +228,7 @@
                 if($item->Alias) {
                     $job->district = $item->d_Name.', '.$item->Alias;
                 } else {
-                    $job->district = $item->d_name;
+                    $job->district = $item->d_Name;
                 }
                 $job->country = $item->cc_Name;
             }
@@ -430,10 +430,10 @@
         }
         $job_query->execute();
 
-        // drupal_goto();
+        drupal_goto();
     }
 
 
-//     drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
+    // drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
 
 ?>
