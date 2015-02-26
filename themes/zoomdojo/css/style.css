@@ -3088,8 +3088,8 @@ ul#secondary-menu-links a:hover {
 #zd-filter-panel ul.typeahead, /*#findJobsForm */ul.typeahead {
     padding-left: 0px;
     margin-top: 0px;
-    text-align: left;
-
+    margin-left: 108px !important;
+    margin-right: 60px !important;
 }
 
 /*#findJobsForm */ul.typeahead {
