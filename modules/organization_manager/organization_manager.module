@@ -526,6 +526,20 @@ function organization_manager_menu()
         'type'             => MENU_NORMAL_ITEM,
     );
 
+    $items['detailed-job-page/%']                      = array(
+        'title'            => t('Job details'),
+        'weight'           => 0, // menu order
+        'page callback'    => 'organization_manager_jobDetails',
+        'page arguments'   => array(1),
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+    $items['counter_increasement']                  = array(
+        'page callback'    => 'organization_manager_find_counter_increasement',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
+
     /////////////////////////////////////////////
 
     // New jobs list function
@@ -614,7 +628,12 @@ function organization_manager_theme($existing, $type, $theme, $path)
             'variables' => array('variables' => NULL),
             'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
         ),
-
+        'organization_manager_jobDetails' => array(
+            'template'  => 'zd-find-jobs-detailed-job-page',
+            'variables' => array('variables' => NULL),
+            'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
+        ),
+        //
         'organization_manager_find_jobs_popup' => array(
             'template'  => 'zd-find-jobs-popup',
             'variables' => array('variables' => NULL),
@@ -630,6 +649,7 @@ function organization_manager_theme($existing, $type, $theme, $path)
             'variables' => array('variables' => NULL),
             'path'      => drupal_get_path('module', 'organization_manager') . '/theme',
         ),
+
         'organization_manager_featured_jobs' => array(
             'template'  => 'zd-featured-jobs',
             'variables' => array('variables' => NULL),
