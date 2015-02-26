@@ -22,7 +22,7 @@
                     <div class="span4 text-right job-btns share-view">
                         <?php if(!empty($job->Url)): ?>
                             <?php if ($user->uid > 0): ?>
-                                <a href="<?php print $job->Url; ?>" target="_blank" class="btn btn-danger btn-apply"><?php print t('Apply'); ?></a>
+                                <a href="#" class="btn btn-danger btn-apply"><?php print t('Apply'); ?></a>
                             <?php else: ?>
                                 <a href="#" onclick="App.singInPopup(); return false;" class="btn btn-danger btn-apply"><?php print t('Apply'); ?></a>
                             <?php endif; ?>

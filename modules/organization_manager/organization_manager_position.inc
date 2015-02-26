@@ -205,11 +205,33 @@ function organization_manager_find_jobs_getPositionsData($get)
             if ($record->city_name != ""){$record->location.= " ".$record->city_name;}
             if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
             if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
-            $record->postTime = ceil(($now - strtotime($record->Created_on))/3600);
+
+            
+            $postTime = (int)ceil(($now - strtotime($record->Created_on))/3600);
+            
+            
+            if($postTime >= 24){
+                $postTime = (int)($postTime/24);
+                
+                if($postTime == 1){$postFormat = strval($postTime)." day";}
+                else{
+                    if($postTime > 30){
+                        $postTime = 30;
+                        $postFormat=strval($postTime)."+ days";}
+                    else{$postFormat=strval($postTime)." days";}
+                    }
+                
+            }
+            
+            else{
+                if($postTime <= 1){$postFormat = strval($postTime)." hour";}
+                else{{$postFormat = strval($postTime)." hours";}}
+            }
+            $record->post = $postFormat;
+            
             $record->Tags = array();
             $positions[$record->ID] = $record;
             $pos_ids[] = $record->ID;
-         
         }
 
     ///////////////////////////////////////////////////////////////
@@ -628,8 +650,9 @@ function organization_manager_jobDetails($jobId)
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
     //drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/job-detail-page.js');
+    drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/new-job-page.js');
 
-    if($user->uid>1){
+    if($user->uid != 1){
     db_update('zd_dev_jobs')
     ->expression('Counter_1', 'Counter_1 + 1')
     ->condition('ID', $jobId)
@@ -717,7 +740,22 @@ function organization_manager_jobDetails($jobId)
         'user' => $user,
         'home' => $base_url,
     );
+
+    drupal_add_js(
+        array(
+        'jobId'    => $jobId,
+        'jobUrl'   => $query->Url,
+        'userId'   => $user->uid,
+        ), 'setting'
+    );
+
     return theme('organization_manager_jobDetails', $variables);
 }
 
-
+function organization_manager_find_counter_increasement(){
+        $jobId = $_GET['jobId'];
+        db_update('zd_dev_jobs')
+        ->expression('Counter_2', 'Counter_2 + 1')
+        ->condition('ID', $jobId)
+        ->execute();          
+}

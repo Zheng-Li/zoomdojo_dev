@@ -111,6 +111,9 @@
                                         </ul>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="org-meta-desc">
+                                        Post <?php print $position->post ?> ago
+                                    </div>
                                 </div>
                             </div>
                             <div class="row-fluid">
@@ -207,8 +210,11 @@
                             <li><%= Tag %></li> 
                             <% }); %>
                         </ul>
-                    </div>
                 </div>
+                <div class="org-meta-desc">
+                        Post <%=post %> ago
+                </div>
+            </div>
         </div>
         <div class="row-fluid">
             <div class="span12 text-center">

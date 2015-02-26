@@ -534,6 +534,11 @@ function organization_manager_menu()
         'access callback'  => true,
         'type'             => MENU_NORMAL_ITEM,
     );
+    $items['counter_increasement']                  = array(
+        'page callback'    => 'organization_manager_find_counter_increasement',
+        'access callback'  => true,
+        'type'             => MENU_NORMAL_ITEM,
+    );
 
     /////////////////////////////////////////////
 
