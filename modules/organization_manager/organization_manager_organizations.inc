@@ -279,7 +279,7 @@ function organization_manager_organizations_list()
     foreach($result as $item){
         $status = $item->status?'undeleted':'deleted';
         $delete_flag = $item->delete_flag?t('Flagged for delete'):'-';
-        $jobsCount = db_query("SELECT count(*) FROM zd_jobs WHERE organizationId = {$item->id}")->fetchField();
+        $jobsCount = db_query("SELECT count(*) FROM zd_dev_jobs WHERE Org_id = {$item->id}")->fetchField();
         $rows[] = array(
             $item->id,
             $item->name,
