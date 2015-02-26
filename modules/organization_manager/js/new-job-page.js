@@ -28,7 +28,7 @@
                                 data: {"jobId":Drupal.settings.jobId},
                                     });
                         //window.open(Drupal.settings.jobUrl, "_blank");
-                        //window.location.href=Drupal.settings.jobUrl;
+                        window.location.href=Drupal.settings.jobUrl;
                         }
                         else{
                             if(Drupal.settings.userId == 1){
