@@ -111,7 +111,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         }
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Created_on,zo.name,zdlc.Name AS city_name ,zdld.Name AS district_name, zdlco.Name AS country_name
+            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Created_on,zo.name,zdlc.Name AS city_name , zdlco.Name AS country_name
                 FROM zd_dev_jobs AS zdj
                 LEFT JOIN zd_dev_jobs_tags AS zdjt
                 ON zdj.ID = zdjt.ID
@@ -203,7 +203,7 @@ function organization_manager_find_jobs_getPositionsData($get)
             }
             $record->location = "";
             if ($record->city_name != ""){$record->location.= " ".$record->city_name;}
-            if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
+            //if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
             if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
 
             
@@ -655,23 +655,7 @@ function organization_manager_jobDetails($jobId)
     ->execute();
     }
     ///////////////////start query/////////////////
-    /*
-    $params[':jobId'] = $jobId
-
-    $sql = " SELECT 
-            FROM zd_dev_jobs as zdj
-            LEFT JOIN zd_dev_location_city as zdlc
-            ON zdj.City_id = zdlc.ID
-            LEFT JOIN zd_dev_location_district as zdld
-            ON zdj.District_id = zdld.ID
-            LEFT JOIN zd_dev_location_country as zdlco
-            ON zdj.Country_id = zdlco.ID
-            LEFT JOIN zd_organization as zo
-            ON zdj.Org_id = zo.id
-            WHERE zdj.ID = :$jobId
-    " 
-    */
-
+    
     $query = db_select('zd_dev_jobs','zdj');
     $query->leftJoin('zd_dev_location_city','zdlc','zdj.City_id = zdlc.ID');
     $query->leftJoin('zd_dev_location_district','zdld','zdj.District_id = zdld.ID');
@@ -679,7 +663,7 @@ function organization_manager_jobDetails($jobId)
     $query->leftJoin('zd_organization','zo','zdj.Org_id = zo.id');
     $query = $query->fields('zdj')
                 ->fields('zdlc',array('Name'))
-                ->fields('zdld',array('Name'))
+                
                 ->fields('zdlco',array('Name'))
                 ->fields('zo',array('name'))
                 ->condition('zdj.ID',$jobId)
@@ -688,7 +672,7 @@ function organization_manager_jobDetails($jobId)
 
     $query->location = "";
     if ($query->Name != ""){$query->location.= " ".$query->Name;}
-    if ($query->zdld_Name != ""){$query->location.=" ".$query->zdld_Name;}
+    
     if ($query->zdlco_Name != ""){$query->location.= " ".$query->zdlco_Name;}
 
     $tags_query = db_select('zd_dev_jobs_tags','zdjt');
