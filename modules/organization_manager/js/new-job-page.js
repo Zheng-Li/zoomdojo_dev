@@ -27,11 +27,13 @@
                                 url:  '/counter_increasement',
                                 data: {"jobId":Drupal.settings.jobId},
                                     });
-                        window.open(Drupal.settings.jobUrl, "_blank");
+                        //window.open(Drupal.settings.jobUrl, "_blank");
+                        //window.location.href=Drupal.settings.jobUrl;
                         }
                         else{
                             if(Drupal.settings.userId == 1){
-                                window.open(Drupal.settings.jobUrl, "_blank");
+                                //window.open(Drupal.settings.jobUrl, "_blank");
+                                window.location.href=Drupal.settings.jobUrl;
                             }
                         }
                     },
