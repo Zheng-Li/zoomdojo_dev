@@ -68,7 +68,7 @@ function organization_manager_find_jobs_popup()
 
 function organization_manager_find_jobs_header_form()
 {
-    //drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
+    drupal_add_css(drupal_get_path('module', 'organization_manager') . '/css/find-jobs.css');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/typeahead.min.js');
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/position_popup.js');
     /*
