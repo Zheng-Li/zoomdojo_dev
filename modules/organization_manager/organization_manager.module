@@ -553,12 +553,20 @@ function organization_manager_menu()
         'type'             => MENU_NORMAL_ITEM,
     );
 
-    $items['admin/organization-manager/jobs/edit/%']       = array(
+    $items['admin/organization-manager/job/edit/%']       = array(
         'title'            => t('Edit Job'),
-        'page callback'    => 'organization_manager_jobs_edit',
+        'page callback'    => 'organization_manager_job_edit',
         'page arguments'   => array(4),
         'access arguments' => array('administer site configuration'),
         'file'             => 'organization_manager_jobs.inc',
+    );
+
+    $items['admin/organization-manager/job/flag-delete/%/%'] = array(
+        'title'            => t('Change delete status'),
+        'page callback'    => 'organization_manager_job_change_status',
+        'page arguments'   => array(4, 5),
+        'access arguments' => array('administer site configuration'),
+        'file'            => 'organization_manager_jobs.inc',
     );
 
     //   ]] -- Zheng
