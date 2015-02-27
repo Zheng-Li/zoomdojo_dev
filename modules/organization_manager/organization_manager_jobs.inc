@@ -95,8 +95,12 @@
         }
 
         if(variable_get('tag') != "") {
-            $query -> join('zd_dev_jobs_tags', 's', 'j.ID = s.ID');
-            $query -> condition('s.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+            $query -> join('zd_dev_jobs_tags', 'jt', 'j.ID = jt.ID');
+            $query -> join('zd_dev_organizations_tags', 'ot', 'o.ID = ot.ID');
+            $or = db_or()
+                -> condition('jt.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE')
+                -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+            $query -> condition($or);
         }
 
         if(arg(3) != null) {
@@ -108,7 +112,7 @@
             ->orderByHeader($header)
             ->extend('PagerDefault')
             ->limit(10);
-        $result = $query->execute();
+        $result = $query->distinct()->execute();
         $deleteText = array(
             'Undeleted' => 'Are you sure you want to delete this record?',
             'Deleted' => 'Are you sure you want to undelete this row?',
