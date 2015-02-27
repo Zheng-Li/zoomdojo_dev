@@ -30,7 +30,7 @@
 
         $form['filters']['fieldset']['organization'] = array (
             '#type' => 'textfield',
-            '#title' => t('Organization filter'),
+            '#title' => t('Organization Name Filter'),
             '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array(),
             '#name' => 'organization',
             '#size' => 35,           
@@ -38,7 +38,7 @@
 
         $form['filters']['fieldset']['tag'] = array (
             '#type' => 'textfield',
-            '#title' => t('Tag filter'),
+            '#title' => t('Job/Organization Tag Filter'),
             '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array(),
             '#name' => 'tag',
             '#size' => 35,           
@@ -53,11 +53,11 @@
         //Fetch the content of the form
         $header = array(
             array('data' => 'ID', 'field' => 'id'),
-            array('data' => 'Title', 'field' => 'title'),
-            array('data' => 'Snippet', 'field' => 'snippet'),
-            array('data' => 'Url', 'field' => 'url'),
+            array('data' => 'Job Title', 'field' => 'title'),
+            array('data' => 'Job Snippet', 'field' => 'snippet'),
+            array('data' => 'Job Url', 'field' => 'url'),
             array('data' => 'Url Status', 'field' => 'url_status'),
-            array('data' => 'Organization', 'field' => 'org_name'),
+            array('data' => 'Organization Name', 'field' => 'org_name'),
             array('data' => 'City', 'field' => 'city'),
             array('data' => 'District', 'field' => 'district'),
             array('data' => 'Country', 'field' => 'country'),

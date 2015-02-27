@@ -21,7 +21,7 @@
         <div style="float:left;padding:15px;width:30%;">
             <label for="org_tags">Organization Tags</label>
             <textarea id="org_tags" type="text" rows="1" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
-            name="org-tags" placeholder="Tags go here...(Maxium 5 tags per organization)" ><?php print $org_tags; ?></textarea>
+            name="org-tags" placeholder="Tags go here...(Maxium 5 tags per organization)" readonly><?php print $org_tags; ?></textarea>
         </div>
 		</fieldset>
 		<fieldset id="edit-job-wrapper" class="form-wrapper collapse-processed">
@@ -52,8 +52,8 @@
       		<input id="job_url" value="<?php print $job_url; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" maxlength="255" size="60" name="job-url" placeholder="e.g. http://www.abc.com">
       	</div>
         <div style="float:left;padding:15px;">
-          <label for="url_status">Url Status</label>
-          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404">
+          <label for="url_status">Url Status</label>`
+          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404" readonly>
         </div>
         <br style="clear:both;" />
       	<div style="float:left;margin-right:15px;padding:15px;">
@@ -88,9 +88,9 @@
      		</div>
 		</fieldset>
 		<div>
-      		<input type="submit" class="form-submit" value="Save" name="op" id="edit-save" />  
+          <input type="button" class="form-submit" value="Back to List" style="float:left;" onclick="history.go(-1);"/>
+      		<input type="submit" class="form-submit" value="Save and Exit" name="op" id="edit-save" style="float:right;"/>  
       		<!-- <input type="submit" class="form-submit" value="Flag to Delete" name="op"/> -->
-      		<input type="reset" class="form-submit" value="Reset" style="float:right;" />
       </div>
 	</div>
 </form>
