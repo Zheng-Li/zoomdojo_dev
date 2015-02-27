@@ -130,8 +130,8 @@
                 $item->Counter_1,
                 $item->Counter_2,
                 $status = $item->Delete_flag ? "Deleted" : "Undeleted",
-                l(t('Edit'), 'admin/organization-manager/jobs/edit/'. $item->ID,array('query' => drupal_get_destination())),
-                l(t('Change Flag'), 'admin/organization-manager/jobs/flag-delete/' . $item->ID . '/' . $item->Delete_flag, array(
+                l(t('Edit'), 'admin/organization-manager/job/edit/'. $item->ID,array('query' => drupal_get_destination())),
+                l(t('Change Flag'), 'admin/organization-manager/job/flag-delete/' . $item->ID . '/' . $item->Delete_flag, array(
                     'attributes' => array(
                         'onClick' => 'if (!confirm("'.$deleteText[$status].'")) {return false;}'
                     ))
@@ -165,7 +165,7 @@
     /*
      * Job editing page with pre-defined organization
      */
-    function organization_manager_jobs_edit($id = 0) {
+    function organization_manager_job_edit($id = 0) {
         if (isset($_POST['op'])) {
             organization_manager_job_edit_submit($_POST);
         }
@@ -433,6 +433,18 @@
         drupal_goto();
     }
 
+    function organization_manager_job_change_status($id, $status) {
+        $st = 0;
+        if ($status == 0) {
+            $st = 1;
+        }
+        db_update('zd_dev_jobs')
+            ->fields(array('Delete_flag' => $st))
+            ->condition('id', $id)
+            ->execute();
+
+        drupal_goto($_SERVER['HTTP_REFERER']);
+    }
 
     // drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
 
