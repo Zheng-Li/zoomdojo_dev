@@ -62,7 +62,7 @@
       	</div>
     		<div style="float:left;padding:15px;">
     			<label for="date_expired">Date Expired</label>
-     			<input id="date_expired" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_expired; ?>" name="date-expired" readonly>
+     			<input id="date_expired" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_expired; ?>" name="date-expired">
     		</div>
         <div style="float:left;padding:15px;">
           <label for="date_updated">Date Updated</label>
