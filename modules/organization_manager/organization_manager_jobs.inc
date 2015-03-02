@@ -56,13 +56,13 @@
             array('data' => 'Job Title', 'field' => 'title'),
             array('data' => 'Job Snippet', 'field' => 'snippet'),
             array('data' => 'Job Url', 'field' => 'url'),
-            array('data' => 'Url Status', 'field' => 'url_status'),
-            array('data' => 'Organization Name', 'field' => 'name'),
+            array('data' => 'Url Status (read only)', 'field' => 'url_status'),
+            array('data' => 'Organization Name (read only)', 'field' => 'name'),
+            array('data' => 'Created On (read only)', 'field' => 'created_on'),
+            array('data' => 'Expired On (read only)', 'field' => 'expired_on'),
             array('data' => 'City', 'field' => 'c.name'),
             array('data' => 'District', 'field' => 'd.name'),
             array('data' => 'Country', 'field' => 't.name'),
-            array('data' => 'Created On', 'field' => 'created_on'),
-            array('data' => 'Expired On', 'field' => 'expired_on'),
             array('data' => 'Counter 1', 'field' => 'counter_1'),
             array('data' => 'Counter 2', 'field' => 'counter_2'), 
             array('data' => 'Delete Flag', 'field' => 'delete_flag'),
@@ -126,11 +126,11 @@
                 strlen($item->Url) > 25 ? substr($item->Url,0,16)."..." : $item->Url,
                 $item->Url_status,
                 $item->Name,
+                $item->Created_on,
+                $item->Expired_on,
                 $item->c_Name,
                 $item->d_Name,
                 $item->t_Name,
-                $item->Created_on,
-                $item->Expired_on,
                 $item->Counter_1,
                 $item->Counter_2,
                 $status = $item->Delete_flag ? "Deleted" : "Undeleted",
@@ -229,11 +229,7 @@
                 $job->date_updated = $item->Updated_on;
                 $job->date_expired = $item->Expired_on;
                 $job->city = $item->Name;
-                if($item->Alias) {
-                    $job->district = $item->d_Name.', '.$item->Alias;
-                } else {
-                    $job->district = $item->d_Name;
-                }
+                $job->district = $item->d_Name;
                 $job->country = $item->cc_Name;
             }
 

@@ -44,7 +44,12 @@
       	</div>
         <div style="float:left;padding:15px;">
           <label for="weight">Job Weight</label>
-          <input id="weight" value="<?php print $weight; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="job-weight" placeholder="0">
+          <select id="weight" name="job-weight" style="border:1px solid #ccc;font-size:17px;">
+            <option value="1" <?php if($weight==1) print "selected"; ?>>Top sponsored job</option>
+            <option value="0" <?php if($weight==0) print "selected"; ?>>None</option>
+            <option value="-1" <?php if($weight==-1) print "selected"; ?>>Bottom sponsored job</option>
+          </select>
+          <!-- <input id="weight" value="<?php print $weight; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="job-weight" placeholder="0"> -->
         </div>
       	<br style="clear:both;" />
       	<div style="float:left;padding:15px;margin-right:15px;">
