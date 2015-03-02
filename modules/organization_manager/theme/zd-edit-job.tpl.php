@@ -89,8 +89,9 @@
      		<br style="clear:both;" />
     		<div style="padding:15px;">
      			<label for="job_snippet">Job Snippet</label>
-     			<textarea id="job_snippet" style="border:1px solid #ccc;font-size:17px;" rows="3" cols="100" type="text" name="job-snippet" placeholder="A brief Description of the job"><?php print $job_snippet; ?></textarea>
-     		</div>
+     			<textarea id="job_snippet" style="border:1px solid #ccc;font-size:17px;" rows="3" cols="100" maxlength="500" type="text" name="job-snippet" placeholder="A brief Description of the job"><?php print $job_snippet; ?></textarea>
+     		  <div id="character_count"></div>
+        </div>
 		</fieldset>
 		<div>
           <input type="button" class="form-submit" value="Back to List" style="float:left;" onclick="history.go(-1);"/>

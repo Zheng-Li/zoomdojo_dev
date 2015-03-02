@@ -181,6 +181,7 @@
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/character-count.js');
 
         $job = new stdClass();
         $job->org_id           = 0;
@@ -268,6 +269,21 @@
             'district'      => $job->district,
             'country'       => $job->country,
             );
+
+        // $js = "jQuery(document).ready(function () {"
+        //     . "$('#character_count').text('500 characters left');"
+        //     . "$('#job_snippet').keyup(function () {"
+        //     . "var max = 500; "
+        //     . "alert('fjdskalfjdksaljfkadsjkl');"
+        //     . "var len = $(this).val().length;"             
+        //     . "if (len >= max) { "
+        //     . "$('#character_count').text(' you have reached the limit');"
+        //     . "} else {"
+        //     . "var ch = max - len;"
+        //     . "$('#character_count').text(ch + ' characters left');"
+        //     . "}"
+        //     . "});";
+        // drupal_add_js($js, 'inline');
 
         return theme('organization_manager_edit_job', $variables);
     }
