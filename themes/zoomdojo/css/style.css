@@ -2801,11 +2801,12 @@ ul.pager>li.pager-current {
     float: left;
     font-size: 15px;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     line-height: 80px;
     padding-left: 17px;
     color:#524747;
 }
+
 .front-tb-right {
     width: 75%;
     float: right;
@@ -3088,8 +3089,8 @@ ul#secondary-menu-links a:hover {
 #zd-filter-panel ul.typeahead, /*#findJobsForm */ul.typeahead {
     padding-left: 0px;
     margin-top: 0px;
-    margin-left: 108px !important;
-    margin-right: 60px !important;
+    margin-left:71px !important;
+    margin-right: 40px !important;
 }
 
 /*#findJobsForm */ul.typeahead {
@@ -3120,7 +3121,7 @@ ul#secondary-menu-links a:hover {
 }
 
 /*#findJobsForm */ul.typeahead > li > a {
-    padding: 5px 215px 5px 6px;
+    padding: 5px 218px 5px 6px;
 }
 
 #zd-filter-panel .dropdown-menu > .active > a, #zd-filter-panel .dropdown-menu > .active > a:hover, #zd-filter-panel .dropdown-menu > .active > a:focus, #findJobsForm .dropdown-menu > .active > a, #findJobsForm .dropdown-menu > .active > a:hover, #findJobsForm .dropdown-menu > .active > a:focus, #findNewJobsPopup .dropdown-menu > .active > a, #findNewJobsPopup .dropdown-menu > .active > a:hover, #findNewJobsPopup .dropdown-menu > .active > a:focus {
@@ -3134,6 +3135,17 @@ ul#secondary-menu-links a:hover {
     background: linear-gradient(to bottom,  rgba(188,6,0,1) 0%,rgba(204,0,0,1) 50%,rgba(188,6,0,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bc0600', endColorstr='#bc0600',GradientType=0 ); /* IE6-9 */
 
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    background-color: #780000  !important;
+    background-image: -moz-linear-gradient(top, #323232, #323232) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#323232), to(#323232)) !important;
+  background-image: -webkit-linear-gradient(top, #323232, #323232) !important;
+  background-image: -o-linear-gradient(top, #323232, #323232 ) !important ;
+    background-image: linear-gradient(to bottom, #323232 , #323232 ) !important;
 }
 
 #zd-filter-panel ul.typeahead > li:last-child > a, #findJobsForm ul.typeahead, #findNewJobsPopup  ul.typeahead {
@@ -3253,6 +3265,7 @@ i#share-btn {
 
 .input-large {
   width: 0px;
+  margin-left: 120px;
   height: 30px !important;
   margin-bottom: 0px !important;
   line-height: 20px !important;
