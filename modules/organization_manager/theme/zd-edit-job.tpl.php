@@ -57,7 +57,7 @@
       		<input id="job_url" value="<?php print $job_url; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" maxlength="255" size="60" name="job-url" placeholder="e.g. http://www.abc.com">
       	</div>
         <div style="float:left;padding:15px;">
-          <label for="url_status">Url Status</label>`
+          <label for="url_status">Url Status</label>
           <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404" readonly>
         </div>
         <br style="clear:both;" />
