@@ -1838,9 +1838,11 @@ span.feature-shadow {
     background: url("../img/feature-shadow.png") no-repeat;
 }
 
+
 #below-content{
     float: left;
 }
+
 
 .interships-2013 {
     background-image: url("../img/fall-interships-2013-background.png");
@@ -1860,7 +1862,7 @@ span.feature-shadow {
 }
 .interships-2013 > p > span {
     font-size: 22px;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 .social-bg {
@@ -2799,11 +2801,12 @@ ul.pager>li.pager-current {
     float: left;
     font-size: 15px;
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     line-height: 80px;
     padding-left: 17px;
     color:#524747;
 }
+
 .front-tb-right {
     width: 75%;
     float: right;
@@ -3086,7 +3089,8 @@ ul#secondary-menu-links a:hover {
 #zd-filter-panel ul.typeahead, /*#findJobsForm */ul.typeahead {
     padding-left: 0px;
     margin-top: 0px;
-    text-align: left;
+    margin-left:71px !important;
+    margin-right: 40px !important;
 }
 
 /*#findJobsForm */ul.typeahead {
@@ -3117,7 +3121,7 @@ ul#secondary-menu-links a:hover {
 }
 
 /*#findJobsForm */ul.typeahead > li > a {
-    padding: 5px 215px 5px 6px;
+    padding: 5px 218px 5px 6px;
 }
 
 #zd-filter-panel .dropdown-menu > .active > a, #zd-filter-panel .dropdown-menu > .active > a:hover, #zd-filter-panel .dropdown-menu > .active > a:focus, #findJobsForm .dropdown-menu > .active > a, #findJobsForm .dropdown-menu > .active > a:hover, #findJobsForm .dropdown-menu > .active > a:focus, #findNewJobsPopup .dropdown-menu > .active > a, #findNewJobsPopup .dropdown-menu > .active > a:hover, #findNewJobsPopup .dropdown-menu > .active > a:focus {
@@ -3133,8 +3137,20 @@ ul#secondary-menu-links a:hover {
 
 }
 
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+    background-color: #780000  !important;
+    background-image: -moz-linear-gradient(top, #666666, #666666) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#666666), to(#666666)) !important;
+  background-image: -webkit-linear-gradient(top, #666666, #666666) !important;
+  background-image: -o-linear-gradient(top, #666666, #666666 ) !important ;
+    background-image: linear-gradient(to bottom, #8a181c , #8a181c ) !important;
+}
+
 #zd-filter-panel ul.typeahead > li:last-child > a, #findJobsForm ul.typeahead, #findNewJobsPopup  ul.typeahead {
     border-bottom: none;
+
 }
 
 #findNewJobsForm .leftpart h3 {
@@ -3249,6 +3265,7 @@ i#share-btn {
 
 .input-large {
   width: 0px;
+  margin-left: 120px;
   height: 30px !important;
   margin-bottom: 0px !important;
   line-height: 20px !important;
@@ -4264,6 +4281,7 @@ h2.fg-red {
     }
     #secondary-menu .dropdown-menu {
         top: 80px !important;
+
     }
 
     #secondary-menu {
@@ -4403,6 +4421,7 @@ h2.fg-red {
 
     .dropdown-menu {
         top: 80px !important;
+
     }
 
     .greetings {
@@ -4742,7 +4761,7 @@ h2.fg-red {
     }
 
     .interships-2013 {
-        margin: 0px 7px 0px 7px;
+        margin: 0px 7px 20px 7px;
     }
 
     .featured-jobs-wrapper a {

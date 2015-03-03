@@ -9,7 +9,7 @@
   <?php print $styles; ?>
   <?php print $scripts; ?>
 
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
   <div id="skip-link">

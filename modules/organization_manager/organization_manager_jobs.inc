@@ -30,7 +30,7 @@
 
         $form['filters']['fieldset']['organization'] = array (
             '#type' => 'textfield',
-            '#title' => t('Organization filter'),
+            '#title' => t('Organization Name Filter'),
             '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array(),
             '#name' => 'organization',
             '#size' => 35,           
@@ -38,7 +38,7 @@
 
         $form['filters']['fieldset']['tag'] = array (
             '#type' => 'textfield',
-            '#title' => t('Tag filter'),
+            '#title' => t('Job/Organization Tag Filter'),
             '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array(),
             '#name' => 'tag',
             '#size' => 35,           
@@ -53,16 +53,16 @@
         //Fetch the content of the form
         $header = array(
             array('data' => 'ID', 'field' => 'id'),
-            array('data' => 'Title', 'field' => 'title'),
-            array('data' => 'Snippet', 'field' => 'snippet'),
-            array('data' => 'Url', 'field' => 'url'),
-            array('data' => 'Url Status', 'field' => 'url_status'),
-            array('data' => 'Organization', 'field' => 'org_name'),
-            array('data' => 'City', 'field' => 'city'),
-            array('data' => 'District', 'field' => 'district'),
-            array('data' => 'Country', 'field' => 'country'),
-            array('data' => 'Created On', 'field' => 'date_created'),
-            array('data' => 'Expired On', 'field' => 'date_expired'),
+            array('data' => 'Job Title', 'field' => 'title'),
+            array('data' => 'Job Snippet', 'field' => 'snippet'),
+            array('data' => 'Job Url', 'field' => 'url'),
+            array('data' => 'Url Status (read only)', 'field' => 'url_status'),
+            array('data' => 'Organization Name (read only)', 'field' => 'name'),
+            array('data' => 'Created On (read only)', 'field' => 'created_on'),
+            array('data' => 'Expired On (read only)', 'field' => 'expired_on'),
+            array('data' => 'City', 'field' => 'c.name'),
+            array('data' => 'District', 'field' => 'd.name'),
+            array('data' => 'Country', 'field' => 't.name'),
             array('data' => 'Counter 1', 'field' => 'counter_1'),
             array('data' => 'Counter 2', 'field' => 'counter_2'), 
             array('data' => 'Delete Flag', 'field' => 'delete_flag'),
@@ -95,8 +95,12 @@
         }
 
         if(variable_get('tag') != "") {
-            $query -> join('zd_dev_jobs_tags', 's', 'j.ID = s.ID');
-            $query -> condition('s.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+            $query -> join('zd_dev_jobs_tags', 'jt', 'j.ID = jt.ID');
+            $query -> join('zd_dev_organizations_tags', 'ot', 'o.ID = ot.ID');
+            $or = db_or()
+                -> condition('jt.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE')
+                -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+            $query -> condition($or);
         }
 
         if(arg(3) != null) {
@@ -108,7 +112,7 @@
             ->orderByHeader($header)
             ->extend('PagerDefault')
             ->limit(10);
-        $result = $query->execute();
+        $result = $query->distinct()->execute();
         $deleteText = array(
             'Undeleted' => 'Are you sure you want to delete this record?',
             'Deleted' => 'Are you sure you want to undelete this row?',
@@ -122,16 +126,16 @@
                 strlen($item->Url) > 25 ? substr($item->Url,0,16)."..." : $item->Url,
                 $item->Url_status,
                 $item->Name,
+                $item->Created_on,
+                $item->Expired_on,
                 $item->c_Name,
                 $item->d_Name,
                 $item->t_Name,
-                $item->Created_on,
-                $item->Expired_on,
                 $item->Counter_1,
                 $item->Counter_2,
                 $status = $item->Delete_flag ? "Deleted" : "Undeleted",
-                l(t('Edit'), 'admin/organization-manager/jobs/edit/'. $item->ID,array('query' => drupal_get_destination())),
-                l(t('Change Flag'), 'admin/organization-manager/jobs/flag-delete/' . $item->ID . '/' . $item->Delete_flag, array(
+                l(t('Edit'), 'admin/organization-manager/job/edit/'. $item->ID,array('query' => drupal_get_destination())),
+                l(t('Change Flag'), 'admin/organization-manager/job/flag-delete/' . $item->ID . '/' . $item->Delete_flag, array(
                     'attributes' => array(
                         'onClick' => 'if (!confirm("'.$deleteText[$status].'")) {return false;}'
                     ))
@@ -165,7 +169,7 @@
     /*
      * Job editing page with pre-defined organization
      */
-    function organization_manager_jobs_edit($id = 0) {
+    function organization_manager_job_edit($id = 0) {
         if (isset($_POST['op'])) {
             organization_manager_job_edit_submit($_POST);
         }
@@ -177,6 +181,7 @@
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/underscore-min.js');
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/backbone-min.js');
         drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/organization_manager.js');
+        drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/character-count.js');
 
         $job = new stdClass();
         $job->org_id           = 0;
@@ -225,7 +230,7 @@
                 $job->date_updated = $item->Updated_on;
                 $job->date_expired = $item->Expired_on;
                 $job->city = $item->Name;
-                $job->district = $item->d_Name.', '.$item->Alias;
+                $job->district = $item->d_Name;
                 $job->country = $item->cc_Name;
             }
 
@@ -332,7 +337,7 @@
             );
 
         if($var['city'] == "" && $var['district'] == "" && $var['country'] == "") {
-            var_dump('WTF!!!');   
+            // var_dump('WTF!!!');   
         }
 
         $loc_query = db_select('zd_dev_location_city', 'c')
@@ -426,10 +431,25 @@
         }
         $job_query->execute();
 
-        // drupal_goto();
+        drupal_goto();
     }
 
+    /*
+     *Change delete flag of the job
+     */
+    function organization_manager_job_change_status($id, $status) {
+        $st = 0;
+        if ($status == 0) {
+            $st = 1;
+        }
+        db_update('zd_dev_jobs')
+            ->fields(array('Delete_flag' => $st))
+            ->condition('id', $id)
+            ->execute();
 
-//     drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
+        drupal_goto($_SERVER['HTTP_REFERER']);
+    }
+
+    // drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
 
 ?>

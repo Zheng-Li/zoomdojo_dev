@@ -10,18 +10,18 @@
           <input id="org_id" type="hidden" value="<?php print $org_id; ?>" name="org-id">
     		<div style="float:left;margin-right:10px;padding:15px;width:15%;">
        			<label for="org_name">Organization Name</label>
-        		<textarea id="org_name" type="text" rows="1" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+        		<textarea id="org_name" type="text" rows="1" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
             name="org-name" placeholder="e.g. Apple Inc..." readonly><?php print $org_name; ?></textarea>
     		</div>
     		<div style="float:left;margin-right:10px;padding:15px;width:30%;">
        			<label for="org_url">Organization Url</label>
-        		<textarea id="org_url" type="text" rows="1" cols ="50" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+        		<textarea id="org_url" type="text" rows="1" cols ="50" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
             name="org-url" placeholder="http://www.example.com" readonly><?php print $org_url; ?></textarea>
     		</div>
         <div style="float:left;padding:15px;width:30%;">
             <label for="org_tags">Organization Tags</label>
-            <textarea id="org_tags" type="text" rows="1" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
-            name="org-tags" placeholder="Tags go here...(Maxium 5 tags per organization)" ><?php print $org_tags; ?></textarea>
+            <textarea id="org_tags" type="text" rows="1" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+            name="org-tags" placeholder="Tags go here...(Maxium 5 tags per organization)" readonly><?php print $org_tags; ?></textarea>
         </div>
 		</fieldset>
 		<fieldset id="edit-job-wrapper" class="form-wrapper collapse-processed">
@@ -44,7 +44,12 @@
       	</div>
         <div style="float:left;padding:15px;">
           <label for="weight">Job Weight</label>
-          <input id="weight" value="<?php print $weight; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="job-weight" placeholder="0">
+          <select id="weight" name="job-weight" style="border:1px solid #ccc;font-size:17px;">
+            <option value="1" <?php if($weight==1) print "selected"; ?>>Top sponsored job</option>
+            <option value="0" <?php if($weight==0) print "selected"; ?>>None</option>
+            <option value="-1" <?php if($weight==-1) print "selected"; ?>>Bottom sponsored job</option>
+          </select>
+          <!-- <input id="weight" value="<?php print $weight; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="job-weight" placeholder="0"> -->
         </div>
       	<br style="clear:both;" />
       	<div style="float:left;padding:15px;margin-right:15px;">
@@ -53,20 +58,20 @@
       	</div>
         <div style="float:left;padding:15px;">
           <label for="url_status">Url Status</label>
-          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404">
+          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404" readonly>
         </div>
         <br style="clear:both;" />
       	<div style="float:left;margin-right:15px;padding:15px;">
       		<label for="date_created">Date Created</label>
-      		<input id="date_created" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_created; ?>" name="date-created" readonly>
+      		<input id="date_created" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_created; ?>" name="date-created" readonly>
       	</div>
     		<div style="float:left;padding:15px;">
     			<label for="date_expired">Date Expired</label>
-     			<input id="date_expired" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_expired; ?>" name="date-expired" readonly>
+     			<input id="date_expired" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_expired; ?>" name="date-expired">
     		</div>
         <div style="float:left;padding:15px;">
           <label for="date_updated">Date Updated</label>
-          <input id="date_updated" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_updated; ?>" name="date-updated" readonly>
+          <input id="date_updated" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_updated; ?>" name="date-updated" readonly>
         </div>
         <br style="clear:both;" />
         <div style="float:left;margin-right:15px;padding:15px;">
@@ -84,13 +89,14 @@
      		<br style="clear:both;" />
     		<div style="padding:15px;">
      			<label for="job_snippet">Job Snippet</label>
-     			<textarea id="job_snippet" style="border:1px solid #ccc;font-size:17px;" rows="3" cols="100" type="text" name="job-snippet" placeholder="A brief Description of the job"><?php print $job_snippet; ?></textarea>
-     		</div>
+     			<textarea id="job_snippet" style="border:1px solid #ccc;font-size:17px;" rows="3" cols="100" maxlength="500" type="text" name="job-snippet" placeholder="A brief Description of the job"><?php print $job_snippet; ?></textarea>
+     		  <div id="character_count"></div>
+        </div>
 		</fieldset>
 		<div>
-      		<input type="submit" class="form-submit" value="Save" name="op" id="edit-save" />  
+          <input type="button" class="form-submit" value="Back to List" style="float:left;" onclick="history.go(-1);"/>
+      		<input type="submit" class="form-submit" value="Save and Exit" name="op" id="edit-save" style="float:right;"/>  
       		<!-- <input type="submit" class="form-submit" value="Flag to Delete" name="op"/> -->
-      		<input type="reset" class="form-submit" value="Reset" style="float:right;" />
       </div>
 	</div>
 </form>
