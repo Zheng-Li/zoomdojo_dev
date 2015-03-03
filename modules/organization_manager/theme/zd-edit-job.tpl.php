@@ -10,17 +10,17 @@
           <input id="org_id" type="hidden" value="<?php print $org_id; ?>" name="org-id">
     		<div style="float:left;margin-right:10px;padding:15px;width:15%;">
        			<label for="org_name">Organization Name</label>
-        		<textarea id="org_name" type="text" rows="1" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+        		<textarea id="org_name" type="text" rows="1" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
             name="org-name" placeholder="e.g. Apple Inc..." readonly><?php print $org_name; ?></textarea>
     		</div>
     		<div style="float:left;margin-right:10px;padding:15px;width:30%;">
        			<label for="org_url">Organization Url</label>
-        		<textarea id="org_url" type="text" rows="1" cols ="50" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+        		<textarea id="org_url" type="text" rows="1" cols ="50" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
             name="org-url" placeholder="http://www.example.com" readonly><?php print $org_url; ?></textarea>
     		</div>
         <div style="float:left;padding:15px;width:30%;">
             <label for="org_tags">Organization Tags</label>
-            <textarea id="org_tags" type="text" rows="1" style="border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
+            <textarea id="org_tags" type="text" rows="1" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;width:100%;resize:none;" 
             name="org-tags" placeholder="Tags go here...(Maxium 5 tags per organization)" readonly><?php print $org_tags; ?></textarea>
         </div>
 		</fieldset>
@@ -58,12 +58,12 @@
       	</div>
         <div style="float:left;padding:15px;">
           <label for="url_status">Url Status</label>
-          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404" readonly>
+          <input id="url_status" value="<?php print $job_url_status; ?>" type="text" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" name="url-status" placeholder="e.g. 404" readonly>
         </div>
         <br style="clear:both;" />
       	<div style="float:left;margin-right:15px;padding:15px;">
       		<label for="date_created">Date Created</label>
-      		<input id="date_created" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_created; ?>" name="date-created" readonly>
+      		<input id="date_created" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_created; ?>" name="date-created" readonly>
       	</div>
     		<div style="float:left;padding:15px;">
     			<label for="date_expired">Date Expired</label>
@@ -71,7 +71,7 @@
     		</div>
         <div style="float:left;padding:15px;">
           <label for="date_updated">Date Updated</label>
-          <input id="date_updated" style="border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_updated; ?>" name="date-updated" readonly>
+          <input id="date_updated" style="background-color:#EBEBE4;border:1px solid #ccc;font-size:17px;" type="date" value="<?php print $date_updated; ?>" name="date-updated" readonly>
         </div>
         <br style="clear:both;" />
         <div style="float:left;margin-right:15px;padding:15px;">
