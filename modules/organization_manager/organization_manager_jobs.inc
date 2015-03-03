@@ -270,21 +270,6 @@
             'country'       => $job->country,
             );
 
-        // $js = "jQuery(document).ready(function () {"
-        //     . "$('#character_count').text('500 characters left');"
-        //     . "$('#job_snippet').keyup(function () {"
-        //     . "var max = 500; "
-        //     . "alert('fjdskalfjdksaljfkadsjkl');"
-        //     . "var len = $(this).val().length;"             
-        //     . "if (len >= max) { "
-        //     . "$('#character_count').text(' you have reached the limit');"
-        //     . "} else {"
-        //     . "var ch = max - len;"
-        //     . "$('#character_count').text(ch + ' characters left');"
-        //     . "}"
-        //     . "});";
-        // drupal_add_js($js, 'inline');
-
         return theme('organization_manager_edit_job', $variables);
     }
 
@@ -352,7 +337,7 @@
             );
 
         if($var['city'] == "" && $var['district'] == "" && $var['country'] == "") {
-            var_dump('WTF!!!');   
+            // var_dump('WTF!!!');   
         }
 
         $loc_query = db_select('zd_dev_location_city', 'c')
@@ -449,6 +434,9 @@
         drupal_goto();
     }
 
+    /*
+     *Change delete flag of the job
+     */
     function organization_manager_job_change_status($id, $status) {
         $st = 0;
         if ($status == 0) {
