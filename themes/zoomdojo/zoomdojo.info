@@ -17,8 +17,6 @@ scripts[] = js/underscore-min.js
 scripts[] = js/backbone-min.js
 scripts[] = js/main.js
 
-
-
 regions[header] = Header
 regions[help] = Help
 regions[page_top] = Page top

@@ -3141,11 +3141,11 @@ ul#secondary-menu-links a:hover {
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
     background-color: #780000  !important;
-    background-image: -moz-linear-gradient(top, #323232, #323232) !important;
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#323232), to(#323232)) !important;
-  background-image: -webkit-linear-gradient(top, #323232, #323232) !important;
-  background-image: -o-linear-gradient(top, #323232, #323232 ) !important ;
-    background-image: linear-gradient(to bottom, #323232 , #323232 ) !important;
+    background-image: -moz-linear-gradient(top, #666666, #666666) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#666666), to(#666666)) !important;
+  background-image: -webkit-linear-gradient(top, #666666, #666666) !important;
+  background-image: -o-linear-gradient(top, #666666, #666666 ) !important ;
+    background-image: linear-gradient(to bottom, #8a181c , #8a181c ) !important;
 }
 
 #zd-filter-panel ul.typeahead > li:last-child > a, #findJobsForm ul.typeahead, #findNewJobsPopup  ul.typeahead {

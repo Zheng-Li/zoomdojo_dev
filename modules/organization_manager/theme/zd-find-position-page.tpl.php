@@ -2,12 +2,12 @@
     <?php if (!$featuredJobs): ?>
         <div class="front-tb-right">
         <form id="findJobsFormMini" action="/find-positions" method="get">
-            <div class="row-fluid">
-                <input name="keywords" value="" id="employer-autocomplete" type="text" autocomplete="off"  placeholder="<?php print $keywords; ?>" class="fullwidth keywords-autocomplete"/>
-                <input name="location" value="" id="employer-autocomplete" type="text" autocomplete="off"  placeholder="<?php print $location; ?>" class="fullwidth location-autocomplete"/>
-            </div>
+            <div class="row-fluid" style="position:relative; right:90px;">
+                <input name="keywords" value="" id="employer-autocomplete" type="text" autocomplete="off"  placeholder="<?php print $keywords; ?>" class="input-large span4 keywords-autocomplete" style="margin-left:71px;"/>
+                <input name="location" value="" id="employer-autocomplete" type="text" autocomplete="off"  placeholder="<?php print $location; ?>" class="input-large span4 location-autocomplete" style="margin-left:71px;" />
+            </div><br>
         </form>
-        <a class="btn btn-danger btn-small fr-search-btn" href="#" onclick="jQuery('#findJobsFormMini').submit(); return false;">Go</a>
+        <a class="btn btn-danger btn-small fr-search-btn" style="position:relative;right:-210px;" href="#" onclick="jQuery('#findJobsFormMini').submit(); return false;">Go</a>
     </div>
     <?php endif; ?>
     <div id="zd-filter-panel">

@@ -823,6 +823,6 @@ function zoomdojo_blocks_homePageLinkView()
     $homePageLink = '/featured-jobs/internships';
     return '<div class="interships-2013" style="height:60px;position:relative;">
                 <p id="below-content" class="btn btn-danger btn-lg" href="'.$homePageLink.'">'.t('Click here').'</a></p>
-                 <span style="font-size:22px; float:left; max-width:901px;width:100%;height:50px;margin:5px; padding-left:25px;">'.t('Just posted! Exclusive Job and Internship Opportunities and new International Internships!').'</span>
+                 <span style="font-size:22px; float:left; max-width:901px;height:50px;margin:5px; padding-left:25px;">'.t('Just posted! Exclusive Job and Internship Opportunities and new International Internships!').'</span>
            </div>';
 }

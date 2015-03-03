@@ -220,6 +220,34 @@ jQuery(document).ready(function($) {
     */
     //ting
     ///////////
+
+    //Shiva
+     $('#findJobsFormMini').submit(function(){
+        /*if($(this).find('input[name=company_name]').length > 0 && $(this).find('input[name=company_name]').val() != ""){
+            $(this).find('select').val('');
+            $(this).find('select, input').filter(function() { return $(this).val() == ""; }).attr('disabled','disabled');
+            return true;
+        }*/
+
+        if($(this).find('input[name=keywords]').length > 0 && $(this).find('input[name=keywords]').val() != ""){
+            //var msg = ($(this).find('input[name=company_name]').length > 0)?'Please fill in two or more fields!':'Please fill in keywords';
+           return true;
+        }
+        else{
+             var msg = 'Please enter any keyword';
+            if (jQuery.browser.version == 8.0) {
+                alert(msg);
+            } else {
+                ShowAlert(msg);
+            }
+            return false;
+        }
+        $(this).find('select, input').filter(function() { return $(this).val() == ""; }).attr('disabled','disabled');
+    });
+
+    //Shiva ends
+
+
     $('#findJobsForm input[name=company_name], #findNewJobsForm input[name=company_name]').on('change', function(e){
         $(e.currentTarget).parents('form').find('select').val('');
     });
