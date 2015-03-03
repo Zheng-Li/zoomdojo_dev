@@ -66,6 +66,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if (!empty($get['keywords'])){
         $keywords = $get['keywords'];
     }
+    else{$keywords = '%';}
 
     if (!empty($get['location'])){
         $location  = trim($get['location']);
@@ -283,7 +284,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
-
+    if($keywords == '%'){$keywords = '';}
     return array(
         'positions'     => $positions,
         'limit'         => $limit,
