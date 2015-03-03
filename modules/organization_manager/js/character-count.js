@@ -1,6 +1,5 @@
 (function($){
 	$(document).ready(function () {
-		$('#character_count').text('500 characters left');
 		$('#job_snippet').keyup(function () {
 			var max = 500;
 			var len = $(this).val().length;
