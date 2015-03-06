@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                                 <div class="org-meta-desc">
-                                    <span><?php print $position->name; ?></span>
+                                    <span><?php print $position->Name; ?></span>
                                     <span> | </span>
                                     <span><?php print $position->location; ?></span>
                                 </div>
@@ -194,7 +194,7 @@
             </div>
         </div>
             <div class="org-meta-desc">
-                <span><%= name %></span>
+                <span><%= Name %></span>
                 <span> | </span>
                 <span><%= location %></span>
             </div>

@@ -15,7 +15,7 @@
                 </div>
                 <div class="row-fluid">
                     <div class="span8 text-left company-info">
-                        <div class="company-name"><?php print $job->name; ?></div>
+                        <div class="company-name"><?php print $job->Name; ?></div>
                         <div class="company-location"><?php print $job->location; ?></div>
                     </div>
 

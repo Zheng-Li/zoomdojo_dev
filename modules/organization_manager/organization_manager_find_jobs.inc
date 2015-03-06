@@ -301,7 +301,8 @@ function organization_manager_find_jobs_getOrganizationsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
-
+    ///////////////////////////////
+    
     
 
 
