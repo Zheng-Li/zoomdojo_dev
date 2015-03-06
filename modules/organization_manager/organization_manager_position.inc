@@ -103,7 +103,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if($numOfKeywords>0 and $numOfKeywords<10){
 
         /////keywords string process///////
-
+ 
         $params = array();    
         for($i=0;$i<$numOfKeywords;$i++){
             $tempName = ":kw".$i;
@@ -112,19 +112,16 @@ function organization_manager_find_jobs_getPositionsData($get)
         }
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS distinct zdj.ID, Title, Snippet, Created_on,zo.name,zdlc.Name AS city_name , zdlco.Name AS country_name
-                FROM zd_dev_jobs AS zdj
-                LEFT JOIN zd_dev_jobs_tags AS zdjt
-                ON zdj.ID = zdjt.ID
-                LEFT JOIN zd_organization AS zo
-                ON zdj.Org_id = zo.id
-                LEFT JOIN zd_dev_location_city AS zdlc
-                ON zdj.City_id = zdlc.ID
-                LEFT JOIN zd_dev_location_district AS zdld
-                ON zdj.District_id = zdld.ID
-                LEFT JOIN zd_dev_location_country AS zdlco
-                ON zdj.Country_id = zdlco.ID
-                WHERE ( CONCAT(IFNULL(zdjt.Tag, zdj.Title),',',zdj.Title,',',zdj.Snippet,',',zo.name) like :kw0
+            SELECT SQL_CALC_FOUND_ROWS distinct znj.ID, Title, Snippet, Updated_on, zo.Name, znl.City as city_name,
+                znl.State as District, znl.Country as country_name 
+                FROM zd_new_job AS znj
+                LEFT JOIN zd_new_job_tag AS znjt
+                ON znj.ID = znjt.ID
+                LEFT JOIN zd_new_organization AS zo
+                ON znj.Org_id = zo.ID
+                LEFT JOIN zd_new_location AS znl
+                ON znj.Loc_id = znl.ID
+                WHERE ( CONCAT(IFNULL(znjt.Tag, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like :kw0
         ";
         
         $sql_keyword = "";
@@ -132,56 +129,34 @@ function organization_manager_find_jobs_getPositionsData($get)
             
             $tempKeyword = ":kw".$i;
             $sql_keyword=$sql_keyword." ";
-            $sql_keyword = $sql_keyword."AND CONCAT(IFNULL(zdjt.Tag, zdj.Title),',',zdj.Title,',',zdj.Snippet,',',zo.name) like ".$tempKeyword;
+            $sql_keyword = $sql_keyword."AND CONCAT(IFNULL(znjt.Tag, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like ".$tempKeyword;
         }
 
         $sql=$sql.$sql_keyword.")";
 
         ///location string process
-        if($location != ""){
-        
-        $location_id_res = db_query('
-            SELECT id 
-            FROM zd_dev_location_city
-            WHERE Name = :Name'
-        , array(':Name' => $location))->fetchAll();
+         if($location != ""){
+        $params[':loc'] = $location;
 
-        $location_pos = ' City_id = ';
+            $sql_loc = " AND Loc_id in (
+                SELECT ID FROM zd_new_location WHERE City = :loc
+                UNION 
+                SELECT ID FROM zd_new_location WHERE State = :loc
+                UNION 
+                SELECT ID FROM zd_new_location WHERE Country = :loc
+                )
+            ";
+        $sql=$sql.$sql_loc;
 
-        if(empty($location_id_res)){
-            $location_id_res = db_query('
-            SELECT id 
-            FROM zd_dev_location_district
-            WHERE Name = :Name'
-        , array(':Name' => $location))->fetchAll();
-            $location_pos = ' District_id = ';
-        }
-
-        if(empty($location_id_res)){
-            $location_id_res = db_query('
-            SELECT id 
-            FROM zd_dev_location_country
-            WHERE Name = :Name'
-        , array(':Name' => $location))->fetchAll();
-            $location_pos = ' Country_id = ';
-        }
-        
-        if(empty($location_id_res)){
-            $loc_id = 0;
-        }
-        else{
-        $loc_id = $location_id_res[0]->id;}
-
-        $sql_loc = " AND ".$location_pos.$loc_id;
-
-        $sql = $sql.$sql_loc;
-        }
+         }
         
         //////location string process end///////////
         
-        $sql_condition = " AND zdj.Status = '1'
-                    AND (zdj.Url_status < '300' or  zdj.Url_status = '304')
-                    ORDER BY Job_weight ASC, Created_on DESC";
+
+
+        $sql_condition = " AND znj.Status = '1'
+                    AND (znj.Url_status < '300' or znj.Url_status = '304')
+                    ORDER BY Job_weight ASC, city_name = :loc DESC, District = :loc DESC, country_name = :loc DESC, Updated_on DESC";
 
         $sql=$sql.$sql_condition;
         
@@ -207,7 +182,7 @@ function organization_manager_find_jobs_getPositionsData($get)
             //if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
             if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
 
-            $postTime = (int)ceil(($now - strtotime($record->Created_on))/3600);
+            $postTime = (int)ceil(($now - strtotime($record->Updated_on))/3600);
             
             
             if($postTime >= 24){
@@ -241,8 +216,8 @@ function organization_manager_find_jobs_getPositionsData($get)
 
         if(!empty($positions)){
 
-        $results_tag = db_select("zd_dev_jobs_tags","zdjt")
-            ->fields("zdjt")
+        $results_tag = db_select("zd_new_job_tag","znjt")
+            ->fields("znjt")
             ->condition("ID", $pos_ids, "IN")
             ->execute();
 
@@ -367,12 +342,16 @@ function organization_manager_find_jobs_getPositions()
         $params[':keyword'] = '%'.$_GET['keywords'].'%';
         
         $sql = "SELECT Tag as result
-                FROM zd_dev_jobs_tags
+                FROM zd_new_job_tag
                 WHERE Tag like :keyword
                 UNION
                 SELECT Title as result
-                FROM zd_dev_jobs
+                FROM zd_new_job
                 WHERE Title like :keyword
+                UNION
+                SELECT Name as result
+                FROM zd_new_organization
+                WHERE Name like :keyword
         ";
 
         $results = db_query($sql,$params);
@@ -409,32 +388,27 @@ function organization_manager_find_jobs_getLocation()
         'data'   => 'No result',
     );
     if (!empty($_GET['location'])) {
-        $location = $_GET['location'];
-        $query = db_select('zd_dev_location_city', 'zdlc');
-        //$query->addField('zdlc', 'Name', 'locationName');
-        $query = $query->fields('zdlc', array('Name'))
-            ->condition('Name', '%' . db_like($location) . '%', 'LIKE');
-
+        $location = trim($_GET['location']);
+        //$params = array();
+        $params[':loc'] = '%'.$location.'%';
+        $sql = "
+         SELECT City as Name 
+         From zd_new_location
+         Where City LIKE :loc
+         UNION
+         SELECT State as Name 
+         From zd_new_location
+         Where State LIKE :loc
+         UNION
+         SELECT Country as Name 
+         From zd_new_location
+         Where Country LIKE :loc
+        ";
+        $results = db_query($sql,$params);
         
-        $query_district = db_select('zd_dev_location_district', 'zdld');
-        $query_district = $query_district->fields('zdld', array('Name'))
-            ->condition('Name', '%' . db_like($location) . '%', 'LIKE');
-
-        $query->union($query_district, 'UNION');
-
-        $query_country = db_select('zd_dev_location_country', 'zdlco');
-        $query_country = $query_country->fields('zdlco', array('Name'))
-            ->condition('Name', '%' . db_like($location) . '%', 'LIKE');
-
-        $query->union($query_country, 'UNION');
-
-        //$query->condition('zo.status', 1);
-        $query = $query->range(0, 20)
-            //->groupBy('zo.id')
-            ->execute()
-            ->fetchAll();
-
-        //To be cleared
+        foreach ($results as $res) {
+            $query[] = $res;
+        }
 
         if (!empty($query)) {
             /*
@@ -653,35 +627,31 @@ function organization_manager_jobDetails($jobId)
     drupal_add_js(drupal_get_path('module', 'organization_manager') . '/js/new-job-page.js');
 
     if($user->uid != 1){
-    db_update('zd_dev_jobs')
+    db_update('zd_new_job')
     ->expression('Counter_1', 'Counter_1 + 1')
     ->condition('ID', $jobId)
     ->execute();
     }
     ///////////////////start query/////////////////
     
-    $query = db_select('zd_dev_jobs','zdj');
-    $query->leftJoin('zd_dev_location_city','zdlc','zdj.City_id = zdlc.ID');
-    $query->leftJoin('zd_dev_location_district','zdld','zdj.District_id = zdld.ID');
-    $query->leftJoin('zd_dev_location_country','zdlco','zdj.Country_id = zdlco.ID');
-    $query->leftJoin('zd_organization','zo','zdj.Org_id = zo.id');
-    $query = $query->fields('zdj')
-                ->fields('zdlc',array('Name'))
-                
-                ->fields('zdlco',array('Name'))
-                ->fields('zo',array('name'))
-                ->condition('zdj.ID',$jobId)
+    $query = db_select('zd_new_job','znj');
+    $query->leftJoin('zd_new_location','znl','znj.Loc_id = znl.ID');
+    $query->leftJoin('zd_new_organization','zo','znj.Org_id = zo.ID');
+    $query = $query->fields('znj')
+                ->fields('znl',array('City','State','Country'))
+                ->fields('zo',array('Name'))
+                ->condition('znj.ID',$jobId)
                 ->execute()
                 ->fetch();
 
     $query->location = "";
-    if ($query->Name != ""){$query->location.= " ".$query->Name;}
+    if ($query->City != ""){$query->location.= " ".$query->City;}
     
-    if ($query->zdlco_Name != ""){$query->location.= " ".$query->zdlco_Name;}
+    if ($query->Country != ""){$query->location.= " ".$query->Country;}
 
-    $tags_query = db_select('zd_dev_jobs_tags','zdjt');
-    $tags_query = $tags_query->fields('zdjt',array('Tag'))
-                ->condition('zdjt.ID',$jobId)
+    $tags_query = db_select('zd_new_job_tag','znjt');
+    $tags_query = $tags_query->fields('znjt',array('Tag'))
+                ->condition('znjt.ID',$jobId)
                 ->execute()
                 ->fetchAll();
 
@@ -738,7 +708,7 @@ function organization_manager_jobDetails($jobId)
 
 function organization_manager_find_counter_increasement(){
         $jobId = $_GET['jobId'];
-        db_update('zd_dev_jobs')
+        db_update('zd_new_job')
         ->expression('Counter_2', 'Counter_2 + 1')
         ->condition('ID', $jobId)
         ->execute();          
