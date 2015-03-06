@@ -3,7 +3,7 @@
     /*
      *Show job details classified by the job itself
      */
-    function organization_manager_jobs() {  # Check
+    function organization_manager_jobs() {  # Done
         if(isset($_POST['op']) && $_POST['op'] == 'Apply the filters'){
             organization_manager_organizations_list_filters_submit($_POST);
         }
@@ -237,7 +237,7 @@
                 $job->job_snippet = $item->Snippet;
                 $job->weight = $item->Job_weight;
                 $job->date_created = $item->Created_on;
-                $job->date_updated = $item->Updated_on;
+                $job->date_updated = date('Y-m-d', strtotime($item->Updated_on));
                 $job->date_expired = $item->Expired_on;
                 $job->city = $item->City;
                 $job->state = $item->State;
@@ -307,7 +307,7 @@
     /*
      * Adding or Editing job with pre-defined organization
      */
-    function organization_manager_job_edit_submit($var) {  # Done with problem!!!!
+    function organization_manager_job_edit_submit($var) {  # Done
         $org_fields = array(
             'ID'        => $var['org-id'],
             'Name'      => $var['org-name'],
@@ -340,13 +340,13 @@
 
         $job_tags = array(
             'ID'        => $var['job-id'],
-            'Tag'           => explode(",", $var['job-tags']),
+            'Tag'       => explode(",", $var['job-tags']),
             );
 
-        $location = array(
-            'City'          => $var['city'],
+        $location_fields = array(
+            'City'       => $var['city'],
             'State'      => $var['state'],
-            'Country'       => $var['country'],
+            'Country'    => $var['country']?$var['country']:'USA',
             );
 
         // -------------------- NOT IN USE -------------------------- 
@@ -399,18 +399,23 @@
         //     $job_fields['Country_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
         // }
         // -------------------- NOT IN USE -------------------------- 
-
+        $or = db_or()
+            ->condition('State', $location_fields['State'], 'LIKE')
+            ->condition('Abbreviation', $location_fields['State'], 'LIKE');
         $loc_query = db_select ('zd_new_location', 'l')
             ->fields('l', array('ID'))
-            ->condition('City', $location['City'])
-            ->condition('State', $location['State'])
-            ->condition('Country', $location['Country'])
+            ->condition('City', $location_fields['City'])
+            ->condition('Country', $location_fields['Country'])
+            ->condition($or)
             ->execute();
         $num = $loc_query->rowCount();
         if($num) {
             $job_fields['Loc_id'] = $loc_query->fetchField();
         } else {
-            // Problem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!. <Geolocation + Abbreviation>
+            $insert = db_insert('zd_new_location')
+                ->fields($location_fields)
+                ->execute();
+            $job_fields['Loc_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
         }
 
         $org_query = db_merge('zd_new_organization')

@@ -76,15 +76,15 @@
         <br style="clear:both;" />
         <div style="float:left;margin-right:15px;padding:15px;">
             <label for="city">City</label>
-            <input id="city" type="text" value="<?php print $city; ?>" style="border:1px solid #ccc;font-size:17px;" name="city" placeholder="City of the job">
+            <input id="city" type="text" value="<?php print $city; ?>" style="border:1px solid #ccc;font-size:17px;" name="city" placeholder="City (full name)">
         </div>
         <div style="float:left;margin-right:15px;padding:15px;">
             <label for="state">State</label>
-            <input id="state" type="text" value="<?php print $state; ?>" style="border:1px solid #ccc;font-size:17px;" name="state" placeholder="State of the job">
+            <input id="state" type="text" value="<?php print $state; ?>" style="border:1px solid #ccc;font-size:17px;" name="state" placeholder="State (full name)">
         </div>
         <div style="float:left;padding:15px;">
             <label for="country">Country</label>
-            <input id="country" type="text" value="<?php print $country; ?>" style="border:1px solid #ccc;font-size:17px;" name="country" placeholder="Country of the job">
+            <input id="country" type="text" value="<?php print $country; ?>" style="border:1px solid #ccc;font-size:17px;" name="country" placeholder="Country (full name)">
         </div>
      		<br style="clear:both;" />
     		<div style="padding:15px;">
