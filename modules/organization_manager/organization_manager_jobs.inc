@@ -3,7 +3,7 @@
     /*
      *Show job details classified by the job itself
      */
-    function organization_manager_jobs() {  
+    function organization_manager_jobs() {  # Check
         if(isset($_POST['op']) && $_POST['op'] == 'Apply the filters'){
             organization_manager_organizations_list_filters_submit($_POST);
         }
@@ -23,7 +23,7 @@
         $form['filters']['fieldset']['location'] = array (
             '#type' => 'textfield',
             '#title' => t('Location filter'),
-            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array(),
+            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array('placeholder' => 'Any location in full name...'),
             '#name' => 'location',
             '#size' => 35,           
             );
@@ -31,7 +31,7 @@
         $form['filters']['fieldset']['organization'] = array (
             '#type' => 'textfield',
             '#title' => t('Organization Name Filter'),
-            '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array(),
+            '#attributes'=>variable_get('organization')?array('placeholder' => variable_get('organization')):array('placeholder' => 'Any organization name...'),
             '#name' => 'organization',
             '#size' => 35,           
             );
@@ -39,7 +39,7 @@
         $form['filters']['fieldset']['tag'] = array (
             '#type' => 'textfield',
             '#title' => t('Job/Organization Tag Filter'),
-            '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array(),
+            '#attributes'=>variable_get('tag')?array('placeholder' => variable_get('tag')):array('placeholder' => 'Any tags for job or organization...'),
             '#name' => 'tag',
             '#size' => 35,           
             );
@@ -60,43 +60,49 @@
             array('data' => 'Organization Name (read only)', 'field' => 'name'),
             array('data' => 'Created On (read only)', 'field' => 'created_on'),
             array('data' => 'Expired On (read only)', 'field' => 'expired_on'),
-            array('data' => 'City', 'field' => 'c.name'),
-            array('data' => 'District', 'field' => 'd.name'),
-            array('data' => 'Country', 'field' => 't.name'),
+            array('data' => 'City', 'field' => 'city'),
+            array('data' => 'State', 'field' => 'state'),
+            array('data' => 'Country', 'field' => 'country'),
             array('data' => 'Counter 1', 'field' => 'counter_1'),
             array('data' => 'Counter 2', 'field' => 'counter_2'), 
             array('data' => 'Delete Flag', 'field' => 'delete_flag'),
             array('data' => t('Operations'), 'colspan' => 2),
         );
 
-        $query = db_select('zd_dev_jobs', 'j');
-        $query -> leftjoin('zd_dev_organizations', 'o', 'j.Org_id = o.ID');
-        $query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
-        $query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
-        $query -> join('zd_dev_location_country', 't', 'j.Country_id = t.ID');
+        $query = db_select('zd_new_job', 'j');
+        $query -> leftjoin('zd_new_organization', 'o', 'j.Org_id = o.ID');
+        // ------------------------- NOT IN USE ---------------------------
+        // $query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
+        // $query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
+        // $query -> join('zd_dev_location_country', 't', 'j.Country_id = t.ID');
+        // ------------------------- NOT IN USE ---------------------------
+        $query -> join('zd_new_location', 'l', 'j.Loc_id = l.ID');
         $query -> fields('j', array('ID', 'Title', 'Snippet', 'Url', 'Url_status'));
         $query -> fields('o', array('Name'));
-        $query -> fields('c', array('Name'));
-        $query -> fields('d', array('Name'));
-        $query -> fields('t', array('Name'));
+        // ------------------------- NOT IN USE ---------------------------
+        // $query -> fields('c', array('Name'));
+        // $query -> fields('d', array('Name'));
+        // $query -> fields('t', array('Name'));
+        // ------------------------- NOT IN USE ---------------------------
+        $query -> fields('l', array('City', 'State', 'Country'));
         $query -> fields('j', array('Created_on', 'Expired_on','Counter_1', 'Counter_2', 'Delete_flag'));
 
         // Apply the filter for the sql query
         if(variable_get('location') != "") {
             $or = db_or()
-                -> condition('c.Name', '%'.db_like(variable_get('location')).'%', 'LIKE')
-                -> condition('d.Name', '%'.db_like(variable_get('location')).'%', 'LIKE')
-                -> condition('t.Name', '%'.db_like(variable_get('location')).'%', 'LIKE');
+                -> condition('City', '%'.db_like(variable_get('location')).'%', 'LIKE')
+                -> condition('State', '%'.db_like(variable_get('location')).'%', 'LIKE')
+                -> condition('Country', '%'.db_like(variable_get('location')).'%', 'LIKE');
             $query -> condition($or);
         }
 
         if(variable_get('organization') != "") {
-            $query -> condition('o.Name', '%'.db_like(variable_get('organization')).'%', 'LIKE');
+            $query -> condition('Name', '%'.db_like(variable_get('organization')).'%', 'LIKE');
         }
 
         if(variable_get('tag') != "") {
-            $query -> join('zd_dev_jobs_tags', 'jt', 'j.ID = jt.ID');
-            $query -> join('zd_dev_organizations_tags', 'ot', 'o.ID = ot.ID');
+            $query -> join('zd_new_job_tag', 'jt', 'j.ID = jt.ID');
+            $query -> join('zd_new_organization_tag', 'ot', 'o.ID = ot.ID');
             $or = db_or()
                 -> condition('jt.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE')
                 -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
@@ -128,9 +134,9 @@
                 $item->Name,
                 $item->Created_on,
                 $item->Expired_on,
-                $item->c_Name,
-                $item->d_Name,
-                $item->t_Name,
+                $item->City,
+                $item->State,
+                $item->Country,
                 $item->Counter_1,
                 $item->Counter_2,
                 $status = $item->Delete_flag ? "Deleted" : "Undeleted",
@@ -169,7 +175,7 @@
     /*
      * Job editing page with pre-defined organization
      */
-    function organization_manager_job_edit($id = 0) {
+    function organization_manager_job_edit($id = 0) { # Done
         if (isset($_POST['op'])) {
             organization_manager_job_edit_submit($_POST);
         }
@@ -196,22 +202,26 @@
         $job->date_created     = '';
         $job->date_expired     = '';
         $job->city             = '';
-        $job->district         = '';
+        $job->state            = '';
         $job->country          = '';
         $job->weight           = 0;
         $job->job_tags         = '';
         
         if($id) {
-            $job_query = db_select('zd_dev_jobs', 'j');
-            $job_query -> leftJoin('zd_dev_jobs_tags', 't', 'j.ID = t.ID');
-            $job_query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
-            $job_query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
-            $job_query -> join('zd_dev_location_country', 'cc', 'j.Country_id = cc.ID');
+            $job_query = db_select('zd_new_job', 'j');
+            $job_query -> leftJoin('zd_new_job_tag', 't', 'j.ID = t.ID');
+            // ------------------- NOT IN USE ----------------------
+            // $job_query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
+            // $job_query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
+            // $job_query -> join('zd_dev_location_country', 'cc', 'j.Country_id = cc.ID');
+            // $job_query -> fields('c', array('Name'));
+            // $job_query -> fields('d', array('Name', 'Alias'));
+            // $job_query -> fields('cc', array('Name'));
+            // ------------------- NOT IN USE ----------------------
+            $job_query -> join('zd_new_location', 'l', 'j.Loc_id = l.ID');
             $job_query -> fields('j', array('ID', 'Title', 'Url', 'Url_status', 'Org_id', 'Job_weight', 'Created_on', 'Expired_on', 'Updated_on', 'Snippet'));
+            $job_query -> fields('l', array('City', 'State', 'Country'));
             $job_query -> fields('t', array('Tag'));
-            $job_query -> fields('c', array('Name'));
-            $job_query -> fields('d', array('Name', 'Alias'));
-            $job_query -> fields('cc', array('Name'));
             $job_query -> condition('j.ID', $id);
             $job_query -> addExpression('GROUP_CONCAT(DISTINCT Tag)', 'Tag_list');
             $job_query -> groupBy('j.ID');
@@ -229,13 +239,13 @@
                 $job->date_created = $item->Created_on;
                 $job->date_updated = $item->Updated_on;
                 $job->date_expired = $item->Expired_on;
-                $job->city = $item->Name;
-                $job->district = $item->d_Name;
-                $job->country = $item->cc_Name;
+                $job->city = $item->City;
+                $job->state = $item->State;
+                $job->country = $item->Country;
             }
 
-            $org_query = db_select('zd_dev_organizations', 'o');
-            $org_query -> leftJoin('zd_dev_organizations_tags', 't', 'o.ID = t.ID');
+            $org_query = db_select('zd_new_organization', 'o');
+            $org_query -> leftJoin('zd_new_organization_tag', 't', 'o.ID = t.ID');
             $org_query -> fields('o', array('ID', 'Name', 'Url'));
             $org_query -> fields('t', array('Tag'));
             $org_query -> condition('o.ID', $job->org_id);
@@ -266,7 +276,7 @@
             'date_updated'  => $job->date_updated,
             'weight'        => $job->weight,
             'city'          => $job->city,
-            'district'      => $job->district,
+            'state'         => $job->state,
             'country'       => $job->country,
             );
 
@@ -276,7 +286,7 @@
     /*
      * Apply the filter by button
      */
-    function organization_manager_organizations_list_filters_submit($form) {
+    function organization_manager_organizations_list_filters_submit($form) { # Done
         variable_set($form['location'], '');
         variable_set($form['organization'], '');
         variable_set($form['tag'], '');
@@ -297,7 +307,7 @@
     /*
      * Adding or Editing job with pre-defined organization
      */
-    function organization_manager_job_edit_submit($var) {  
+    function organization_manager_job_edit_submit($var) {  # Done with problem!!!!
         $org_fields = array(
             'ID'        => $var['org-id'],
             'Name'      => $var['org-name'],
@@ -318,11 +328,14 @@
             'Url_status'    => $var['url-status'],
             'Snippet'       => $var['job-snippet'],
             'Created_on'    => $var['date-created'],
-            'Expired_on'    => $var['date-expired'],  
-            'Updated_on'    => date("Y-m-d"),
-            'City_id'       => 0,
-            'District_id'   => 0,
-            'Country_id'    => 0,
+            'Expired_on'    => $var['date-expired'], 
+            'Loc_id'        => 0,
+            //------- NOT IN USE ----------
+            // 'Updated_on'    => date("Y-m-d"),
+            // 'City_id'       => 0,
+            // 'District_id'   => 0,
+            // 'Country_id'    => 0,
+            //------- NOT IN USE ----------
             );
 
         $job_tags = array(
@@ -332,104 +345,113 @@
 
         $location = array(
             'City'          => $var['city'],
-            'District'      => $var['district'],
+            'State'      => $var['state'],
             'Country'       => $var['country'],
             );
 
-        if($var['city'] == "" && $var['district'] == "" && $var['country'] == "") {
-            // var_dump('WTF!!!');   
-        }
+        // -------------------- NOT IN USE -------------------------- 
+        // $loc_query = db_select('zd_dev_location_city', 'c')
+        //     ->fields('c', array('ID'))
+        //     ->condition('Name', $location['City'])
+        //     ->execute();
+        // $num = $loc_query->rowCount();
+        // if($num == 1) {
+        //     $job_fields['City_id'] = $loc_query->fetchField();
+        // } 
+        // if($num == 0) {
+        //     $insert = db_insert('zd_dev_location_city')
+        //                 ->fields(array('Name' => $var['city'],))
+        //                 ->execute();
+        //     $job_fields['City_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        // }
 
-        $loc_query = db_select('zd_dev_location_city', 'c')
-            ->fields('c', array('ID'))
-            ->condition('Name', $location['City'])
+        // $or = db_or()
+        //     ->condition('Name', '%'.db_like($location['District']).'%', 'LIKE')
+        //     ->condition('Alias', '%'.db_like($location['District']).'%', 'LIKE');
+        // $loc_query = db_select('zd_dev_location_district', 'd')
+        //     ->fields('d', array('ID'))
+        //     ->condition($or)
+        //     ->execute();
+        // $num = $loc_query -> rowCount();
+        // if($num == 1) {
+        //     $job_fields['District_id'] = $loc_query -> fetchField();
+        // } 
+        // if($num == 0) {
+        //     $insert = db_insert('zd_dev_location_district')
+        //         -> fields(array(
+        //             'Name' => $location['District'],))
+        //         -> execute();
+        //     $job_fields['District_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField(); 
+        // }
+
+        // $loc_query = db_select('zd_dev_location_country', 'c')
+        //     ->fields('c', array('ID'))
+        //     ->condition('Name', $location['Country'])
+        //     ->execute();
+        // $num = $loc_query->rowCount();
+        // if($num == 1) {
+        //     $job_fields['Country_id'] = $loc_query->fetchField();
+        // } 
+        // if($num == 0) {
+        //     $insert = db_insert('zd_dev_location_country')
+        //                 ->fields(array('Name' => $var['country'],))
+        //                 ->execute();
+        //     $job_fields['Country_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        // }
+        // -------------------- NOT IN USE -------------------------- 
+
+        $loc_query = db_select ('zd_new_location', 'l')
+            ->fields('l', array('ID'))
+            ->condition('City', $location['City'])
+            ->condition('State', $location['State'])
+            ->condition('Country', $location['Country'])
             ->execute();
         $num = $loc_query->rowCount();
-        if($num == 1) {
-            $job_fields['City_id'] = $loc_query->fetchField();
-        } 
-        if($num == 0) {
-            $insert = db_insert('zd_dev_location_city')
-                        ->fields(array('Name' => $var['city'],))
-                        ->execute();
-            $job_fields['City_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
+        if($num) {
+            $job_fields['Loc_id'] = $loc_query->fetchField();
+        } else {
+            // Problem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!. <Geolocation + Abbreviation>
         }
 
-        $or = db_or()
-            ->condition('Name', '%'.db_like($location['District']).'%', 'LIKE')
-            ->condition('Alias', '%'.db_like($location['District']).'%', 'LIKE');
-        $loc_query = db_select('zd_dev_location_district', 'd')
-            ->fields('d', array('ID'))
-            ->condition($or)
-            ->execute();
-        $num = $loc_query -> rowCount();
-        if($num == 1) {
-            $job_fields['District_id'] = $loc_query -> fetchField();
-        } 
-        if($num == 0) {
-            $insert = db_insert('zd_dev_location_district')
-                -> fields(array(
-                    'Name' => $location['District'],))
-                -> execute();
-            $job_fields['District_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField(); 
-        }
-
-        $loc_query = db_select('zd_dev_location_country', 'c')
-            ->fields('c', array('ID'))
-            ->condition('Name', $location['Country'])
-            ->execute();
-        $num = $loc_query->rowCount();
-        if($num == 1) {
-            $job_fields['Country_id'] = $loc_query->fetchField();
-        } 
-        if($num == 0) {
-            $insert = db_insert('zd_dev_location_country')
-                        ->fields(array('Name' => $var['country'],))
-                        ->execute();
-            $job_fields['Country_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
-        }
-
-        $org_status = db_merge('zd_dev_organizations')
+        $org_query = db_merge('zd_new_organization')
             ->key(array('ID' => $var['org-id']?$var['org-id']:null))
             ->fields($org_fields)
             ->execute();
-        if($org_status == MergeQuery::STATUS_INSERT) {
+        if($org_query == MergeQuery::STATUS_INSERT) {
             $job_fields['org_id'] = db_query("SELECT LAST_INSERT_ID()")->fetchField();
-        } 
-        if($num == 0) {
+        } else {
             $job_fields['org_id'] = $var['org-id'];
         }
 
-        $org_query = db_delete('zd_dev_organizations_tags')
+        $org_tag_query = db_delete('zd_new_organization_tag')
             ->condition('ID', $org_tags['ID'])
             ->execute();
-        $org_query = db_insert('zd_dev_organizations_tags')
+        $org_tag_query = db_insert('zd_new_organization_tag')
             ->fields(array('ID', 'Tag'));
         foreach ($org_tags['Tag'] as $t) {
-            $org_query->values(array($org_tags['ID'], $t));
+            $org_tag_query->values(array($org_tags['ID'], $t));
         }
-        $org_query->execute();
+        $org_tag_query->execute();
 
-        $job_status = db_merge('zd_dev_jobs')
+        $job_query = db_merge('zd_new_job')
             ->key(array('ID' => $var['job-id']?$var['job-id']:null))
             ->fields($job_fields)
             ->execute();
-        if($job_status == MergeQuery::STATUS_INSERT) {
+        if($job_query == MergeQuery::STATUS_INSERT) {
             $last_id = db_query("SELECT LAST_INSERT_ID()")->fetchField();
-        } 
-        if($num == 0) {
+        } else {
             $last_id = $var['job-id'];
         }
 
-        $job_query = db_delete('zd_dev_jobs_tags')
+        $job_tag_query = db_delete('zd_new_job_tag')
             ->condition('ID', $job_tags['ID'])
             ->execute();
-        $job_query = db_insert('zd_dev_jobs_tags')
+        $job_tag_query = db_insert('zd_new_job_tag')
             ->fields(array('ID', 'Tag'));
         foreach ($job_tags['Tag'] as $t) {
-            $job_query->values(array($job_tags['ID'], $t));
+            $job_tag_query->values(array($job_tags['ID'], $t));
         }
-        $job_query->execute();
+        $job_tag_query->execute();
 
         drupal_goto();
     }
@@ -437,19 +459,17 @@
     /*
      *Change delete flag of the job
      */
-    function organization_manager_job_change_status($id, $status) {
+    function organization_manager_job_change_status($id, $status) { # Done
         $st = 0;
         if ($status == 0) {
             $st = 1;
         }
-        db_update('zd_dev_jobs')
+        db_update('zd_new_job')
             ->fields(array('Delete_flag' => $st))
             ->condition('id', $id)
             ->execute();
 
         drupal_goto($_SERVER['HTTP_REFERER']);
     }
-
-    // drupal_goto('admin/organization-manager/organization/'.$fields['organizationId'].'/jobs');
 
 ?>

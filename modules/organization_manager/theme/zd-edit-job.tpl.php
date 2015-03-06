@@ -79,8 +79,8 @@
             <input id="city" type="text" value="<?php print $city; ?>" style="border:1px solid #ccc;font-size:17px;" name="city" placeholder="City of the job">
         </div>
         <div style="float:left;margin-right:15px;padding:15px;">
-            <label for="district">District</label>
-            <input id="district" type="text" value="<?php print $district; ?>" style="border:1px solid #ccc;font-size:17px;" name="district" placeholder="District/State of the job">
+            <label for="state">State</label>
+            <input id="state" type="text" value="<?php print $state; ?>" style="border:1px solid #ccc;font-size:17px;" name="state" placeholder="State of the job">
         </div>
         <div style="float:left;padding:15px;">
             <label for="country">Country</label>
