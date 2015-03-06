@@ -66,6 +66,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if (!empty($get['keywords'])){
         $keywords = $get['keywords'];
     }
+    else{$keywords = '%';}
 
     if (!empty($get['location'])){
         $location  = trim($get['location']);
@@ -99,7 +100,7 @@ function organization_manager_find_jobs_getPositionsData($get)
 
     $numOfKeywords = count($fined_keywords);
 
-    if($numOfKeywords>0 and $numOfKeywords<4){
+    if($numOfKeywords>0 and $numOfKeywords<10){
 
         /////keywords string process///////
 
@@ -189,7 +190,7 @@ function organization_manager_find_jobs_getPositionsData($get)
 
         $results = db_query($sql,$params);
 
-        $now=strtotime(date("y-m-d"));
+        $now=strtotime(date("y-m-d H:i:s"));
 
         $positions = array();
         
@@ -206,7 +207,6 @@ function organization_manager_find_jobs_getPositionsData($get)
             //if ($record->district_name != ""){$record->location.=" ".$record->district_name;}
             if ($record->country_name != ""){$record->location.= " ".$record->country_name;}
 
-            
             $postTime = (int)ceil(($now - strtotime($record->Created_on))/3600);
             
             
@@ -288,7 +288,7 @@ function organization_manager_find_jobs_getPositionsData($get)
     if ($router_item = menu_get_item('admin/organization-manager/organizations/edit/%')) {
       $userCanEdit = $router_item['access'];
     }
-
+    if($keywords == '%'){$keywords = '';}
     return array(
         'positions'     => $positions,
         'limit'         => $limit,

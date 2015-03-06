@@ -58,7 +58,7 @@
                 <h3 class="job-info-text"><?php print t('Job Details'); ?></h3>
             </div>
             <div class="span2 job-status text-right">
-                <div class="posted">Posted <?php print $job->Created_on; ?> </div>
+                <div class="posted">Posted on <?php print $job->Created_on; ?> </div>
             </div>
             <div class="span12 job-info">
                 <div class="job-description"><?php print $job->Snippet; ?></div>

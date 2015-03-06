@@ -1,6 +1,9 @@
 <div class="featured-jobs-wrapper industries">
     <div class="featured-jobs-desc">
-        Explore Zoomdojo's 2015 internship list. Hundreds of new postings in architecture internships, accounting internships, arts internships, IT internships, finance internships, engineering internships, marketing internships and more. Want more options? Do an in-depth job search at Zoomdojo.
+                <?php if ($user->uid==0): ?>
+                <button><span style="font-size: 13pt; font-family: Verdana, sans-serif; color: #993300;"><b onclick="App.singInPopup();">Sign In now</b></span></button> 
+                <?php endif; ?>
+                Find hundreds of 2015 Internships. Are you interested in international internships? Looking for accounting, technology or arts internships?  Discover internships in New York, LA, and many more cities.
     </div>
     <?php if (!empty($industries)): ?>
         <div class="industries-pager">
