@@ -23,7 +23,7 @@
         $form['filters']['fieldset']['location'] = array (
             '#type' => 'textfield',
             '#title' => t('Location filter'),
-            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array('placeholder' => 'Any location in full name...'),
+            '#attributes'=>variable_get('location')?array('placeholder' => variable_get('location')):array('placeholder' => 'Any location name...'),
             '#name' => 'location',
             '#size' => 35,           
             );

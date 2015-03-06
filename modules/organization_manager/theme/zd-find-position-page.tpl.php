@@ -93,6 +93,7 @@
                                     <span> | </span>
                                     <span><?php print $position->location; ?></span>
                                 </div>
+                                <br>
                             <div class="row-fluid">
                                 <div class="span12 text-left">
                                     <div class="org-meta-desc">
@@ -101,18 +102,20 @@
                                         <?php else: ?>
                                             <?php print t('Please click on job name for more info'); ?>
                                         <?php endif; ?>
-                                    </div>
+                                    </div><br>
                                     <div class="org-meta-desc">
                                         <?php if (!empty($position->Tags)): ?>
-                                        <ul>
+                                        <ul style="list-style-type: none;margin: 0;padding: 0;">
                                             <?php foreach ($position->Tags as $Tag): ?>
-                                            <li><?php print $Tag?></li> 
+                                            <b><li style="display:inline;margin:-30px;padding:40px;color:#000000;">&#10148<?php print $Tag?></li></b>
                                             <?php endforeach; ?>
                                         </ul>
                                         <?php endif; ?>
-                                    </div>
-                                    <div class="org-meta-desc">
-                                        Post <?php print $position->post ?> ago
+                                    </div><br>
+                                    <div class="span12 text-center">
+                                        <div class="org-meta-desc">
+                                            Posted <?php print $position->post ?> ago
+                                        </div>
                                     </div>
                                 </div>
                             </div>
