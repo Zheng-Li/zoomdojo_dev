@@ -113,7 +113,7 @@ function organization_manager_find_jobs_getPositionsData($get)
 
         $sql = "
             SELECT SQL_CALC_FOUND_ROWS distinct znj.ID, Title, Snippet, Updated_on, zo.Name, znl.City as city_name,
-                znl.State as District, znl.Country as country_name 
+                znl.State as District, znl.Country as country_name, x.Tags
                 FROM zd_new_job AS znj
                 LEFT JOIN zd_new_job_tag AS znjt
                 ON znj.ID = znjt.ID
@@ -121,7 +121,11 @@ function organization_manager_find_jobs_getPositionsData($get)
                 ON znj.Org_id = zo.ID
                 LEFT JOIN zd_new_location AS znl
                 ON znj.Loc_id = znl.ID
-                WHERE ( CONCAT(IFNULL(znjt.Tag, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like :kw0
+                LEFT JOIN (
+                select zd_new_job_tag.ID, group_concat(Tag separator ',') as Tags from zd_new_job_tag GROUP BY zd_new_job_tag.ID
+                ) x
+                ON x.ID = znj.ID
+                WHERE ( CONCAT(IFNULL(x.Tags, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like :kw0
         ";
         
         $sql_keyword = "";
@@ -129,7 +133,7 @@ function organization_manager_find_jobs_getPositionsData($get)
             
             $tempKeyword = ":kw".$i;
             $sql_keyword=$sql_keyword." ";
-            $sql_keyword = $sql_keyword."AND CONCAT(IFNULL(znjt.Tag, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like ".$tempKeyword;
+            $sql_keyword = $sql_keyword."AND CONCAT(IFNULL(x.Tags, znj.Title),',',znj.Title,',',znj.Snippet,',',zo.Name) like ".$tempKeyword;
         }
 
         $sql=$sql.$sql_keyword.")";
