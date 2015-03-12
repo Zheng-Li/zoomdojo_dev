@@ -328,7 +328,7 @@
             'Url_status'    => $var['url-status'],
             'Snippet'       => $var['job-snippet'],
             'Created_on'    => $var['date-created'],
-            'Expired_on'    => $var['date-expired'], 
+            'Expired_on'    => $var['date-expired']?$var['date-expired']:date('Y-m-d', strtotime("+2 months")), # Defualt expire date is 2 month from now
             'Loc_id'        => 0,
             //------- NOT IN USE ----------
             // 'Updated_on'    => date("Y-m-d"),
