@@ -48,7 +48,7 @@ function organization_manager_job_industries_list($form_state){
 function organization_manager_job_industries_get_data(){
     $rootnodes = db_query('SELECT id, title, weight, pid
                        FROM {zd_job_industries}
-                       WHERE (pid = 0) AND id <> 62 AND id <> 63 AND id <> 64 AND id <> 65 AND id <> 66 AND id <> 67
+                       WHERE (pid = 0)
                        ORDER BY title ASC');
     $itemtree  = array();
     $depth     = -1;
