@@ -233,6 +233,8 @@ table ul.links li {
 .block ul {
     margin: 0;
     padding: 0 0 0.25em 1em; /* LTR */
+    /*margin: 5px 0;
+    padding: 0 0 0.25em 2.5em;*/
 }
 .contextual-links-wrapper {
     font-size: small !important;
@@ -506,11 +508,11 @@ h1#site-name {
 #main-menu-links li a.active {
     border-bottom: none;
 }
-.featured #main-menu-links li a:active,
+/*.featured #main-menu-links li a:active,
 .featured #main-menu-links li a.active {
     background: #f0f0f0;
     background: rgba(240, 240, 240, 1.0);
-}
+}*/
 
 /* ------------------- Main ------------------- */
 
@@ -1839,10 +1841,6 @@ span.feature-shadow {
 }
 
 
-#below-content{
-    float: left;
-}
-
 
 .interships-2013 {
     background-image: url("../img/fall-interships-2013-background.png");
@@ -1855,11 +1853,23 @@ span.feature-shadow {
 }
 .interships-2013 > p > a {
     margin-top: -8px;
+    float: left;
 }
 
 .interships-2013 > p {
     margin: 0;
+    font-size: 22px;
 }
+
+.interships-2013 > span {
+    font-size: 22px;
+    position: relative;
+    /*height: 50%;*/
+    margin-right:5px;
+    top:-10px;
+    right:-5px;
+}
+
 .interships-2013 > p > span {
     font-size: 22px;
     margin-left: 15px;
@@ -3111,17 +3121,14 @@ ul#secondary-menu-links a:hover {
     opacity: 1 !important;
 }
 
-#zd-filter-panel ul.typeahead > li > a,/* #findJobsForm*/ ul.typeahead > li > a {
+#zd-filter-panel ul.typeahead > li > a, /* #findJobsForm*/ ul.typeahead > li > a {
     /*  background: none;*/
     color: #777;
     font-size: 11px;
     font-weight: bold;
     border-bottom: 1px solid #ccc;
-    padding: 5px 10px;
-}
-
-/*#findJobsForm */ul.typeahead > li > a {
-    padding: 5px 218px 5px 6px;
+    padding: 5px 0px 10px 3px;
+    width:99%;
 }
 
 #zd-filter-panel .dropdown-menu > .active > a, #zd-filter-panel .dropdown-menu > .active > a:hover, #zd-filter-panel .dropdown-menu > .active > a:focus, #findJobsForm .dropdown-menu > .active > a, #findJobsForm .dropdown-menu > .active > a:hover, #findJobsForm .dropdown-menu > .active > a:focus, #findNewJobsPopup .dropdown-menu > .active > a, #findNewJobsPopup .dropdown-menu > .active > a:hover, #findNewJobsPopup .dropdown-menu > .active > a:focus {
@@ -3142,7 +3149,7 @@ ul#secondary-menu-links a:hover {
 .dropdown-menu > .active > a:focus {
     background-color: #780000  !important;
     background-image: -moz-linear-gradient(top, #666666, #666666) !important;
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#666666), to(#666666)) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#666666), to(#666666org-meta-desc)) !important;
   background-image: -webkit-linear-gradient(top, #666666, #666666) !important;
   background-image: -o-linear-gradient(top, #666666, #666666 ) !important ;
     background-image: linear-gradient(to bottom, #8a181c , #8a181c ) !important;
@@ -3150,7 +3157,6 @@ ul#secondary-menu-links a:hover {
 
 #zd-filter-panel ul.typeahead > li:last-child > a, #findJobsForm ul.typeahead, #findNewJobsPopup  ul.typeahead {
     border-bottom: none;
-
 }
 
 #findNewJobsForm .leftpart h3 {
@@ -4779,9 +4785,9 @@ h2.fg-red {
         display: none;
     }
 
-    .interships-2013 > p > span {
+    /*.interships-2013 > p > span {
         font-size: 14px;
-    }
+    }*/
 
     .without-secondary-menu .region-header, .with-secondary-menu .region-header {
         margin-top: 5px;

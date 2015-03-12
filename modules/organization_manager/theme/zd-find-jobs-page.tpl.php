@@ -341,3 +341,94 @@
         </div>
     </div>
 </script>
+
+
+
+
+
+
+<!--<div id="zd-filter-panel">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <?php if (!$featuredJobs): ?>
+                    <div class="span4">
+                        <span id="zd-location">
+                            <?php print $allJobString; ?>
+                        </span>
+                    </div>
+                    <div class="span8 text-right">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <input type="text" id="search-keyword" class="typeahead"  placeholder="Find..." value="" />
+                                <a href="#" class="btn btn-danger" id="btn-find-keyword"><i class="icon-white icon-search"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="span12">
+                        <span id="zd-fj-location">
+                            <?php print t('Internships in ').$industryStr; ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="row-fluid">
+                <div class="row-fluid">
+                    <div class="span3">
+                        <div class="dispalay-ctl">
+                            <span class="dispalay-text"><?php print t('Display by'); ?></span>
+                            <select  id="dispalay-ctl"  class="dispalay-select input-mini">
+                                <?php foreach ($displayArray as $row): ?>
+                                    <?php if ($row == $limit): ?>
+                                        <option value="<?php print $row; ?>" selected="selected"><?php print $row; ?></option>
+                                    <?php else: ?>
+                                        <option value="<?php print $row; ?>"><?php print $row; ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="span6 text-center pagination">
+                        <?php if (!empty($countPage)): ?>
+                            <?php if ($currentPage - 1 >= 0): ?>
+                                <a href="<?php print $url; ?><?php print $currentPage - 1; ?>" class="prev-link" data-page="<?php print $currentPage - 1; ?>"><?php print t('Prev'); ?></a>
+                            <?php endif; ?>
+                            <?php if (($currentPage - $dotted) > 0): ?>
+                                <span class="dotted">...</span>
+                            <?php endif; ?>
+                            <?php for ($i = 0; $i < $countPage; $i++): ?>
+                                <?php if ($i >= ($currentPage - $dotted) && $i <= ($currentPage + $dotted)): ?>
+                                    <?php if ($i == $currentPage): ?>
+                                        <span><?php print $i+1; ?></span>
+                                    <?php else: ?>
+                                        <a href="<?php print $url; ?><?php print $i; ?>" data-page="<?php print $i; ?>"><?php print $i+1; ?></a>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                            <?php if (($currentPage + $dotted) < $countPage-1): ?>
+                                <span class="dotted">...</span>
+                            <?php endif; ?>
+                            <?php if ($currentPage + 1 < $countPage): ?>
+                                <a href="<?php print $url; ?><?php print $currentPage + 1; ?>" class="next-link" data-page="<?php print $currentPage + 1; ?>"><?php print t('Next'); ?></a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="span3">
+                        <span class="text"><?php print t('Organizations'); ?></span>
+                        <?php
+                            $startLimit = $limit * $currentPage + 1;
+                            if (count($organizations) == 0) {
+                                $startLimit = 0;
+                            }
+                        ?>
+                        <span id="zd-limit-row"><?php print $startLimit; ?></span> -
+                        <?php $endLimit = $limit * $currentPage + $limit; ?>
+                        <span id="zd-end-limit-row"><?php print ($endLimit > $countRows)?$countRows:$endLimit; ?></span> <?php print t('of'); ?>
+                        <span id="zd-count-row"><?php print $countRows; ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+
