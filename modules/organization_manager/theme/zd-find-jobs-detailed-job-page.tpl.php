@@ -6,8 +6,8 @@
             </div> -->
             <div class="span12">
                 <div class="row-fluid">
-                    <div class="span8 text-left job-Title">
-                        <?php print $job->Title; ?>
+                    <div class="span8 text-left job-Title" >
+                        <strong><?php print $job->Title; ?></strong>
                     </div>
                     <div class="span4 text-right job-price">
 
@@ -38,18 +38,7 @@
                         </a>
                         
                     </div>
-                  <div class="span8 text-left">
 
-                        <div class="span8 text-left company-info">
-                            <?php if(!empty($job->Tags))?>
-                            <ul>
-                            <?php foreach ($job->Tags as $tag): ?>
-                            <li><?php print $tag ?></li>
-                            <?php endforeach;?>
-                            </ul> 
-                        </div>
-                        
-                    </div>  
                 </div>
             </div>
         </div>
@@ -62,7 +51,18 @@
             </div>
             <div class="span12 job-info">
                 <div class="job-description"><?php print $job->Snippet; ?></div>
-            </div>
+            </div> 
         </div>
+        <div class="row-fluid job-bottom-block" style="background-color: #E9E9E9;">
+            <div class="span8 text-left company-info">
+                <strong>FIND SIMILAR JOBS:</strong>
+                <?php if(!empty($job->Tags))?>
+                <ul>
+                <?php foreach ($job->Tags as $tag): ?>
+                <li style="list-style-type:none;position:relative;left:-30px;font-size:15px;"><a href="/find-positions?keywords=<?php print urlencode($tag);?>&location=" target="_blank"><?php print $tag ?> Jobs</a></li>
+                <?php endforeach;?>
+                </ul> 
+            </div>
+        </div>  
     </div>
 </div>

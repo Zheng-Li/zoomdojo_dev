@@ -102,16 +102,8 @@
                                         <?php else: ?>
                                             <?php print t('Please click on job name for more info'); ?>
                                         <?php endif; ?>
-                                    </div><br>
-                                    <div class="org-meta-desc">
-                                        <?php if (!empty($position->Tags)): ?>
-                                        <ul style="list-style-type: none;margin: 0;padding: 0;">
-                                            <?php foreach ($position->Tags as $Tag): ?>
-                                            <b><li style="display:inline;margin:-30px;padding:40px;color:#000000;">&#10148<?php print $Tag?></li></b>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                        <?php endif; ?>
-                                    </div><br>
+                                    </div>
+                           
                                     <div class="span12 text-center">
                                         <div class="org-meta-desc">
                                             Posted <?php print $position->post ?> ago
@@ -207,13 +199,7 @@
                             <?php print t('Please click on organisation name for more info'); ?>
                         <% } %>
                 </div>
-                <div class="org-meta-desc">
-                        <ul>
-                            <% _.each(Tags,function(Tag) { %> 
-                            <li><%= Tag %></li> 
-                            <% }); %>
-                        </ul>
-                </div>
+
                 <div class="org-meta-desc">
                         Post <%=post %> ago
                 </div>

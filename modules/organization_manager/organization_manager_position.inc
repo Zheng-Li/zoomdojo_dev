@@ -112,7 +112,7 @@ function organization_manager_find_jobs_getPositionsData($get)
         }
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS distinct znj.ID, Title, Snippet, Updated_on, zo.Name, znl.City as city_name,
+            SELECT SQL_CALC_FOUND_ROWS distinct znj.ID, Title, znj.Snippet, Updated_on, zo.Name, znl.City as city_name,
                 znl.State as District, znl.Country as country_name, x.Tags
                 FROM zd_new_job AS znj
                 LEFT JOIN zd_new_job_tag AS znjt

@@ -527,7 +527,7 @@ function organization_manager_menu()
     );
 
     $items['detailed-job-page/%']                      = array(
-        'title'            => t('Job details'),
+        // 'title'            => t('Job details'),
         'weight'           => 0, // menu order
         'page callback'    => 'organization_manager_jobDetails',
         'page arguments'   => array(1),
