@@ -100,14 +100,25 @@
             $query -> condition('Name', '%'.db_like(variable_get('organization')).'%', 'LIKE');
         }
 
-        if(variable_get('tag') != "") {
-            $query -> join('zd_new_job_tag', 'jt', 'j.ID = jt.ID');
-            $query -> join('zd_new_organization_tag', 'ot', 'o.ID = ot.ID');
-            $or = db_or()
-                -> condition('jt.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE')
-                -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
-            $query -> condition($or);
-        }
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+        // if(variable_get('tag') != "") {
+        //     $query -> join('zd_new_job_tag', 'jt', 'j.ID = jt.ID');
+        //     $query -> join('zd_new_organization_tag', 'ot', 'o.ID = ot.ID');
+        //     $or = db_or()
+        //         -> condition('jt.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE')
+        //         -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+        //     $query -> condition($or);
+        // }
+
+        // Alternative
+            if(variable_get('tag') != "") {
+                $query -> join('zd_new_organization_tag', 'ot', 'o.ID = ot.ID');
+                $or = db_or()
+                    -> condition('j.tags', '%'.db_like(variable_get('tag')).'%', 'LIKE')
+                    -> condition('ot.Tag', '%'.db_like(variable_get('tag')).'%', 'LIKE');
+                $query -> condition($or);
+            }
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
 
         if(arg(3) != null) {
             $query -> condition('o.ID', arg(3));
@@ -208,8 +219,6 @@
         $job->job_tags         = '';
         
         if($id) {
-            $job_query = db_select('zd_new_job', 'j');
-            $job_query -> leftJoin('zd_new_job_tag', 't', 'j.ID = t.ID');
             // ------------------- NOT IN USE ----------------------
             // $job_query -> join('zd_dev_location_city', 'c', 'j.City_id = c.ID');
             // $job_query -> join('zd_dev_location_district', 'd', 'j.District_id = d.ID');
@@ -218,19 +227,30 @@
             // $job_query -> fields('d', array('Name', 'Alias'));
             // $job_query -> fields('cc', array('Name'));
             // ------------------- NOT IN USE ----------------------
+            $job_query = db_select('zd_new_job', 'j');
+
+            // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+            // $job_query -> leftJoin('zd_new_job_tag', 't', 'j.ID = t.ID');
+            // $job_query -> fields('t', array('Tag'));
+            // $job_query -> addExpression('GROUP_CONCAT(DISTINCT Tag)', 'Tag_list');
+
             $job_query -> join('zd_new_location', 'l', 'j.Loc_id = l.ID');
-            $job_query -> fields('j', array('ID', 'Title', 'Url', 'Url_status', 'Org_id', 'Job_weight', 'Created_on', 'Expired_on', 'Updated_on', 'Snippet'));
+            $job_query -> fields('j', array('ID', 'Title', 'Url', 'Url_status', 'Org_id', 'Job_weight', 'Created_on', 'Expired_on', 'Updated_on', 'Snippet', 'tags'));
             $job_query -> fields('l', array('City', 'State', 'Country'));
-            $job_query -> fields('t', array('Tag'));
             $job_query -> condition('j.ID', $id);
-            $job_query -> addExpression('GROUP_CONCAT(DISTINCT Tag)', 'Tag_list');
             $job_query -> groupBy('j.ID');
             $job_result = $job_query -> execute();
+            // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
 
             foreach($job_result as $item) {
                 $job->job_id = $item->ID;
                 $job->job_title = $item->Title;
-                $job->job_tags = $item->Tag_list;
+
+                // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+                // $job->job_tags = $item->Tag_list;
+                $job ->job_tags = $item->tags; // Alternative 
+                // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+
                 $job->job_url = $item->Url;
                 $job->job_url_status = $item->Url_status;
                 $job->org_id = $item->Org_id;
@@ -311,7 +331,6 @@
         $org_fields = array(
             'ID'        => $var['org-id'],
             'Name'      => $var['org-name'],
-            'Url'       => $var['org-url'],
             );
 
         $org_tags = array(
@@ -330,6 +349,10 @@
             'Created_on'    => $var['date-created'],
             'Expired_on'    => $var['date-expired']?$var['date-expired']:date('Y-m-d', strtotime("+2 months")), # Defualt expire date is 2 month from now
             'Loc_id'        => 0,
+            // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+            'tags'          => $var['job-tags'],
+            // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
+
             //------- NOT IN USE ----------
             // 'Updated_on'    => date("Y-m-d"),
             // 'City_id'       => 0,
@@ -338,10 +361,12 @@
             //------- NOT IN USE ----------
             );
 
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
         $job_tags = array(
             'ID'        => $var['job-id'],
             'Tag'       => explode(",", $var['job-tags']),
             );
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
 
         $location_fields = array(
             'City'       => $var['city'],
@@ -448,6 +473,7 @@
             $last_id = $var['job-id'];
         }
 
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
         $job_tag_query = db_delete('zd_new_job_tag')
             ->condition('ID', $job_tags['ID'])
             ->execute();
@@ -457,6 +483,7 @@
             $job_tag_query->values(array($job_tags['ID'], $t));
         }
         $job_tag_query->execute();
+        // +++++++++++++++++++ Tag table disabled +++++++++++++++++++
 
         drupal_goto();
     }
