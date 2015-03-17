@@ -89,6 +89,8 @@
                                         <i id="share-btn"></i>
                                     </a>
                                     <!-- Share button end -->
+                                    <!--Delete button-->
+                                    <!--<a class="btn btn-danger btn-large">Delete<i id="delete-button"></i></a>-->
                                 </div>
                             </div>
                             <div class="row-fluid">
@@ -315,4 +317,13 @@
             <% } %>
         </div>
     </div>
+</script>
+
+<script>
+    $(function(){
+        $('#trigger').click(function(){
+        $('#myModal').modal('show');
+        return false;
+        })
+    });
 </script>

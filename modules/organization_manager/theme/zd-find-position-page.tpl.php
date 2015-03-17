@@ -24,21 +24,26 @@
 
     <!--tings code-->
     <?php endif; ?>
-    <div id="zd-filter-panel">
-        <div class="container-fluid" style="height:80px;">
-            <!--<div class="row-fluid">-->
+        <div id="zd-filter-panel">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                    <!--<div class="span8 text-right">-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <form id="findJobsFormMini" action="/find-positions" method="get">
+                                <input name="keywords" value="" id="employer-autocomplete" type="text" class="keywords-autocomplete" autocomplete="off" placeholder="Type any Keyword" style="margin-left:95px; width:213px; font-size: 12px !important;" required/>
+                                <input name="location" value="" id="employer-autocomplete" type="text" class="location-autocomplete" autocomplete="off" placeholder="Type Location" style="margin-left:95px; width:213px; font-size: 12px !important;" />
+                                <a class="btn btn-danger btn-small fr-search-btn" style="position:relative;top:-4px;right:-50px;" href="#" onclick="jQuery('#findJobsFormMini').submit(); return false;">Search</a>
+                                <!--<a href="#" class="btn btn-danger" id="btn-find-keyword"><i class="icon-white icon-search"></i></a>-->
+                                </form>
+                            </div>
+                        </div>
+                    <!--</div>-->
+            </div>
             <div class="row-fluid">
                 <div class="row-fluid">
-                    <!--<div class="span3">-->
-                        <div class="span12">
-                            <form id="findJobsFormMini" action="/find-positions" method="get">
-                                <input name="keywords" value="" id="employer-autocomplete" type="text" class="keywords-autocomplete" autocomplete="off" placeholder="Type any Keyword" style="margin-left:71px; width:252px; font-size: 12px !important;" required/>
-                                <!--<input name="keywords" value="" id="employer-autocomplete" type="text" autocomplete="off" placeholder="Type any keywords" class="input-large span4 keywords-autocomplete" style="margin-left:71px; height:20px; position:relative; top:8px;" required/>-->
-                                <!--<input name="location" value="" id="employer-autocomplete" type="text" autocomplete="off" placeholder="Type location" class="input-large span4 location-autocomplete" style="margin-left:71px; position:relative; top:8px;"/>-->
-                                <input name="location" value="" id="employer-autocomplete" type="text" class="location-autocomplete" autocomplete="off" placeholder="Type Location" style="margin-left:71px; width:252px; font-size: 12px !important;" />
-                                <a class="btn btn-danger btn-medium fr-search-btn" href="#" style="position:relative;top:-5px;right:-30px;" onclick="jQuery('#findJobsFormMini').submit(); return false;">Search</a>
-                            </form>
-                        <div class="dispalay-ctl" style="position:relative;top:17px;">
+                    <div class="span3">
+                        <div class="dispalay-ctl">
                             <span class="dispalay-text"><?php print t('Display by'); ?></span>
                             <select  id="dispalay-ctl"  class="dispalay-select input-mini">
                                 <?php foreach ($displayArray as $row): ?>
@@ -51,7 +56,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="span6 text-center pagination" style="position:relative;left:230px;top:-8px;">
+                    <div class="span6 text-center pagination">
                         <?php if (!empty($countPage)): ?>
                             <?php if ($currentPage - 1 >= 0): ?>
                                 <a href="<?php print $url; ?><?php print $currentPage - 1; ?>" class="prev-link" data-page="<?php print $currentPage - 1; ?>"><?php print t('Prev'); ?></a>
@@ -77,18 +82,17 @@
                         <?php endif; ?>
                     </div>
                     <div class="span3">
-                        <span class="text" style="position:relative; top:-8px; left:165px;"><?php print t('Jobs'); ?></span>
+                        <span class="text"><?php print t('Jobs'); ?></span>
                         <?php
                             $startLimit = $limit * $currentPage + 1;
                             if (count($positions) == 0) {
                                 $startLimit = 0;
                             }
                         ?>
-                    
-                        <span id="zd-limit-row" style="position:relative; top:-8px; left:165px;"><?php print $startLimit; ?></span> <span style="position:relative; top:-8px; left:165px;">-</span>
+                        <span id="zd-limit-row"><?php print $startLimit; ?></span> -
                         <?php $endLimit = $limit * $currentPage + $limit; ?>
-                        <span id="zd-end-limit-row" style="position:relative; top:-8px; left:165px;"><?php print ($endLimit > $countRows)?$countRows:$endLimit; ?></span><span style="position:relative; top:-8px; left:165px;"> <?php print t('of'); ?></span>
-                        <span id="zd-count-row" style="position:relative; top:-8px; left:165px;"><?php print $countRows; ?></span>
+                        <span id="zd-end-limit-row"><?php print ($endLimit > $countRows)?$countRows:$endLimit; ?></span> <?php print t('of'); ?>
+                        <span id="zd-count-row"><?php print $countRows; ?></span>
                     </div>
                 </div>
             </div>
@@ -159,7 +163,7 @@
     <div id="zd-find-jobs-footer">
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="span12 text-center pagination" style="position:relative;left:28px;">
+                <div class="span12 text-center pagination">
                     <?php if (!empty($countPage)): ?>
                         <?php if ($currentPage - 1 >= 0): ?>
                             <a href="<?php print $url; ?><?php print $currentPage - 1; ?>"  class="prev-link" data-page="<?php print $currentPage - 1; ?>"><?php print t('Prev'); ?></a>

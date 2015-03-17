@@ -2303,8 +2303,8 @@ ul.social-list li.pinterest a:hover {
 
 .top-menu-block ul li:hover .drop-box {
     /*display:block;
-	z-index: 100;
-	background: url("../images/site-bg/top-menu-bg.jpg") repeat-x scroll 0 -33px transparent;*/
+    z-index: 100;
+    background: url("../images/site-bg/top-menu-bg.jpg") repeat-x scroll 0 -33px transparent;*/
 }
 .top-menu-block ul li.active .drop-box{
     display:block;
@@ -3099,7 +3099,7 @@ ul#secondary-menu-links a:hover {
 #zd-filter-panel ul.typeahead, /*#findJobsForm */ul.typeahead {
     padding-left: 0px;
     margin-top: 0px;
-    margin-left:71px !important;
+    margin-left:95px !important;
     margin-right: 40px !important;
 }
 
@@ -3127,7 +3127,7 @@ ul#secondary-menu-links a:hover {
     font-size: 11px;
     font-weight: bold;
     border-bottom: 1px solid #ccc;
-    padding: 5px 0px 10px 3px;
+    padding: 3px 0px 10px 3px;
     width:99%;
 }
 
@@ -3223,6 +3223,14 @@ i#share-btn {
     margin-bottom: -5px;
 }
 
+i#delete-button{
+    /*background: url(/sites/all/modules/organization_manager/img/delete-icon2.jpeg) no-repeat center left;*/
+    display: inline-block;
+    margin-bottom: -5px;
+    width: 20px;
+    height: 20px;
+}
+
 
 .btn {
     -webkit-transition: background .2s ease-in-out;
@@ -3277,11 +3285,24 @@ i#share-btn {
   line-height: 20px !important;
   padding: 7px 10px !important;
   font-size: 10px !important;
+  top:-1px;
   -webkit-border-radius: 10px;
      -moz-border-radius: 10px;
           border-radius: 10px;
 }
 
+.input-large1 {
+  /*width: 0px;*/
+  margin-left: 120px;
+  height: 30px !important;
+  margin-bottom: 0px !important;
+  line-height: 20px !important;
+  padding: 7px 10px !important;
+  font-size: 10px !important;
+  -webkit-border-radius: 10px;
+     -moz-border-radius: 10px;
+          border-radius: 10px;
+}
 
 
 
@@ -4320,14 +4341,12 @@ h2.fg-red {
 }
 
 /*@media (min-width: 1024px) and (max-width: 1170px) {
-
     .front-tb-left {
         width: 14%;
         font-size: 18px;
         padding-top: 20px;
         line-height: 20px;
     }
-
 }*/
 
 @media (min-width: 1024px) {

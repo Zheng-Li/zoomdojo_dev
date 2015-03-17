@@ -410,7 +410,9 @@
 }
 
 #zd-find-jobs-footer a {
-    font-weight: bold; }
+    font-weight: bold; 
+}
+
 #zd-find-jobs-footer {
     font-size: 13px;
 }
